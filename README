@@ -1,0 +1,193 @@
+
+Table of contents
+=================
+
+	- Requirements
+	- `cnn_train' Usage
+	- `cnn_predict' Usage
+	- Configuration File
+	- Options
+	- Data Provided
+	- A Full Example
+
+
+Requirements
+============
+
+MATLAB R2016b, or Octave 4.0.3. Other higher version may work as well.
+
+`cnn_train' Usage
+=================
+
+Syntax
+------
+model = cnn_train(y, Z, config_file[, options]);
+model = cnn_train(y, Z, config_file[, options, seed]);
+
+Parameters
+----------
+          y: A label vector in the range {1, ..., K} for a K-class problem.
+          Z: A dense feature matrix with the shape of l x abd, where l is
+             #instances, a is image height, b is image width and d is #channels.
+config_file: A string specifying the configuration file path. Please see the
+             `Configuration File' section.
+    options: A string. Please see the `Options' section. If no option, use ''.
+       seed: A nonnegative integer for MATLAB, or an arbitrary vector of length
+             less than or equal to 625 for Octave. It is used for the seed of
+             random number generator, rng() in MATLAB and rand(), randi() in
+             Octave. If it is not given, a different result is produced after each
+             run.
+
+Returns
+-------
+model: A structure consists of trained model variables and parameters.
+
+Example
+-------
+(1) Running with the default options.
+>> model = cnn_train(y, Z, 'config/mnist-demo-layer3.config');
+
+(2) Running with the default options and a specific seed.
+>> model = cnn_train(y, Z, 'config/mnist-demo-layer3.config', '', 111);
+
+(3) Running with the specific options and no seed.
+>> model = cnn_train(y, Z, 'config/mnist-demo-layer3.config', ...
+    '-C 0.01 -SR 0.01');
+
+(4) Running with the specific options and a specific seed.
+>> model = cnn_train(y, Z, 'config/mnist-demo-layer3.config', ...
+    '-C 0.01 -SR 0.01', 111);
+
+`cnn_predict' Usage
+===================
+
+Syntax
+------
+[predict, acc] = cnn_predict(y, Z, model)
+
+Parameters
+----------
+    y: A label vector in the range {1, ..., K} for a K-class problem.
+    Z: A dense feature matrix with the shape of l x abd, where l is
+       #instances, a is image height, b is image width and d is #channels.
+model: A structure consists of trained model variables and parameters.
+
+Returns
+-------
+predict: A l by 1 predicted label vector, where l is #instances.
+    acc: Accuracy.
+
+Example
+-------
+>> [predict, acc] = cnn_predict(y, Z, model);
+
+Configuration File
+==================
+
+Let's take `./config/mnist-demo-layer3.config' as an example. The following
+items are contained in the configuration file.
+
+(1) The #layers of the neural network:
+ L: The number of layers
+LC: The number of convolutional layers
+LF: The number of fully-connected layers
+
+L = 4;
+LC = 3;
+LF = 1;
+
+(2) The statistics of the training data:
+wd_input: The width of the input image data
+ht_input: The height of the input image data
+ch_input: The number of channels in each convolutional layer
+
+wd_input = 28;
+ht_input = 28;
+ch_input = [1,16,16,32];
+
+(3) The parameters of the neural network structure:
+    wd_pad_added: The width of the zero-padding around the input image border
+                  at each layer.
+       wd_filter: The width of the filters for the convolutional operation at each
+                  layer.
+         strides: The stride of the filters for the convolutional operation at each
+                  layer.
+wd_subimage_pool: The width of the filters for the max pooling operation at each
+                  layer. If the pooling operation is not applied for a
+                  particular layer, set the corresponding element to 1. For
+                  example, if we don't apply the pooling operation at layer 2, the
+                  array will be [2,1,2].
+    full_neurons: The number of neurons at each fully-connected layer.
+
+wd_pad_added = [2,1,1];
+wd_filter = [5,3,3];
+strides = [1,1,1];
+wd_subimage_pool = [2,2,2];
+full_neurons = [10];
+
+Options
+=======
+
+The following options are necessary parameters for Newton Method. They are
+listed along with their default values. You can change the default value
+by giving the string `option' in `cnn_train'. The string format should be
+
+'-<option> <value>'
+
+and separated by a space between each option-value pair inside the string. For
+example, we can set the option to be '-C 0.1 -SR 0.1' to change the sampling rate and
+the regularization constant.
+
+(1) The sampling rate of the subsampled Gauss-Newton matrix.
+SR = 0.05;
+
+(2) The maximal number of Newton iterations.
+iter_max = 10;
+
+(3) The regularization constant in the objective function.
+C = 0.01;
+
+(4) The tolerance in the relative stopping condition for the conjugate gradient (CG)
+method.
+xi = 0.1;
+
+(5) The maximal number of CG iterations.
+CGmax = 250;
+
+(6) The initial lambda for the Levenberg-Marquardt (LM) method.
+lambda = 1;
+
+(7) The drop and boost constants for the LM method.
+drop = 2/3;
+boost = 3/2;
+
+(8) The parameter for the line search stopping condition.
+eta = 0.0001;
+
+Data Provided
+=============
+
+We provide two small data sets, `mnist-demo.mat' for training and
+`mnist-demo.t.mat' for testing. The data sets are generated using stratified
+selection to select 2,000 instances and 1,000 instances from
+`https://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/multiclass/mnist.scale.bz2'
+and
+`https://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/multiclass/mnist.scale.t.bz2'
+respectively.
+
+The `*.mat' files contain a label vector, y and a dense feature matrix, Z. In
+the original data, the
+range of the label vector, y, is {0, ..., 9}. We change it to {1, ..., 10}
+following the requirement of `cnn_train' or `cnn_predict'.
+
+For example:
+
+>> load('data/mnist-demo.mat', 'y', 'Z');
+>> model = cnn_train(y, Z, 'config/mnist-demo-layer3.config');
+
+
+A Full Example
+==============
+
+Please see `./example_mnist.m'.
+
