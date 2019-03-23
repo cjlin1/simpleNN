@@ -2,7 +2,7 @@ function model = train(prob, param)
 
 model = init_model(param);
 net = init_net(param, model);
-
+tic;
 switch param.solver
 	case 1
 		model = newton(prob, param, model, net);
@@ -13,7 +13,7 @@ switch param.solver
 otherwise
 	error('solver not correctly specified', param.solver);
 end
-
+toc
 function model = init_model(param)
 
 LC = param.LC;
@@ -44,15 +44,15 @@ for m = 1 : LC
 	model.wd_input(m+1) = floor(model.wd_conv(m)/model.wd_subimage_pool(m));
 	var_num(m) = model.ch_input(m+1)*(model.wd_filter(m)*model.wd_filter(m)*model.ch_input(m) + 1);
 
-	model.weight{m} = randn(model.ch_input(m+1),model.wd_filter(m)*model.wd_filter(m)*model.ch_input(m))*sqrt(2.0/(model.wd_filter(m)*model.wd_filter(m)*model.ch_input(m)));
-	model.bias{m} = zeros(model.ch_input(m+1),1);
+	model.weight{m} = randn(model.ch_input(m+1),model.wd_filter(m)*model.wd_filter(m)*model.ch_input(m),'gpuArray')*sqrt(2.0/(model.wd_filter(m)*model.wd_filter(m)*model.ch_input(m)));
+	model.bias{m} = zeros(model.ch_input(m+1),1,'gpuArray');
 end
 
 num_neurons_prev = model.ht_input(LC+1)*model.wd_input(LC+1)*model.ch_input(LC+1);
 for m = LC+1 : L
 	num_neurons = model.full_neurons(m - LC);
-	model.weight{m} = randn(num_neurons, num_neurons_prev) * sqrt(2.0/num_neurons_prev);
-	model.bias{m} = zeros(num_neurons, 1);
+	model.weight{m} = randn(num_neurons, num_neurons_prev,'gpuArray') * sqrt(2.0/num_neurons_prev);
+	model.bias{m} = zeros(num_neurons, 1,'gpuArray');
 	var_num(m) = num_neurons * (num_neurons_prev + 1);
 	num_neurons_prev = num_neurons;
 end

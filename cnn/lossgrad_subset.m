@@ -17,8 +17,8 @@ if strcmp(task, 'fungrad')
 	% grad
 	dXidS = 2*(net.Z{L+1} - Y);
 	for m = L : -1 : LC+1
-		net.dlossdW{m} = dXidS*net.Z{m}';
-		net.dlossdb{m} = sum(dXidS,2);
+		net.dlossdW{m} = gather(dXidS*net.Z{m}');
+		net.dlossdb{m} = gather(sum(dXidS,2));
 		dXidS = model.weight{m}'*dXidS;
 		dXidS = dXidS.*(net.Z{m} > 0);
 	end
@@ -28,8 +28,8 @@ if strcmp(task, 'fungrad')
 		if model.wd_subimage_pool(m) > 1
 			dXidS = reshape(vTP(param, model, net, m, dXidS, 'pool_gradient'), model.ch_input(m+1), []);
 		end
-		net.dlossdW{m} = dXidS*net.phiZ{m}';
-		net.dlossdb{m} = sum(dXidS, 2);
+		net.dlossdW{m} = gather(dXidS*net.phiZ{m}');
+		net.dlossdb{m} = gather(sum(dXidS, 2));
 
 		if m > 1
 			V = model.weight{m}' * dXidS;

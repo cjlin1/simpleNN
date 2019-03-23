@@ -88,7 +88,7 @@ for m = L : -1 : LC+1
 	u_m = net.dzdS{m} .* q';
 	u_m = sum(reshape(u_m, [], nL, num_data), 2);
 	u_m = reshape(u_m, [], num_data) * [net.Z{m}' ones(num_data, 1)];
-	u(var_range) = u_m(:);
+	u(var_range) = gather(u_m(:));
 end
 
 for m = LC : -1 : 1
@@ -100,6 +100,6 @@ for m = LC : -1 : 1
 	u_m = reshape(net.dzdS{m}, [], nL*num_data) .* q';   %( \label{list:JTq|r-st} %)
 	u_m = sum(reshape(u_m, [], nL, num_data), 2);      %( \label{list:JTq|r-ed} %)
 	u_m = reshape(u_m, d, []) * [net.phiZ{m}' ones(a*b*num_data, 1)];  %( \label{list:JTq|JTq_m} %)
-	u(var_range) = u_m(:);
+	u(var_range) = gather(u_m(:));
 end
 

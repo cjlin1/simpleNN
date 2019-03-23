@@ -18,7 +18,7 @@ outa = model.ht_input(m+1);
 outb = model.wd_input(m+1);
 max_id = reshape(max_id, d*outa*outb, []) + h*h*[0:d*outa*outb-1]';  %( \label{list:p-pool|phi-pool-linearidx} %)
 
-idx_pool = [1:d*a*b];                   %( \label{list:p-pool|Z-linear-idx} %)
+idx_pool = gpuArray([1:d*a*b]);                   %( \label{list:p-pool|Z-linear-idx} %)
 idx_pool = idx_pool(P);                 %( \label{list:p-pool|phi-poolidx} %)
 idx_pool = idx_pool(max_id);                %( \label{list:p-pool|poolidx} %)
 

@@ -21,19 +21,19 @@ for batch_num = batch_order
 	f = f + loss;
 
 	if strcmp(task, 'fungrad')
-	        if (batch_num == batch_order(1))
+		if (batch_num == batch_order(1))
 			grad.dfdW = cell(L, 1);
 			grad.dfdb = cell(L, 1);
 			for m = 1 : L
 				grad.dfdW{m} = net.dlossdW{m};
 				grad.dfdb{m} = net.dlossdb{m};
 			end
-                else
+		else
 			for m = 1 : L
 				grad.dfdW{m} = grad.dfdW{m} + net.dlossdW{m};
 				grad.dfdb{m} = grad.dfdb{m} + net.dlossdb{m};
 			end
-	        end
+		end
 	end
         
 end
@@ -43,8 +43,8 @@ reg = 0.0;
 for m = 1 : L
 	reg = reg + norm(model.weight{m},'fro')^2 + norm(model.bias{m})^2;
 	if strcmp(task, 'fungrad')
-		grad.dfdW{m} = model.weight{m}/param.C + grad.dfdW{m}/prob.l;
-		grad.dfdb{m} = model.bias{m}/param.C + grad.dfdb{m}/prob.l;
+		grad.dfdW{m} = gather(model.weight{m})/param.C + grad.dfdW{m}/prob.l;
+		grad.dfdb{m} = gather(model.bias{m})/param.C + grad.dfdb{m}/prob.l;
 	end
 end
 f = (1.0/(2*param.C))*reg + f/prob.l;

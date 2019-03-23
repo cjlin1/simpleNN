@@ -16,5 +16,5 @@ for i = 1 : ceil(1/param.SR)
 
 	net = feedforward(prob.data(:, batch_idx), param, model, net);
 
-	results(:, batch_idx) = net.Z{L+1};
+	results(:, batch_idx) = gather(net.Z{L+1});
 end

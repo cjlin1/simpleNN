@@ -20,6 +20,12 @@ elseif nargin == 5
 else
 	error('The #arguments is incorrect.');
 end
+switch version('-release')
+    case '2018a'
+        gpurng(111,'CombRecursive');
+    case '2017a'
+        parallel.gpu.rng(111,'CombRecursive');
+end
 addpath(genpath('./cnn'), genpath('./opt'));
 
 param = parameter(y, Z, config_file, options);
