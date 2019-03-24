@@ -63,9 +63,9 @@ for m = LC : -1 : 1
 	ab = model.ht_conv(m)*model.wd_conv(m);
 	d = model.ch_input(m+1);
 
-	p = reshape(v(var_range), d, []) * [net.phiZ{m}; ones(1, ab*num_data)];
-	p = sum(reshape(net.dzdS{m}, d*ab, nL, []) .* reshape(p, d*ab, 1, []),1);
-	Jv = Jv + p(:);
+	p = reshape(v(var_range), d, []) * [net.phiZ{m}; ones(1, ab*num_data)];  %( \label{list:Jv|p} %)
+	p = sum(reshape(net.dzdS{m}, d*ab, nL, []) .* reshape(p, d*ab, 1, []),1);  %( \label{list:Jv|Jp} %)
+	Jv = Jv + p(:);  %( \label{list:Jv|sumJv} %)
 end
 
 function Jv = BJv(Jv)
@@ -97,9 +97,9 @@ for m = LC : -1 : 1
 	d = model.ch_input(m+1);
 	var_range = var_ptr(m) : var_ptr(m+1) - 1;
 
-	u_m = reshape(net.dzdS{m}, [], nL*num_data) .* q';
-	u_m = sum(reshape(u_m, [], nL, num_data), 2);
-	u_m = reshape(u_m, d, []) * [net.phiZ{m}' ones(a*b*num_data, 1)];
+	u_m = reshape(net.dzdS{m}, [], nL*num_data) .* q';   %( \label{list:JTq|r-st} %)
+	u_m = sum(reshape(u_m, [], nL, num_data), 2);      %( \label{list:JTq|r-ed} %)
+	u_m = reshape(u_m, d, []) * [net.phiZ{m}' ones(a*b*num_data, 1)];  %( \label{list:JTq|JTq_m} %)
 	u(var_range) = u_m(:);
 end
 

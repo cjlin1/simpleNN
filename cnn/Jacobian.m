@@ -17,19 +17,19 @@ net.dzdS{m-1} = reshape(net.dzdS{m-1}, [], nL, num_data);
 
 for m = LC : -1 : 1
 	if model.wd_subimage_pool(m) > 1
-		net.dzdS{m} = vTP(param, model, net, m, net.dzdS{m}, 'pool_Jacobian');
+		net.dzdS{m} = vTP(param, model, net, m, net.dzdS{m}, 'pool_Jacobian');     %( \label{list:Jacobian|dzdS} %)
 	end
 
 	net.dzdS{m} = reshape(net.dzdS{m}, model.ch_input(m+1), []);
 
 	if m > 1
-		V = model.weight{m}' * net.dzdS{m};
-		net.dzdS{m-1} = reshape(vTP(param, model, net, m, V, 'phi_Jacobian'), model.ch_input(m), []);
+		V = model.weight{m}' * net.dzdS{m};         %( \label{list:Jacobian|dzdZ_phi} %)
+		net.dzdS{m-1} = reshape(vTP(param, model, net, m, V, 'phi_Jacobian'), model.ch_input(m), []);  %( \label{list:Jacobian|dzdZ_pad} %)
 
 		% vTP_pad
 		a = model.ht_pad(m); b = model.wd_pad(m);
-		net.dzdS{m-1} = net.dzdS{m-1}(:, net.idx_pad{m} + a*b*[0:nL*num_data-1]);
+		net.dzdS{m-1} = net.dzdS{m-1}(:, net.idx_pad{m} + a*b*[0:nL*num_data-1]);  %( \label{list:Jacobian|dzdZ_act} %)
 
-		net.dzdS{m-1} = reshape(net.dzdS{m-1}, [], nL, num_data) .* reshape(net.Z{m} > 0, [], 1, num_data);
+		net.dzdS{m-1} = reshape(net.dzdS{m-1}, [], nL, num_data) .* reshape(net.Z{m} > 0, [], 1, num_data);  %( \label{list:Jacobian|dzdZ_pool} %)
 	end
 end
