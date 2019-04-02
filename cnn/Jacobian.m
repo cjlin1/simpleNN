@@ -28,8 +28,8 @@ for m = LC : -1 : 1
 
 		% vTP_pad
 		a = model.ht_pad(m); b = model.wd_pad(m);
-		net.dzdS{m-1} = net.dzdS{m-1}(:, net.idx_pad{m} + a*b*[0:nL*num_data-1]);  %( \label{list:Jacobian|dzdZ_act} %)
+		net.dzdS{m-1} = net.dzdS{m-1}(:, net.idx_pad{m} + a*b*[0:nL*num_data-1]);
 
-		net.dzdS{m-1} = reshape(net.dzdS{m-1}, [], nL, num_data) .* reshape(net.Z{m} > 0, [], 1, num_data);  %( \label{list:Jacobian|dzdZ_pool} %)
+		net.dzdS{m-1} = reshape(net.dzdS{m-1}, [], nL, num_data) .* reshape(net.Z{m} > 0, [], 1, num_data);
 	end
 end

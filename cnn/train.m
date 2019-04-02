@@ -2,7 +2,7 @@ function model = train(prob, param)
 
 model = init_model(param);
 net = init_net(param, model);
-tic;
+
 switch param.solver
 	case 1
 		model = newton(prob, param, model, net);
@@ -13,7 +13,7 @@ switch param.solver
 otherwise
 	error('solver not correctly specified', param.solver);
 end
-toc
+
 function model = init_model(param)
 
 LC = param.LC;
