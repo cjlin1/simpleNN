@@ -21,19 +21,19 @@ for batch_num = batch_order
 	f = f + loss;
 
 	if strcmp(task, 'fungrad')
-	        if (batch_num == batch_order(1))
+		if (batch_num == batch_order(1))
 			grad.dfdW = cell(L, 1);
 			grad.dfdb = cell(L, 1);
 			for m = 1 : L
 				grad.dfdW{m} = net.dlossdW{m};
 				grad.dfdb{m} = net.dlossdb{m};
 			end
-                else
+		else
 			for m = 1 : L
 				grad.dfdW{m} = grad.dfdW{m} + net.dlossdW{m};
 				grad.dfdb{m} = grad.dfdb{m} + net.dlossdb{m};
 			end
-	        end
+		end
 	end
         
 end
