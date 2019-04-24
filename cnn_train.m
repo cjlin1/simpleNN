@@ -53,7 +53,10 @@ param.eta = 1e-4;
 % parameters for stochastic gradient
 
 param.lr = 0.01;
+param.decay = 0;
 param.bsize = 128;
+param.momentum = 0;
+param.epoch_max = 500;
 
 % Read options given by users
 if ~isempty(options)
@@ -118,8 +121,14 @@ for i = 1 : length(options)/2
 			param.eta = value;
 		case '-lr'
 			param.lr = value;
+		case '-decay'
+			param.decay = value;
 		case '-bsize'
 			param.bsize = value;
+		case '-momentum'
+			param.momentum = value;
+		case '-epoch_max'
+			param.epoch_max = value;
 		otherwise
 			error('%s is not a supported option.', option);
 	end
