@@ -23,7 +23,7 @@ for k = 1 : param.epoch_max
 		lr = param.lr/(1 + decay*step);
 		step = step + 1;
 	end
-	fprintf('%d-epoch avg. loss: %g\n', k, loss/batch_size);
+	fprintf('%d-epoch loss/batch_size: %g\n', k, loss/batch_size);
 end
 
 model.param = param;
