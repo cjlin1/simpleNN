@@ -3,8 +3,8 @@ function phiZ = padding_and_phiZ(model, net, m)
 num_data = net.num_sampled_data;
 phiZ = padding(model, net, m);
 % Calculate phiZ
-phiZ = reshape(phiZ, [], num_data);
-phiZ = phiZ(net.idx_phiZ{m}, :);
+phiZ = reshape(phiZ, [], num_data);  %( \label{list:phi|extract-phiZ-st} %)
+phiZ = phiZ(net.idx_phiZ{m}, :);     %( \label{list:phi|extract-phiZ-ed} %)
 
 h = model.wd_filter(m);
 d = model.ch_input(m);
