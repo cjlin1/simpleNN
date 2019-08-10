@@ -18,7 +18,7 @@ outa = model.ht_input(m+1);
 outb = model.wd_input(m+1);
 max_id = reshape(max_id, d*outa*outb, []) + h*h*[0:d*outa*outb-1]';
 
-idx_pool = gpuArray([1:d*a*b]);
+idx_pool = array([1:d*a*b]);
 idx_pool = idx_pool(P);
 idx_pool = idx_pool(max_id);
 

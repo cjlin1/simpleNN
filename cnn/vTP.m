@@ -24,11 +24,10 @@ case {'phi_gradient', 'phi_Jacobian'}
 	if strcmp(op, 'phi_gradient')
 		num_v = num_data; 
 		idx = net.idx_phiZ{m}(:) + [0:num_v-1]*d_prev*a_prev*b_prev;
-	else
-		num_v = nL*num_data;
+	else 
+		num_v = nL*num_data; 
 		idx = gather(net.idx_phiZ{m}(:)) + [0:num_v-1]*d_prev*a_prev*b_prev;
 	end
-
 otherwise
 	error('Unknown operation in function vTP.');
 end

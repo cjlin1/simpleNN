@@ -18,5 +18,5 @@ a = model.ht_pad(m);
 b = model.wd_pad(m);
 d = model.ch_input(m);
 idx = reshape(net.idx_pad{m} + [0:num_data-1]*a*b, [], 1);
-output = zeros(d,a*b*num_data,'gpuArray');
+output = array(zeros(d,a*b*num_data));
 output(:,idx) = net.Z{m};

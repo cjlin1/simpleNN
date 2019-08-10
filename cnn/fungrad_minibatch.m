@@ -47,4 +47,4 @@ for m = 1 : L
 		grad.dfdb{m} = gather(model.bias{m})/param.C + grad.dfdb{m}/prob.l;
 	end
 end
-f = (1.0/(2*param.C))*reg + f/prob.l;
+f = (1.0/(2*param.C))*gather(reg) + f/prob.l;

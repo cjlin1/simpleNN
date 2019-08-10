@@ -41,10 +41,10 @@ model.param = param;
 
 function param = update_lambda(param, actred, prered)
 
-param.phik = actred/prered;
-if (param.phik < 0.25)
+phik = actred/prered;
+if (phik < 0.25)
 	param.lambda = param.lambda * param.boost;
-elseif (param.phik >= 0.75)
+elseif (phik >= 0.75)
 	param.lambda = param.lambda * param.drop;
 end
 

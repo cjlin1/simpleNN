@@ -20,15 +20,20 @@ elseif nargin == 5
 else
 	error('The #arguments is incorrect.');
 end
-switch version('-release')
-    case '2018a'
-        gpurng(111,'CombRecursive');
-    case '2017a'
-        parallel.gpu.rng(111,'CombRecursive');
-end
 addpath(genpath('./cnn'), genpath('./opt'));
 
+% Check GPU device
+global gpu_use
+gpu_use = (gpuDeviceCount > 0);
+
 param = parameter(y, Z, config_file, options);
+
+if (gpu_use == 0)
+	fprintf('We use CPUs to train\n');
+else
+	fprintf('We use GPUs to train\n');
+end
+
 prob = check_data(y, Z, param);
 model = train(prob, param);
 
@@ -59,7 +64,10 @@ param.eta = 1e-4;
 % parameters for stochastic gradient
 
 param.lr = 0.01;
+param.decay = 0;
 param.bsize = 128;
+param.momentum = 0;
+param.epoch_max = 500;
 
 % Read options given by users
 if ~isempty(options)
@@ -97,7 +105,7 @@ options = strsplit(strtrim(options), ' ');
 if mod(length(options), 2) == 1
 	error('Each option is specified by its name and value.');
 end
-
+global gpu_use
 for i = 1 : length(options)/2
 	option = options{2*i-1};
 	value = str2num(options{2*i});
@@ -124,8 +132,22 @@ for i = 1 : length(options)/2
 			param.eta = value;
 		case '-lr'
 			param.lr = value;
+		case '-decay'
+			param.decay = value;
 		case '-bsize'
 			param.bsize = value;
+		case '-momentum'
+			param.momentum = value;
+		case '-epoch_max'
+			param.epoch_max = value;
+		case '-gpu_use'
+			if (gpu_use == 0 & value == 1)
+				fprintf('[Warning] We do not detect any GPU device.\n');
+			end
+			if (gpu_use == 1 & value == 0)
+				fprintf('[Warning] We detect your GPU device. However, CPUs are chosen to train.\n');
+				gpu_use = 0;
+			end
 		otherwise
 			error('%s is not a supported option.', option);
 	end

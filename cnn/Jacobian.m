@@ -10,7 +10,7 @@ net.dzdS{L} = repmat(eye(nL, nL), 1, num_data);
 
 for m = L : -1 : LC+1
 	% Compute dzdZ
-	net.dzdS{m-1} = gather(model.weight{m}' * net.dzdS{m}).*reshape(repmat(net.Z{m} > 0,nL,1),[],nL*num_data);
+	net.dzdS{m-1} = gather((model.weight{m}' * net.dzdS{m}).*reshape(repmat(net.Z{m} > 0,nL,1),[],nL*num_data));
 end
 % Compute dzdS or dzdZ_pool in (LC+1)th layer
 net.dzdS{m-1} = reshape(net.dzdS{m-1}, [], nL, num_data);
