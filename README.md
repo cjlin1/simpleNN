@@ -185,9 +185,9 @@ eta = 0.0001;
 
 The following options are necessary parameters for SG method.
 
-1. **-iter_max**: the maximal number of SG epochs.
+1. **-epoch_max**: the maximal number of SG epochs.
 ```
-iter_max = 100;
+epoch_max = 500;
 ```
 
 2. **-C**: the regularization constant in the objective function.
@@ -200,9 +200,19 @@ C = 0.01;
 lr = 0.01
 ```
 
-4. **-bsize**: mini-batch size.
+4. **-decay**: learning rate decay over each mini-batch update.
+```
+decay = 0
+```
+
+5. **-bsize**: mini-batch size.
 ```
 bsize = 128
+```
+
+6. **-momentum**: weight of information from past sub-gradients.
+```
+momentum = 0
 ```
 
 # Data Provided
