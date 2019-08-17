@@ -1,4 +1,26 @@
 function model = cnn_train(y, Z, config_file, options, seed)
+% -s: the optimization method used for training CNN. (1: Newton method (Default); 2: SG method)
+% -C: the regularization constant in the objective function.
+% -inner_bsize: the smaller inner batch size than a mini-batch or a subsampled subset.
+% -gpu_use the flag (0: CPU; 1: GPU. default:0)
+%
+% options for Newton method (-s 1):
+% -SR: the sampling rate of the subsampled Gauss-Newton matrix.
+% -iter_max: the maximal number of Newton iterations.
+% -xi: the tolerance in the relative stopping condition for the conjugate gradient (CG) method.
+% -CGmax: the maximal number of CG iterations.
+% -lambda: the initial lambda for the Levenberg-Marquardt (LM) method.
+% -drop/-boost: the drop and boost constants for the LM method.
+% -eta: the parameter for the line search stopping condition.
+% -JF: Jacobian free strategy. (0: store dZdS. 1: calculate dZdS every CG iteration. default: 0)
+%
+% options for SG method (-s 2):
+% -epoch_max: the maximal number of SG epochs.
+% -lr: learning rate.
+% -bsize: mini-batch size.
+% -momentum: weight of information from past sub-gradients.
+% -decay: learning rate decay over each mini-batch update.
+%
 
 if nargin == 3 || nargin == 4
 	if nargin == 3
@@ -27,13 +49,11 @@ global gpu_use
 gpu_use = (gpuDeviceCount > 0);
 
 param = parameter(y, Z, config_file, options);
-
 if (gpu_use == 0)
 	fprintf('We use CPUs to train\n');
 else
 	fprintf('We use GPUs to train\n');
 end
-
 prob = check_data(y, Z, param);
 model = train(prob, param);
 
@@ -42,8 +62,10 @@ function param = parameter(y, Z, config_file, options)
 param = struct;
 
 param.solver = 1;
+param.inner_bsize = 128;
 
 % parameters for Newton methods
+param.JF = 0;
 
 % The subsampled size for calculating the Gauss-Newton matrix
 param.SR = 0.05;
@@ -140,6 +162,10 @@ for i = 1 : length(options)/2
 			param.momentum = value;
 		case '-epoch_max'
 			param.epoch_max = value;
+		case '-inner_bsize'
+			param.inner_bsize = value;
+		case '-JF'
+			param.JF = value;
 		case '-gpu_use'
 			if (gpu_use == 0 & value == 1)
 				fprintf('[Warning] We do not detect any GPU device.\n');
@@ -152,4 +178,3 @@ for i = 1 : length(options)/2
 			error('%s is not a supported option.', option);
 	end
 end
-

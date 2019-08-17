@@ -2,13 +2,14 @@ function model = newton(prob, param, model, net)
 
 % Assign each instance to a batch
 batch_idx = assign_inst_idx(param, prob.l);
-
 subsampled_batch = 1;
 [net, f, grad] = fungrad_minibatch(prob, param, model, net, batch_idx, ...
                                    subsampled_batch, 'fungrad');
 
 for k = 1 : param.iter_max
-	net = Jacobian(param, model, net);
+	if param.JF == 0
+		net = Jacobian(param, model, net);
+	end
 	[x, CGiter, gs, sGs] = CG(param, model, net, grad);
 
 	% line search

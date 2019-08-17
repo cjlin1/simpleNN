@@ -5,10 +5,6 @@ LC = param.LC;
 
 % Initialize temporary variables for layer 1 to L+1 (used in pipeline)
 net.Z = cell(L+1, 1);
-net.phiZ = cell(LC, 1);
-net.dzdS = cell(L, 1);
-net.dlossdW = cell(L, 1);
-net.dlossdb = cell(L, 1);
 
 % P_pad, P_phi, P_pool
 net.idx_pad = cell(LC, 1);

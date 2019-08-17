@@ -17,9 +17,13 @@ gnorm = norm(g);
 rTr = gnorm^2;
 cgtol = param.xi * gnorm;
 for CGiter = 1 : param.CGmax
-	Gv = Jv(param, model, net, v);
-	Gv = BJv(Gv);
-	Gv = JTq(param, model, net, Gv);
+	if param.JF == 1
+		Gv = JF_JTBJv(param, model, net, v);
+	else
+		Gv = Jv(param, model, net, v);
+		Gv = BJv(Gv);
+		Gv = JTq(param, model, net, Gv);
+	end
 	Gv = (param.lambda + 1/param.C) * v + Gv/num_data;
 
 	alpha = rTr / (v' * Gv);
@@ -63,7 +67,8 @@ for m = LC : -1 : 1
 	ab = model.ht_conv(m)*model.wd_conv(m);
 	d = model.ch_input(m+1);
 
-	p = reshape(v(var_range), d, []) * [net.phiZ{m}; ones(1, ab*num_data)];
+	phiZ = padding_and_phiZ(model, net, m, net.Z{m});
+	p = reshape(v(var_range), d, []) * [phiZ; ones(1, ab*num_data)];
 	p = sum(reshape(net.dzdS{m}, d*ab, nL, []) .* reshape(p, d*ab, 1, []),1);
 	Jv = Jv + p(:);
 end
@@ -99,7 +104,8 @@ for m = LC : -1 : 1
 
 	u_m = reshape(net.dzdS{m}, [], nL*num_data) .* q';
 	u_m = sum(reshape(u_m, [], nL, num_data), 2);
-	u_m = reshape(u_m, d, []) * [net.phiZ{m}' ones(a*b*num_data, 1)];
+	phiZ = padding_and_phiZ(model, net, m, net.Z{m});
+	u_m = reshape(u_m, d, []) * [phiZ' ones(a*b*num_data, 1)];
 	u(var_range) = gather(u_m(:));
 end
 

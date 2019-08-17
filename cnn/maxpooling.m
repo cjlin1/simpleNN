@@ -1,12 +1,10 @@
-function [Zout, idx_pool] = maxpooling(model, net, m)
+function [Zout, idx_pool] = maxpooling(model, net, m, Z)
 
+% Z input: sigma(S_m)
 a = model.ht_conv(m);
 b = model.wd_conv(m);
 d = model.ch_input(m+1);
 h = model.wd_subimage_pool(m);
-
-% Z input: sigma(S_m)
-Z = net.Z{m+1};
 
 P = net.idx_phiZ_pool{m};
 Z = reshape(Z, d*a*b, []);

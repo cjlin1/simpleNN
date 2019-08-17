@@ -16,7 +16,7 @@ grad = [];
 
 for batch_num = batch_order
 
-	[net, loss] = lossgrad_subset(prob, param, model, net, batch_idx{batch_num}, task);
+	[net, loss, dlossdW, dlossdb] = lossgrad_subset(prob, param, model, net, batch_idx{batch_num}, task);
 
 	f = f + loss;
 
@@ -25,26 +25,26 @@ for batch_num = batch_order
 			grad.dfdW = cell(L, 1);
 			grad.dfdb = cell(L, 1);
 			for m = 1 : L
-				grad.dfdW{m} = net.dlossdW{m};
-				grad.dfdb{m} = net.dlossdb{m};
+				grad.dfdW{m} = dlossdW{m};
+				grad.dfdb{m} = dlossdb{m};
 			end
 		else
 			for m = 1 : L
-				grad.dfdW{m} = grad.dfdW{m} + net.dlossdW{m};
-				grad.dfdb{m} = grad.dfdb{m} + net.dlossdb{m};
+				grad.dfdW{m} = grad.dfdW{m} + dlossdW{m};
+				grad.dfdb{m} = grad.dfdb{m} + dlossdb{m};
 			end
 		end
 	end
-        
 end
+
 
 % Obj function value and gradient norm
 reg = 0.0;
 for m = 1 : L
 	reg = reg + norm(model.weight{m},'fro')^2 + norm(model.bias{m})^2;
 	if strcmp(task, 'fungrad')
-		grad.dfdW{m} = gather(model.weight{m})/param.C + grad.dfdW{m}/prob.l;
-		grad.dfdb{m} = gather(model.bias{m})/param.C + grad.dfdb{m}/prob.l;
+		grad.dfdW{m} = gather(model.weight{m}/param.C + grad.dfdW{m}/prob.l);
+		grad.dfdb{m} = gather(model.bias{m}/param.C + grad.dfdb{m}/prob.l);
 	end
 end
 f = (1.0/(2*param.C))*gather(reg) + f/prob.l;
