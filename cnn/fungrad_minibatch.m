@@ -10,13 +10,13 @@ batch_order = [1:num_splits];
 % The batch for subsampled Hessian is the last to be handled
 batch_order([num_splits subsampled_batch]) = batch_order([subsampled_batch num_splits]);
 f = 0;
-L = param.L;
-LC = param.LC;
+L = model.L;
+LC = model.LC;
 grad = [];
 
 for batch_num = batch_order
 
-	[net, loss] = lossgrad_subset(prob, param, model, net, batch_idx{batch_num}, task);
+	[net, loss] = lossgrad_subset(prob, model, net, batch_idx{batch_num}, task);
 
 	f = f + loss;
 

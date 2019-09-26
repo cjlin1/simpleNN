@@ -1,8 +1,8 @@
-function net = Jacobian(param, model, net)
+function net = Jacobian(model, net)
 
-L = param.L;
-LC = param.LC;
-nL = param.nL;
+L = model.L;
+LC = model.LC;
+nL = model.nL;
 num_data = net.num_sampled_data;
 
 % Compute dzdz
@@ -17,14 +17,14 @@ net.dzdS{m-1} = reshape(net.dzdS{m-1}, [], nL, num_data);
 
 for m = LC : -1 : 1
 	if model.wd_subimage_pool(m) > 1
-		net.dzdS{m} = vTP(param, model, net, m, net.dzdS{m}, 'pool_Jacobian');
+		net.dzdS{m} = vTP(model, net, m, net.dzdS{m}, 'pool_Jacobian');
 	end
 
 	net.dzdS{m} = reshape(net.dzdS{m}, model.ch_input(m+1), []);
 
 	if m > 1
 		V = model.weight{m}' * net.dzdS{m};
-		net.dzdS{m-1} = reshape(vTP(param, model, net, m, V, 'phi_Jacobian'), model.ch_input(m), []);
+		net.dzdS{m-1} = reshape(vTP(model, net, m, V, 'phi_Jacobian'), model.ch_input(m), []);
 
 		% vTP_pad
 		a = model.ht_pad(m); b = model.wd_pad(m);

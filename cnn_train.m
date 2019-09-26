@@ -23,7 +23,7 @@ end
 addpath(genpath('./cnn'), genpath('./opt'));
 
 param = parameter(y, Z, config_file, options);
-prob = check_data(y, Z, param);
+prob = check_data(y, Z, param.config);
 model = train(prob, param);
 
 function param = parameter(y, Z, config_file, options)
@@ -75,17 +75,20 @@ while ~feof(fid)
 	s = fgetl(fid);
 	if ~isempty(s)
 		if strcmp(s(1),'%') == 0
-			eval(['param.' s]);
+			eval(['config.' s]);
 		end
 	end
 end
 fclose(fid);
 
-if param.LC == 0
+if config.LC == 0
 	error('You must have at least one convolutional layer.');
 end
 
-param.nL = param.full_neurons(param.LF);
+config.nL = config.full_neurons(config.LF);
+
+param.config = config;
+param.nL = config.nL;
 
 function param = parse_options(param, options)
 

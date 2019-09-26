@@ -1,7 +1,7 @@
-function net = init_net(param, model)
+function net = init_net(model)
 
-L = param.L;
-LC = param.LC;
+L = model.L;
+LC = model.LC;
 
 % Initialize temporary variables for layer 1 to L+1 (used in pipeline)
 net.Z = cell(L+1, 1);

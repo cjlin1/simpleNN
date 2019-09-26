@@ -6,7 +6,7 @@ num_data = net.num_sampled_data;
 s = zeros(n, 1);
 Gv = zeros(n, 1);
 g = zeros(n, 1);
-for m = 1 : param.L
+for m = 1 : model.L
 	var_range = var_ptr(m) : var_ptr(m+1) - 1;
 	g(var_range) = [grad.dfdW{m}(:); grad.dfdb{m}];
 end
@@ -17,9 +17,9 @@ gnorm = norm(g);
 rTr = gnorm^2;
 cgtol = param.xi * gnorm;
 for CGiter = 1 : param.CGmax
-	Gv = Jv(param, model, net, v);
+	Gv = Jv(model, net, v);
 	Gv = BJv(Gv);
-	Gv = JTq(param, model, net, Gv);
+	Gv = JTq(model, net, Gv);
 	Gv = (param.lambda + 1/param.C) * v + Gv/num_data;
 
 	alpha = rTr / (v' * Gv);
@@ -40,11 +40,11 @@ end
 gs = s' * g;
 sGs = 0.5 * s' * (-g - r - param.lambda*s);
 
-function Jv = Jv(param, model, net, v)
+function Jv = Jv(model, net, v)
 
-nL = param.nL;
-L = param.L;
-LC = param.LC;
+nL = model.nL;
+L = model.L;
+LC = model.LC;
 num_data = net.num_sampled_data;
 var_ptr = model.var_ptr;
 Jv = zeros(nL*num_data, 1);
@@ -72,11 +72,11 @@ function Jv = BJv(Jv)
 
 Jv = 2*Jv;
 
-function u = JTq(param, model, net, q)
+function u = JTq(model, net, q)
 
-nL = param.nL;
-L = param.L;
-LC = param.LC;
+nL = model.nL;
+L = model.L;
+LC = model.LC;
 num_data = net.num_sampled_data;
 var_ptr = model.var_ptr;
 n = var_ptr(end) - 1;

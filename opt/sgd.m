@@ -4,7 +4,7 @@ lr = param.lr;
 batch_size = param.bsize;
 decay = param.decay;
 
-v = cell(param.L,1);
+v = cell(model.L,1);
 v(:) = {0};
 
 step = 1;
@@ -12,8 +12,8 @@ step = 1;
 for k = 1 : param.epoch_max
 	for j = 1 : ceil(prob.l/batch_size) 
 		batch_idx = randsample(prob.l, batch_size);
-		[net, loss] = lossgrad_subset(prob, param, model, net, batch_idx, 'fungrad');
-		for m = 1 : param.L
+		[net, loss] = lossgrad_subset(prob, model, net, batch_idx, 'fungrad');
+		for m = 1 : model.L
 			Grad = [net.dlossdW{m} net.dlossdb{m}]/batch_size;                    
 			Grad = Grad + [model.weight{m} model.bias{m}]/param.C;
 			v{m} = param.momentum*v{m} - lr*Grad;
@@ -25,5 +25,3 @@ for k = 1 : param.epoch_max
 	end
 	fprintf('%d-epoch loss/batch_size: %g\n', k, loss/batch_size);
 end
-
-model.param = param;

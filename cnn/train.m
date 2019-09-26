@@ -1,7 +1,7 @@
 function model = train(prob, param)
 
-model = init_model(param);
-net = init_net(param, model);
+model = init_model(param.config);
+net = init_net(model);
 
 switch param.solver
 	case 1
@@ -14,23 +14,30 @@ otherwise
 	error('solver not correctly specified', param.solver);
 end
 
-function model = init_model(param)
+function model = init_model(config)
 
-LC = param.LC;
-L = param.L;
 model = struct;
-model.ht_input = [param.ht_input; zeros(LC, 1)];  % height of input image
-model.wd_input = [param.wd_input; zeros(LC, 1)];  % width of input image
-model.ch_input = param.ch_input(:);  % #channels of input image
-model.wd_pad_added = param.wd_pad_added(:);  % width of zero-padding around input image border
-model.ht_pad = [zeros(LC, 1)];  % height of image after padding
-model.wd_pad = [zeros(LC, 1)];  % width of image after padding
-model.ht_conv = [zeros(LC, 1)];  % height of image after convolution
-model.wd_conv = [zeros(LC, 1)];  % width of image after convolution
-model.wd_filter = param.wd_filter(:);  % width of filter in convolution
-model.strides = param.strides(:);  % strides of convolution
-model.wd_subimage_pool = param.wd_subimage_pool(:);  % width of filter in pooling
-model.full_neurons = param.full_neurons(:);  % #neurons in fully-connected layers
+model.config = config;
+
+LC = config.LC;
+L =  config.L;
+
+model.LC = LC;
+model.L = L;
+model.nL = config.nL;
+
+model.ht_input = [config.ht_input; zeros(LC, 1)];  % height of input image
+model.wd_input = [config.wd_input; zeros(LC, 1)];  % width of input image
+model.ch_input = config.ch_input(:);  % #channels of input image
+model.wd_pad_added = config.wd_pad_added(:);  % width of zero-padding around input image border
+model.ht_pad = zeros(LC, 1);  % height of image after padding
+model.wd_pad = zeros(LC, 1);  % width of image after padding
+model.ht_conv = zeros(LC, 1);  % height of image after convolution
+model.wd_conv = zeros(LC, 1);  % width of image after convolution
+model.wd_filter = config.wd_filter(:);  % width of filter in convolution
+model.strides = config.strides(:);  % strides of convolution
+model.wd_subimage_pool = config.wd_subimage_pool(:);  % width of filter in pooling
+model.full_neurons = config.full_neurons(:);  % #neurons in fully-connected layers
 model.weight = cell(L, 1);
 model.bias = cell(L, 1);
 var_num = zeros(L, 1);

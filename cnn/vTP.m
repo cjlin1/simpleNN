@@ -1,7 +1,7 @@
-function vTP = vTP(param, model, net, m, V, op)
+function vTP = vTP(model, net, m, V, op)
 % output vTP: a row vector, where mat(vTP) is with dimension $d_prev a_prev b_prev \times num_v$.
 
-nL = param.nL;
+nL = model.nL;
 num_data = net.num_sampled_data;
 
 switch op
