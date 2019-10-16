@@ -83,9 +83,13 @@ In this section, we show option/parameters that are solely for Tensorflow implem
 ```
 
 ### SGD
-1. **--decay**: divide learning rate by 10 every **decay** epochs
+1. **--decay**: divide learning rate by 10 every **--decay** epochs
 ```
 --decay 500
+```
+2. **--momentum**: momentum for SGD
+```
+--momentum 0.9
 ```
 
 # Predict
