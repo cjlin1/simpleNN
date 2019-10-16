@@ -285,8 +285,8 @@ class newton_cg(object):
 			load_time = time.time()
 			idx_start = i * self.config.bsize
 			idx_end = min((i+1) * self.config.bsize, num_data)
-			batch_input = inputs[idx_start: idx_end]
-			batch_labels = labels[idx_start: idx_end]
+			batch_input = inputs[idx_start:idx_end]
+			batch_labels = labels[idx_start:idx_end]
 			self.config.elapsed_time += time.time() - load_time
 
 			if mode == 'funonly':

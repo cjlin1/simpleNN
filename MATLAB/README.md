@@ -1,5 +1,3 @@
-SimpleNN is a simple _MATLAB_/_Octave_ package used for training Convolutional Neural Network (CNN). Currently, this package supports two optimization methods: Newton method and stochastic gradient method (SG). The implementation document of Newton method is available at [https://www.csie.ntu.edu.tw/~cjlin/papers/cnn/newton-CNN.pdf](https://www.csie.ntu.edu.tw/~cjlin/papers/cnn/newton-CNN.pdf).
-
 # Table of contents
 
 - [Requirements](#requirements)
