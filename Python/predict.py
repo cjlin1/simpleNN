@@ -20,12 +20,18 @@ def parse_args():
 	parser.add_argument('--loss', dest='loss', 
 					  help='which loss function to use: MSELoss or CrossEntropy',
 					  default='MSELoss', type=str)
+	parser.add_argument('--dim', dest='dim', nargs='+', help='input dimension of data,'+\
+						'shape must be: In_channel x Height x Width',
+					  default=[3, 32, 32], type=int)
+	parser.add_argument('--num_cls', dest='num_cls',
+					  help='number of classes in the dataset',
+					  default=10, type=int)	
 	args = parser.parse_args()
 	return args
 
 if __name__ == '__main__':
 	args = parse_args()
-	test_batch = read_data(args.test_set)
+	test_batch = read_data(args.test_set, num_cls=args.num_cls, dim=args.dim)
 	if args.net in ('CNN_3layers', 'CNN_6layers'):
 		x, y, outputs = CNN(args)
 		test_network = None
