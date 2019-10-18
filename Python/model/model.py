@@ -3,8 +3,8 @@ import math
 import pdb
 from tensorflow.python.client import device_lib
 
-def CNN_3layers(x_image, reuse=False):
-	_NUM_CLASSES = 10
+def CNN_3layers(x_image, num_cls, reuse=False):
+	_NUM_CLASSES = num_cls
 	with tf.variable_scope('conv1', reuse=reuse) as scope:
 		conv = tf.keras.layers.Conv2D(
 			filters=32,
@@ -41,8 +41,8 @@ def CNN_3layers(x_image, reuse=False):
 
 	return outputs
 
-def CNN_6layers(x_image, reuse=False):
-	_NUM_CLASSES = 10
+def CNN_6layers(x_image, num_cls, reuse=False):
+	_NUM_CLASSES = num_cls
 	with tf.variable_scope('conv1', reuse=reuse) as scope:
 		conv = tf.keras.layers.Conv2D(
 			filters=32,
@@ -99,14 +99,15 @@ def CNN_6layers(x_image, reuse=False):
 	return outputs
 
 def CNN(config):
-	_NUM_CLASSES = 10
-	_IMAGE_SIZE = 32
-	_IMAGE_CHANNELS = 3
+
+	_NUM_CLASSES = config.num_cls
+	_IMAGE_CHANNELS, _IMAGE_HEIGHT, _IMAGE_WIDTH = config.dim
+
 	with tf.name_scope('main_params'):
-		x = tf.placeholder(tf.float32, shape=[None, _IMAGE_SIZE, _IMAGE_SIZE, _IMAGE_CHANNELS], name='Input')
+		x = tf.placeholder(tf.float32, shape=[None, _IMAGE_HEIGHT, _IMAGE_WIDTH, _IMAGE_CHANNELS], name='Input')
 		y = tf.placeholder(tf.float32, shape=[None, _NUM_CLASSES], name='Output')
 
 	net = CNN_3layers if config.net == 'CNN_3layers' else CNN_6layers
-	outputs = net(x)
+	outputs = net(x, _NUM_CLASSES)
 
 	return (x, y, outputs)

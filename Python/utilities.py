@@ -3,18 +3,22 @@ import math
 import scipy.io as sio
 import pdb
 
-def read_data(filename):
+def read_data(filename, num_cls, dim):
 
 	mat_contents = sio.loadmat(filename)
 	images, labels = mat_contents['Z'], mat_contents['y']
-	images_shape = images.shape
+	
+	labels = labels.reshape(-1)
 
-	if isinstance(images, np.ndarray):
-		pass
-	else:
-		images = np.array(images.todense())
-		images_shape = (images.shape[0], 3, 32, 32)
-		images = images.reshape(images_shape)
+	# check data validity
+	nonrepeat = list(dict.fromkeys(labels))
+	if len(nonrepeat) != num_cls:
+		raise ValueError('The number of classes is not equal to the number of\
+						labels in dataset. Please verify them.')
+	
+	labels = labels - min(nonrepeat)
+	
+	images_shape = [images.shape[0]]+dim
 
 	# images normalization and zero centering
 	images = images.reshape(images_shape[0], -1)
@@ -30,9 +34,9 @@ def read_data(filename):
 	images = np.transpose(images, (0, 2, 3, 1))
 
 	# convert groundtruth to one-hot encoding
-	labels = np.eye(10)[labels.reshape(-1)]
+	labels = np.eye(num_cls)[labels]
 	labels = labels.astype('float32')
-
+	
 	return images, labels
 
 def predict(sess, network, test_batch, bsize):

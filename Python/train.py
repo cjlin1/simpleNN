@@ -84,6 +84,12 @@ def parse_args():
 	parser.add_argument('--loss', dest='loss', 
 					  help='which loss function to use: MSELoss or CrossEntropy',
 					  default='MSELoss', type=str)
+	parser.add_argument('--dim', dest='dim', nargs='+', help='input dimension of data,'+\
+						'shape must be: In_channel x Height x Width',
+					  default=[3, 32, 32], type=int)
+	parser.add_argument('--num_cls', dest='num_cls',
+					  help='number of classes in the dataset',
+					  default=10, type=int)		  
 	args = parser.parse_args()
 	return args
 
@@ -259,8 +265,8 @@ def main():
 	
 	network = (x, y, loss, outputs)
 
-	full_batch = read_data(filename=args.train_set)
-	val_batch = read_data(filename=args.val_set)
+	full_batch = read_data(filename=args.train_set, num_cls=args.num_cls, dim=args.dim)
+	val_batch = read_data(filename=args.val_set, num_cls=args.num_cls, dim=args.dim)
 
 	sess_config = tf.ConfigProto()
 	sess_config.gpu_options.allow_growth = True

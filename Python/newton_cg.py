@@ -21,8 +21,10 @@ class Config(object):
 
 		self.train_set = args.train_set
 		self.val_set = args.val_set
-		
-		_, train_labels = read_data(self.train_set)
+		self.num_cls = args.num_cls
+		self.dim = args.dim
+
+		_, train_labels = read_data(self.train_set, self.num_cls, self.dim)
 		self.num_data = train_labels.shape[0]
 		self.sample = min(args.sample, self.num_data)
 		self.C = args.C * self.num_data
@@ -62,6 +64,7 @@ class Config(object):
 			os.makedirs(dir_name, exist_ok=True)
 		
 		self.elapsed_time = 0.0
+
 
 def Rop(outputs, param, v=None, gate_gradients=False):
 	"""Implementation of R operator
@@ -285,8 +288,8 @@ class newton_cg(object):
 			load_time = time.time()
 			idx_start = i * self.config.bsize
 			idx_end = min((i+1) * self.config.bsize, num_data)
-			batch_input = inputs[idx_start:idx_end]
-			batch_labels = labels[idx_start:idx_end]
+			batch_input = inputs[idx_start: idx_end]
+			batch_labels = labels[idx_start: idx_end]
 			self.config.elapsed_time += time.time() - load_time
 
 			if mode == 'funonly':
