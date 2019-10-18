@@ -13,7 +13,7 @@ scipy
 ```
 
 # Train
-We provide exactly the same [CIFAR10](https://drive.google.com/open?id=1WGAPmEOPiRekjpygFp_uVWY0HeeYXns1) dataset used in MATLAB part to test our codes. You may download the dataset from https://drive.google.com/open?id=1WGAPmEOPiRekjpygFp_uVWY0HeeYXns1. **Essentially, we do not feed the whole samples into GPU memory to evaluate sub-sampled Gauss-Newton matrix at once.** Instead we divide the samples into segment of size **bsize** and take average of them to avoid out-of-memory issue.
+We provide exactly the same CIFAR10 dataset used in MATLAB part to test our codes. **Essentially, we do not feed the whole samples into GPU memory to evaluate sub-sampled Gauss-Newton matrix at once.** Instead we divide the samples into segment of size **bsize** and take average of them to avoid out-of-memory issue.
 
 For your own dataset, you may want to rewrite the **read_data** function in the **utilities.py** file which returns tuple **(data, labels)** in numpy format. 
 
@@ -74,6 +74,14 @@ In this section, we show option/parameters that are solely for Tensorflow implem
 ```
 --C math.inf
 ```
+9. **--dim**: input dimension of data. Shape must be: In_channel x Height x Width
+```
+--dim 3 32 32
+```
+10. **--num_cls**: number of classes in the dataset
+```
+--num_cls 10
+```
 
 ### Newton Method
 
@@ -83,13 +91,13 @@ In this section, we show option/parameters that are solely for Tensorflow implem
 ```
 
 ### SGD
-1. **--decay**: divide learning rate by 10 every **--decay** epochs
+1. **--decay**: divide learning rate by 10 every **decay** epochs
 ```
 --decay 500
 ```
-2. **--momentum**: momentum for SGD
+2. **--momentum**: SGD + momentum
 ```
---momentum 0.9
+--momentum 0
 ```
 
 # Predict
@@ -114,8 +122,7 @@ CUDA_VISIBLE_DEVICES=$GPU_ID python predict.py --net CNN_3layers --bsize 1024 \	
 ```
 
 # Experiment Results
-
-In the following experiments, we run 100 Newton steps on Newton method and 500 epochs on SGD. We report our resutls on both 3-layer and 6-layer CNN with MSE loss function. We consider the same 3-layer CNN setting in [Wang et al.](https://www.csie.ntu.edu.tw/~cjlin/papers/cnn/newton-CNN.pdf). Other settings such as the initialization are also the same as [Wang et al.](https://www.csie.ntu.edu.tw/~cjlin/papers/cnn/newton-CNN.pdf) for both 3-layer and 6-layer CNN. Both netowrks are trained and tested on [CIFAR10](https://drive.google.com/open?id=1WGAPmEOPiRekjpygFp_uVWY0HeeYXns1) dataset.
+In the following experiments, we run 100 Newton steps on Newton method and 500 epochs on SGD. We report our resutls on both 3-layer and 6-layer CNN with MSE loss function. We consider the same 3-layer CNN setting in [Wang et al.](https://www.csie.ntu.edu.tw/~cjlin/papers/cnn/newton-CNN.pdf). Other settings such as the initialization are also the same as [Wang et al.](https://www.csie.ntu.edu.tw/~cjlin/papers/cnn/newton-CNN.pdf) for both 3-layer and 6-layer CNN. Both netowrks are trained and tested on CIFAR10 dataset.
 
 ## Experiments on 3 layer CNN
 
