@@ -151,7 +151,7 @@ def gradient_trainer(config, sess, network, full_batch, val_batch, test_network)
 	sess.run(tf.global_variables_initializer())
 	
 
-	print('-------------- initialing network by methods in He et al. (2015) --------------')
+	print('-------------- initializing network by methods in He et al. (2015) --------------')
 	param = tf.trainable_variables()
 	sess.run(init_model(param))
 
@@ -239,7 +239,7 @@ def newton_trainer(config, sess, network, full_batch, val_batch, test_network):
 	newton_solver = newton_cg(config, sess, outputs, loss)
 	sess.run(tf.global_variables_initializer())
 
-	print('-------------- initialing network by methods in He et al. (2015) --------------')
+	print('-------------- initializing network by methods in He et al. (2015) --------------')
 	param = tf.trainable_variables()
 	sess.run(init_model(param))
 
@@ -247,7 +247,13 @@ def newton_trainer(config, sess, network, full_batch, val_batch, test_network):
 
 
 def main():
-	config = Config(args)
+
+	full_batch = read_data(filename=args.train_set, num_cls=args.num_cls, dim=args.dim)
+	val_batch = read_data(filename=args.val_set, num_cls=args.num_cls, dim=args.dim)
+
+	num_data = full_batch[0].shape[0]
+
+	config = Config(args, num_data)
 	# tf.random.set_random_seed(0)
 	# np.random.seed(0)
 	
@@ -258,15 +264,11 @@ def main():
 		raise ValueError('Unrecognized training model')
 
 	if config.loss == 'MSELoss':
-		# Need to scale loss by _NUM_CLASSES to make results consistent
 		loss = tf.reduce_sum(tf.pow(outputs-y, 2))
 	else:
 		loss = tf.reduce_sum(tf.nn.softmax_cross_entropy_with_logits_v2(logits=outputs, labels=y))
 	
 	network = (x, y, loss, outputs)
-
-	full_batch = read_data(filename=args.train_set, num_cls=args.num_cls, dim=args.dim)
-	val_batch = read_data(filename=args.val_set, num_cls=args.num_cls, dim=args.dim)
 
 	sess_config = tf.ConfigProto()
 	sess_config.gpu_options.allow_growth = True

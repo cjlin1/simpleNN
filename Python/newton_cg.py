@@ -7,7 +7,7 @@ import math
 from utilities import read_data, predict
 
 class Config(object):
-	def __init__(self, args):
+	def __init__(self, args, num_data):
 		super(Config, self).__init__()
 		self.args = args
 		# self.sample = args.sample
@@ -24,8 +24,7 @@ class Config(object):
 		self.num_cls = args.num_cls
 		self.dim = args.dim
 
-		_, train_labels = read_data(self.train_set, self.num_cls, self.dim)
-		self.num_data = train_labels.shape[0]
+		self.num_data = num_data
 		self.sample = min(args.sample, self.num_data)
 		self.C = args.C * self.num_data
 		self.net = args.net
@@ -66,40 +65,40 @@ class Config(object):
 		self.elapsed_time = 0.0
 
 
-def Rop(outputs, param, v=None, gate_gradients=False):
+def Rop(f, weights, v=None):
 	"""Implementation of R operator
 	Args:
-		outputs: outputs of the last layer (pre-softmax)
-		param: Weights, list of tensors.
+		f: any function of param
+		weights: Weights, list of tensors.
 		v: vector for right multiplication
 	Returns:
-		JTx: Jaccobian vector product, same size, same shape as param.
+		Jv: Jaccobian vector product, same size, same shape as vector v.
 	"""
-	if type(outputs) == list:
-		u = [tf.ones_like(out) for out in outputs]
+	if type(f) == list:
+		u = [tf.ones_like(ff) for ff in f]
 	else:
-		u = tf.ones_like(outputs)  # dummy variable
-	g = tf.gradients(outputs, param, grad_ys=u)
+		u = tf.ones_like(f)  # dummy variable
+	g = tf.gradients(f, weights, grad_ys=u)
 	return tf.gradients(g, u, grad_ys=v)
 
-def Gauss_Newton_vec(outputs, loss, param, v):
+def Gauss_Newton_vec(outputs, loss, weights, v):
 	"""Implements Gauss-Newton vector product.
 	Args:
 		loss: Loss function.
-		outputs: Before output layer (input to softmax).
-		param: Weights, list of tensors.
-		v: List of perturbation vector for each weight tensor.
+		outputs: outputs of the last layer (pre-softmax).
+		weights: Weights, list of tensors.
+		v: vector to be multiplied with Gauss Newton matrix
 	Returns:
 		J'HJv: Guass-Newton vector product.
 	"""
 	# Validate the input
-	if type(param) == list:
-		if len(v) != len(param):
-			raise ValueError("param and v must have the same length.")
+	if type(weights) == list:
+		if len(v) != len(weights):
+			raise ValueError("weights and v must have the same length.")
 
-	grads_outputs = tf.gradients(loss, outputs, gate_gradients=True)
-	HJv = Rop(grads_outputs, param, v, gate_gradients=True)
-	JHJv = tf.gradients(outputs, param, HJv, gate_gradients=True)
+	grads_outputs = tf.gradients(loss, outputs)
+	HJv = Rop(grads_outputs, weights, v)
+	JHJv = tf.gradients(outputs, weights, HJv)
 	return JHJv
 	
 
@@ -520,7 +519,7 @@ class newton_cg(object):
 				best_acc = val_acc
 				checkpoint_path = self.config.dir_name + '/best-model.ckpt' 
 				save_path = saver.save(self.sess, checkpoint_path)
-				print('Saved best model in {}\r\n'.format(save_path))
+				print('Best model saved in {}\r\n'.format(save_path))
 
 		output_str = 'Final acc: {:.3f}% | best acc {:.3f}% | total running time {:.3f}s'.\
 			format(val_acc*100, best_acc*100, total_running_time)

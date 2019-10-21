@@ -2,6 +2,7 @@ import tensorflow as tf
 import math
 import pdb
 from tensorflow.python.client import device_lib
+import numpy as np
 
 def CNN_3layers(x_image, num_cls, reuse=False):
 	_NUM_CLASSES = num_cls
@@ -36,7 +37,8 @@ def CNN_3layers(x_image, num_cls, reuse=False):
 		# N x 4 x 4 x 64
 
 	with tf.variable_scope('fully_connected', reuse=reuse) as scope:
-		flat = tf.reshape(pool, [-1, 4 * 4 * 64])
+		dim =np.prod(pool.shape[1:])
+		flat = tf.reshape(pool, [-1, dim])
 		outputs = tf.keras.layers.Dense(units=_NUM_CLASSES, name=scope.name)(flat)
 
 	return outputs
@@ -93,7 +95,8 @@ def CNN_6layers(x_image, num_cls, reuse=False):
 		# N x 4 x 4 x 128
 
 	with tf.variable_scope('fully_connected', reuse=reuse) as scope:
-		flat = tf.reshape(pool, [-1, 4 * 4 * 128])
+		dim = np.prod(pool.shape[1:])
+		flat = tf.reshape(pool, [-1, dim])
 		outputs = tf.keras.layers.Dense(units=_NUM_CLASSES, name=scope.name)(flat)
 
 	return outputs

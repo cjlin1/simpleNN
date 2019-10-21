@@ -72,5 +72,5 @@ def predict(sess, network, test_batch, bsize):
 
 if __name__ == '__main__':
 
-	images, labels = read_data('data/cifar10.t.mat')
+	images, labels = read_data('data/cifar10.t.mat', 10, [3, 32, 32])
 	pdb.set_trace()

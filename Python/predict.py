@@ -39,7 +39,6 @@ if __name__ == '__main__':
 		raise ValueError('Unrecognized training model')
 	
 	if args.loss == 'MSELoss':
-		# Need to scale loss by _NUM_CLASSES to make results consistent
 		loss = tf.reduce_sum(tf.pow(outputs-y, 2))
 	else:
 		loss = tf.reduce_sum(tf.nn.softmax_cross_entropy_with_logits_v2(logits=outputs, labels=y))
