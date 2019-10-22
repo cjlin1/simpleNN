@@ -1,6 +1,6 @@
 # SimpleNN_Tensorflow
 
-A Tensorflow implementation of SimpleNN with GPU supported. 
+A Tensorflow implementation of SimpleNN with GPU support. 
 
 # Requirements
 Python dependecies:
@@ -13,9 +13,16 @@ scipy
 ```
 
 # Train
-We provide exactly the same CIFAR10 dataset used in MATLAB part to test our codes. **Essentially, we do not feed the whole samples into GPU memory to evaluate sub-sampled Gauss-Newton matrix at once.** Instead we divide the samples into segment of size **bsize** and take average of them to avoid out-of-memory issue.
+**We do not feed the whole subsampled data into GPU memory to evaluate sub-sampled Gauss-Newton matrix vector product.** Instead we divide the samples into segments of size **bsize** and accumulate results to avoid the out-of-memory issue.
 
-For your own dataset, you may want to rewrite the **read_data** function in the **utilities.py** file which returns tuple **(data, labels)** in numpy format. 
+ For the data format, currently we assume the same format as the **MATLAB** code. See details in the README file of the **MATLAB** directory. The **read_data** function in the **utilities.py** will read **MATLAB** file, perform data normalization and reshape the input data. Please make sure the input data is in **MATLAB** format, and each input instance is vectorized.
+
+input:
+
+- **data**: (NUM_OF_DATA, DIMENSION_OF_DATA)
+- **labels**: (NUM_OF_DATA, NUMBER_OF_CLASS)
+
+<!-- For your own dataset, you may want to rewrite the **read_data** function in the **utilities.py** file which returns tuple **(data, labels)** in numpy format. 
 
 - **data**: (NUM_OF_DATA × DIMENSION_OF_DATA)
 - **labels**: (NUM_OF_DATA × NUMBER_OF_CLASS)
@@ -24,7 +31,7 @@ If you want to rewrite our model, the model needs to return a tuple **(x, y, out
 
 - **x**: placeholder for input 
 - **y**: placeholder for label
-- **outputs**: output value of the neural network (pre-softmax layer)
+- **outputs**: output value of the neural network (pre-softmax layer) -->
 
 ## Examples
 To use Newton optimizer, please run:
@@ -39,18 +46,18 @@ CUDA_VISIBLE_DEVICES=$GPU_ID python train.py --optim SGD --lr 0.01 --C 0.01 \
 ```
 
 ## Arguments
-In this section, we show option/parameters that are solely for Tensorflow implementation. The remaining arguments are maintained the same as the MATLAB version of [SimpleNN](https://github.com/cjlin1/simpleNN). Please refer to [SimpleNN](https://github.com/cjlin1/simpleNN) for details. The sample usage given below also indicates the default value of each parameter.
+In this section, we show option/parameters that are solely for Tensorflow implementation. The remaining arguments are maintained the same as the MATLAB version of [SimpleNN](https://github.com/cjlin1/simpleNN/tree/master/MATLAB). The sample usage given below also indicates the default value of each parameter.
 
 ### General
 1. **--optim**: the optimization method used for training CNN. (NewtonCG, SGD or Adam)
 ```
 --optim NewtonCG
 ```
-2. **--net**: model that we provide (CNN_3layers, CNN_6layers)
+2. **--net**: network configuration (two examples are CNN_3layers and CNN_6layers)
 ```
 --net CNN_3layers
 ```
-3. **--train_set** & **--val_set**: provide the directory of .mat file for training or validation.
+3. **--train_set** & **--val_set**: provide the address of .mat file for training or validation.
 ```
 --train_set data/cifar10.mat
 ```
@@ -101,12 +108,21 @@ In this section, we show option/parameters that are solely for Tensorflow implem
 ```
 
 # Predict
+
+## Example
+```
+CUDA_VISIBLE_DEVICES=$GPU_ID python predict.py --net CNN_3layers --bsize 1024 \
+						--test_set data/cifar10.t.mat \
+						--model ./log_and_model/best-model.ckpt
+```
+
+## Arguments
 You may need the following arguments to run the predict script:
-1. **--model**: provide the address of test model, i.e. ./log_and_model/best-model.ckpt
+1. **--model**: provide the address of the saved model from training, i.e. ./log_and_model/best-model.ckpt
 ```
 --model ./log_and_model/best-model.ckpt
 ```
-2. **--net**: model to be tested
+2. **--net**: network configuration (two examples are CNN_3layers and CNN_6layers)
 ```
 --net CNN_3layers
 ```
@@ -115,14 +131,8 @@ You may need the following arguments to run the predict script:
 --test_set data/cifar10.t.mat
 ```
 
-## Example
-```
-CUDA_VISIBLE_DEVICES=$GPU_ID python predict.py --net CNN_3layers --bsize 1024 \									--test_set data/cifar10.t.mat \
-						--model ./log_and_model/best-model.ckpt
-```
-
 # Experiment Results
-In the following experiments, we run 100 Newton steps on Newton method and 500 epochs on SGD. We report our resutls on both 3-layer and 6-layer CNN with MSE loss function. We consider the same 3-layer CNN setting in [Wang et al.](https://www.csie.ntu.edu.tw/~cjlin/papers/cnn/newton-CNN.pdf). Other settings such as the initialization are also the same as [Wang et al.](https://www.csie.ntu.edu.tw/~cjlin/papers/cnn/newton-CNN.pdf) for both 3-layer and 6-layer CNN. Both netowrks are trained and tested on CIFAR10 dataset.
+In the following experiments, we run 100 Newton steps on Newton method and 500 epochs on SGD. We report our resutls on both 3-layer and 6-layer CNN with MSE loss function. We consider the same 3-layer CNN setting in [Wang et al.](https://www.csie.ntu.edu.tw/~cjlin/papers/cnn/newton-CNN.pdf). Other settings such as the initialization are also the same as [Wang et al.](https://www.csie.ntu.edu.tw/~cjlin/papers/cnn/newton-CNN.pdf) for both 3-layer and 6-layer CNN. Both netowrks are trained and tested on CIFAR10 dataset. To reproduce our results, you may download training set [cifar10.mat](https://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/multiclass/cifar10.mat) and test set[cifar10.t.mat](https://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/multiclass/cifar10.t.mat) to ./data directory.
 
 ## Experiments on 3 layer CNN
 

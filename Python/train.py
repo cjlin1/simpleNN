@@ -5,7 +5,7 @@ import time
 import math
 import argparse
 
-from model.model import CNN
+from model.net import CNN
 from newton_cg import newton_cg, Config
 from utilities import read_data, predict
 

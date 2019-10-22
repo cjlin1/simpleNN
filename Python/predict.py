@@ -1,6 +1,6 @@
 import tensorflow as tf 
 from utilities import predict, read_data
-from model.model import CNN
+from model.net import CNN
 import argparse
 
 def parse_args():
