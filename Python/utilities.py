@@ -18,7 +18,9 @@ def read_data(filename, num_cls, dim):
 	
 	labels = labels - min(nonrepeat)
 	
-	images_shape = [images.shape[0]]+dim
+	_IMAGE_HEIGHT, _IMAGE_WIDTH, _IMAGE_CHANNELS = dim
+
+	images_shape = [images.shape[0], _IMAGE_CHANNELS, _IMAGE_HEIGHT, _IMAGE_WIDTH]
 
 	# images normalization and zero centering
 	images = images.reshape(images_shape[0], -1)

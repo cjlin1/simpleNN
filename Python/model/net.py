@@ -104,7 +104,7 @@ def CNN_6layers(x_image, num_cls, reuse=False):
 def CNN(config):
 
 	_NUM_CLASSES = config.num_cls
-	_IMAGE_CHANNELS, _IMAGE_HEIGHT, _IMAGE_WIDTH = config.dim
+	_IMAGE_HEIGHT, _IMAGE_WIDTH, _IMAGE_CHANNELS = config.dim
 
 	with tf.name_scope('main_params'):
 		x = tf.placeholder(tf.float32, shape=[None, _IMAGE_HEIGHT, _IMAGE_WIDTH, _IMAGE_CHANNELS], name='Input')

@@ -285,10 +285,11 @@ class newton_cg(object):
 		for i in range(num_segment):
 			
 			load_time = time.time()
-			idx_start = i * self.config.bsize
-			idx_end = min((i+1) * self.config.bsize, num_data)
-			batch_input = inputs[idx_start: idx_end]
-			batch_labels = labels[idx_start: idx_end]
+			idx = np.arange(i * self.config.bsize, min((i+1) * self.config.bsize, num_data))
+			batch_input = inputs[idx]
+			batch_labels = labels[idx]
+			batch_input = np.ascontiguousarray(batch_input)
+			batch_labels = np.ascontiguousarray(batch_labels)
 			self.config.elapsed_time += time.time() - load_time
 
 			if mode == 'funonly':

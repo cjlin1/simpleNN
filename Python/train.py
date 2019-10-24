@@ -85,8 +85,8 @@ def parse_args():
 					  help='which loss function to use: MSELoss or CrossEntropy',
 					  default='MSELoss', type=str)
 	parser.add_argument('--dim', dest='dim', nargs='+', help='input dimension of data,'+\
-						'shape must be: In_channel x Height x Width',
-					  default=[3, 32, 32], type=int)
+						'shape must be:  Height x Width x In_channel',
+					  default=[32, 32, 3], type=int)
 	parser.add_argument('--num_cls', dest='num_cls',
 					  help='number of classes in the dataset',
 					  default=10, type=int)		  
@@ -177,6 +177,8 @@ def gradient_trainer(config, sess, network, full_batch, val_batch, test_network)
 
 			batch_input = train_inputs[idx]
 			batch_labels = train_labels[idx]
+			batch_input = np.ascontiguousarray(batch_input)
+			batch_labels = np.ascontiguousarray(batch_labels)
 			config.elapsed_time += time.time() - load_time
 
 			_, _, batch_loss= sess.run(
@@ -271,7 +273,7 @@ def main():
 	network = (x, y, loss, outputs)
 
 	sess_config = tf.ConfigProto()
-	sess_config.gpu_options.allow_growth = True
+	sess_config.gpu_options.allow_growth = False
 
 	with tf.Session(config=sess_config) as sess:
 

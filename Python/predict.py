@@ -21,8 +21,8 @@ def parse_args():
 					  help='which loss function to use: MSELoss or CrossEntropy',
 					  default='MSELoss', type=str)
 	parser.add_argument('--dim', dest='dim', nargs='+', help='input dimension of data,'+\
-						'shape must be: In_channel x Height x Width',
-					  default=[3, 32, 32], type=int)
+						'shape must be:  Height x Width x In_channel',
+					  default=[32, 32, 3], type=int)
 	parser.add_argument('--num_cls', dest='num_cls',
 					  help='number of classes in the dataset',
 					  default=10, type=int)	
