@@ -51,11 +51,11 @@ class Config(object):
 			raise ValueError('Only support SGD, Adam & NewtonCG optimizer!')
 		
 		self.log_file = args.log_name
-		self.print_log_only = args.print_log_only
+		self.screen_log_only = args.screen_log_only
 		dir_name, _ = os.path.split(self.log_file)
 		self.dir_name = dir_name
 
-		if self.print_log_only:
+		if self.screen_log_only:
 			print('You choose not to store running log. Only store model to {}'.format(self.log_file))
 		else:
 			print('Saving log and model to: {}'.format(self.log_file))
@@ -65,7 +65,7 @@ class Config(object):
 		self.elapsed_time = 0.0
 
 
-def Rop(f, weights, v=None):
+def Rop(f, weights, v):
 	"""Implementation of R operator
 	Args:
 		f: any function of param
@@ -89,7 +89,7 @@ def Gauss_Newton_vec(outputs, loss, weights, v):
 		weights: Weights, list of tensors.
 		v: vector to be multiplied with Gauss Newton matrix
 	Returns:
-		J'HJv: Guass-Newton vector product.
+		J'BJv: Guass-Newton vector product.
 	"""
 	# Validate the input
 	if type(weights) == list:
@@ -97,9 +97,9 @@ def Gauss_Newton_vec(outputs, loss, weights, v):
 			raise ValueError("weights and v must have the same length.")
 
 	grads_outputs = tf.gradients(loss, outputs)
-	HJv = Rop(grads_outputs, weights, v)
-	JHJv = tf.gradients(outputs, weights, HJv)
-	return JHJv
+	BJv = Rop(grads_outputs, weights, v)
+	JBJv = tf.gradients(outputs, weights, BJv)
+	return JBJv
 	
 
 class newton_cg(object):
@@ -401,7 +401,7 @@ class newton_cg(object):
 		train_writer = tf.summary.FileWriter('./summary/train', self.sess.graph)
 
 		print(self.config.args)
-		if not self.config.print_log_only:
+		if not self.config.screen_log_only:
 			log_file = open(self.config.log_file, 'w')
 			print(self.config.args, file=log_file)
 		
@@ -491,7 +491,7 @@ class newton_cg(object):
 			output_str = '{}-iter f: {:.3f} |g|: {:.5f} alpha: {:.3e} ratio: {:.3f} lambda: {:.5f} #CG: {} actred: {:.5f} prered: {:.5f} time: {:.3f}'.\
 							format(k, f, gnorm, alpha, actred/prered, self.config._lambda, CGiter, actred, prered, end-start)
 			print(output_str)
-			if not self.config.print_log_only:
+			if not self.config.screen_log_only:
 				print(output_str, file=log_file)
 
 			# Evaluate the performance after every Newton Step
@@ -513,7 +513,7 @@ class newton_cg(object):
 			output_str = '\r\n {}-iter val_acc: {:.3f}% val_loss {:.3f}\r\n'.\
 				format(k, val_acc*100, val_loss)
 			print(output_str)
-			if not self.config.print_log_only:
+			if not self.config.screen_log_only:
 				print(output_str, file=log_file)
 
 			if val_acc > best_acc:
@@ -525,7 +525,7 @@ class newton_cg(object):
 		output_str = 'Final acc: {:.3f}% | best acc {:.3f}% | total running time {:.3f}s'.\
 			format(val_acc*100, best_acc*100, total_running_time)
 		print(output_str)
-		if not self.config.print_log_only:
+		if not self.config.screen_log_only:
 			print(output_str, file=log_file)
 			log_file.close()
 

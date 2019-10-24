@@ -15,8 +15,10 @@ def read_data(filename, num_cls, dim):
 	if len(nonrepeat) != num_cls:
 		raise ValueError('The number of classes is not equal to the number of\
 						labels in dataset. Please verify them.')
+	elif min(nonrepeat) != 1:
+		raise ValueError('The minimal label is not one. Please change it to one!')
 	
-	labels = labels - min(nonrepeat)
+	labels = labels - 1
 	
 	_IMAGE_HEIGHT, _IMAGE_WIDTH, _IMAGE_CHANNELS = dim
 

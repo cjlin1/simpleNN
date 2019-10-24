@@ -22,6 +22,11 @@ input:
 - **data**: (NUM_OF_DATA, DIMENSION_OF_DATA)
 - **labels**: (NUM_OF_DATA, NUMBER_OF_CLASS)
 
+return:
+- **data**: (NUM_OF_DATA, HEIGHT, WIDTH, CHANNEL)
+- **labels**: (NUM_OF_DATA, NUMBER_OF_CLASS)
+
+
 <!-- For your own dataset, you may want to rewrite the **read_data** function in the **utilities.py** file which returns tuple **(data, labels)** in numpy format. 
 
 - **data**: (NUM_OF_DATA × DIMENSION_OF_DATA)
@@ -37,14 +42,16 @@ If you want to rewrite our model, the model needs to return a tuple **(x, y, out
 To use Newton optimizer, please run:
 ```
 CUDA_VISIBLE_DEVICES=$GPU_ID python train.py --optim NewtonCG --s 5000 --C 0.01  \
-						--net CNN_6layers --bsize 1024 --train_set mnist-demo.mat \
-						--val_set mnist-demo.t.mat --dim 28 28 1
+						--net CNN_3layers --bsize 1024 \
+						--train_set ./data/mnist-demo.mat \
+						--val_set ./data/mnist-demo.t.mat --dim 28 28 1
 ```
 To use SGD optimizer, please run:
 ```
 CUDA_VISIBLE_DEVICES=$GPU_ID python train.py --optim SGD --lr 0.01 --C 0.01 \
-						--net CNN_6layers --bsize 256 --train_set mnist-demo.mat \
-						--val_set mnist-demo.t.mat --dim 28 28 1
+						--net CNN_3layers --bsize 256 \
+						--train_set ./data/mnist-demo.mat \
+						--val_set ./data/mnist-demo.t.mat --dim 28 28 1
 ```
 
 ## Arguments
@@ -61,7 +68,7 @@ In this section, we show option/parameters that are solely for Tensorflow implem
 ```
 3. **--train_set** & **--val_set**: provide the address of .mat file for training or validation.
 ```
---train_set data/cifar10.mat
+--train_set data/mnist-demo.mat
 ```
 4. **--model**: save log and model to directory log_and_model
 ```
@@ -71,21 +78,21 @@ In this section, we show option/parameters that are solely for Tensorflow implem
 ```
 --loss: MSELoss
 ```
-6. **--bsize**: Split data into segements of size **bsize** so that they can fit into memroy, while evaluating Gv, stochastic gradient and global graident. If you encounter Out of Memory (OOM) during training, you may decrease the **--bsize** paramters to an appropriate value.
+6. **--bsize**: Split data into segements of size **bsize** so that each segment can fit into memroy, for evaluating Gv, stochastic gradient and global graident. If you encounter Out of Memory (OOM) during training, you may decrease the **--bsize** paramter to an appropriate value.
 ```
 --bsize 1024;
 ```
-7. **--print_log_only**: screen printing running log instead of storing it
+7. **--screen_log_only**: log printed on screen only; not stored to the model
 ```
---print_log_only
+--screen_log_only
 ```
-8. **--C**: regularization term, or so-called weight decay where weight_decay = lr/(C × num_of_samples). In this implementation, regularization term = 1/(2C × num_data) × L2_norm(weight)
+8. **--C**: regularization parameter. Regularization term = 1/(2C × num_data) × L2_norm(weight)
 ```
 --C math.inf
 ```
-9. **--dim**: input dimension of data. Shape must be: In_channel x Height x Width
+9. **--dim**: input dimension of data. Shape must be: height width num_channels
 ```
---dim 3 32 32
+--dim 28 28 1
 ```
 10. **--num_cls**: number of classes in the dataset
 ```
@@ -114,23 +121,31 @@ In this section, we show option/parameters that are solely for Tensorflow implem
 ## Example
 ```
 CUDA_VISIBLE_DEVICES=$GPU_ID python predict.py --net CNN_3layers --bsize 1024 \
-						--test_set data/cifar10.t.mat \
+						--test_set ./data/mnist-demo.t.mat \
 						--model ./log_and_model/best-model.ckpt
 ```
 
 ## Arguments
 You may need the following arguments to run the predict script:
-1. **--model**: provide the address of the saved model from training, i.e. ./log_and_model/best-model.ckpt
+1. **--model**: address of the saved model from training, e.g. ./log_and_model/best-model.ckpt
 ```
 --model ./log_and_model/best-model.ckpt
 ```
-2. **--net**: network configuration (two examples are CNN_3layers and CNN_6layers)
+2. **--net**: network configuration used in training (two examples are CNN_3layers and CNN_6layers)
 ```
 --net CNN_3layers
 ```
 3. **--test_set**: provide the directory of .mat file for test.
 ```
---test_set data/cifar10.t.mat
+--test_set data/mnist-demo.t.mat
+```
+4. **--dim**: input dimension of data. Shape must be: height width num_channels
+```
+--dim 28 28 1
+```
+5. **--num_cls**: number of classes in the dataset
+```
+--num_cls 10
 ```
 
 # Experiment Results

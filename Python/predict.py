@@ -7,7 +7,7 @@ def parse_args():
 	parser = argparse.ArgumentParser(description='prediction')
 	parser.add_argument('--test_set', dest='test_set',
 					  help='provide the directory of .mat file for testing',
-					  default='data/cifar10.t.mat', type=str)
+					  default='data/mnist-demo.t.mat', type=str)
 	parser.add_argument('--model', dest='net_name',
 					  help='provide file storing network parameters, i.e. ./dir/best-model.ckpt',
 					  default='./log_and_model/best-model.ckpt', type=str)
@@ -21,7 +21,7 @@ def parse_args():
 					  help='which loss function to use: MSELoss or CrossEntropy',
 					  default='MSELoss', type=str)
 	parser.add_argument('--dim', dest='dim', nargs='+', help='input dimension of data,'+\
-						'shape must be:  Height x Width x In_channel',
+						'shape must be:  height width num_channels',
 					  default=[32, 32, 3], type=int)
 	parser.add_argument('--num_cls', dest='num_cls',
 					  help='number of classes in the dataset',

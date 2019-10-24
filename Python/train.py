@@ -68,14 +68,14 @@ def parse_args():
 					  default='CNN_3layers', type=str)
 	parser.add_argument('--train_set', dest='train_set',
 					  help='provide the directory of .mat file for training',
-					  default='data/cifar10.mat', type=str)
+					  default='data/mnist-demo.mat', type=str)
 	parser.add_argument('--val_set', dest='val_set',
 					  help='provide the directory of .mat file for validation',
-					  default='data/cifar10.t.mat', type=str)
+					  default='data/mnist-demo.t.mat', type=str)
 	parser.add_argument('--model', dest='log_name',
 					  help='save log and model to directory model',
 					  default='./log_and_model/logger.log', type=str)
-	parser.add_argument('--print_log_only', dest='print_log_only',
+	parser.add_argument('--screen_log_only', dest='screen_log_only',
 					  help='screen printing running log instead of storing it',
 					  action='store_true')
 	parser.add_argument('--optim', '-optim', 
@@ -85,7 +85,7 @@ def parse_args():
 					  help='which loss function to use: MSELoss or CrossEntropy',
 					  default='MSELoss', type=str)
 	parser.add_argument('--dim', dest='dim', nargs='+', help='input dimension of data,'+\
-						'shape must be:  Height x Width x In_channel',
+						'shape must be:  height width num_channels',
 					  default=[32, 32, 3], type=int)
 	parser.add_argument('--num_cls', dest='num_cls',
 					  help='number of classes in the dataset',
@@ -145,7 +145,7 @@ def gradient_trainer(config, sess, network, full_batch, val_batch, test_network)
 	num_iters = math.ceil(num_data/batch_size)
 
 	print(config.args)
-	if not config.print_log_only:
+	if not config.screen_log_only:
 		log_file = open(config.log_file, 'w')
 		print(config.args, file=log_file)
 	sess.run(tf.global_variables_initializer())
@@ -193,7 +193,7 @@ def gradient_trainer(config, sess, network, full_batch, val_batch, test_network)
 				output_str = 'Epoch {}: {}/{} | loss {:.4f} | lr {:.6} | elapsed time {:.3f}'\
 					.format(epoch, i, num_iters, batch_loss , lr, end-start)
 				print(output_str)
-				if not config.print_log_only:
+				if not config.screen_log_only:
 					print(output_str, file=log_file)
 
 		# exclude data loading time for fair comparison
@@ -219,7 +219,7 @@ def gradient_trainer(config, sess, network, full_batch, val_batch, test_network)
 		output_str = 'In epoch {} train loss: {:.3f} | val loss: {:.3f} | val accuracy: {:.3f}% | epoch time {:.3f}'\
 			.format(epoch, loss_avg/(i+1), val_loss, val_acc*100, epoch_end-start)
 		print(output_str)
-		if not config.print_log_only:
+		if not config.screen_log_only:
 			print(output_str, file=log_file)
 		
 		if val_acc > best_acc:
@@ -231,7 +231,7 @@ def gradient_trainer(config, sess, network, full_batch, val_batch, test_network)
 	output_str = 'Final acc: {:.3f}% | best acc {:.3f}% | total running time {:.3f}s'\
 		.format(val_acc*100, best_acc*100, total_running_time)
 	print(output_str)
-	if not config.print_log_only:
+	if not config.screen_log_only:
 		print(output_str, file=log_file)
 		log_file.close()
 
