@@ -7,9 +7,6 @@ Python dependecies:
 ```
 python 3.5.2
 tensorflow 1.13.1
-tensorboard
-numpy
-scipy
 ```
 
 # Train
@@ -20,11 +17,11 @@ scipy
 input:
 
 - **data**: (NUM_OF_DATA, DIMENSION_OF_DATA)
-- **labels**: (NUM_OF_DATA, NUMBER_OF_CLASS)
+- **labels**: (NUM_OF_DATA,)
 
 return:
 - **data**: (NUM_OF_DATA, HEIGHT, WIDTH, CHANNEL)
-- **labels**: (NUM_OF_DATA, NUMBER_OF_CLASS)
+- **labels**: (NUM_OF_DATA,)
 
 
 <!-- For your own dataset, you may want to rewrite the **read_data** function in the **utilities.py** file which returns tuple **(data, labels)** in numpy format. 
@@ -41,14 +38,14 @@ If you want to rewrite our model, the model needs to return a tuple **(x, y, out
 ## Examples
 To use Newton optimizer, please run:
 ```
-CUDA_VISIBLE_DEVICES=$GPU_ID python train.py --optim NewtonCG --s 5000 --C 0.01  \
+CUDA_VISIBLE_DEVICES=0 python train.py --optim NewtonCG --s 100 --C 0.01  \
 						--net CNN_3layers --bsize 1024 \
 						--train_set ./data/mnist-demo.mat \
 						--val_set ./data/mnist-demo.t.mat --dim 28 28 1
 ```
 To use SGD optimizer, please run:
 ```
-CUDA_VISIBLE_DEVICES=$GPU_ID python train.py --optim SGD --lr 0.01 --C 0.01 \
+CUDA_VISIBLE_DEVICES=0 python train.py --optim SGD --lr 0.01 --C 0.01 \
 						--net CNN_3layers --bsize 256 \
 						--train_set ./data/mnist-demo.mat \
 						--val_set ./data/mnist-demo.t.mat --dim 28 28 1
@@ -120,7 +117,7 @@ In this section, we show option/parameters that are solely for Tensorflow implem
 
 ## Example
 ```
-CUDA_VISIBLE_DEVICES=$GPU_ID python predict.py --net CNN_3layers --bsize 1024 \
+CUDA_VISIBLE_DEVICES=0 python predict.py --net CNN_3layers --bsize 1024 \
 						--test_set ./data/mnist-demo.t.mat \
 						--model ./log_and_model/best-model.ckpt
 ```
