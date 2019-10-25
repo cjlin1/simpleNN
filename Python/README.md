@@ -38,14 +38,14 @@ If you want to rewrite our model, the model needs to return a tuple **(x, y, out
 ## Examples
 To use Newton optimizer, please run:
 ```
-CUDA_VISIBLE_DEVICES=0 python train.py --optim NewtonCG --s 100 --C 0.01  \
+CUDA_VISIBLE_DEVICES=0 python3 train.py --optim NewtonCG --s 100 --C 0.01  \
 						--net CNN_3layers --bsize 1024 \
 						--train_set ./data/mnist-demo.mat \
 						--val_set ./data/mnist-demo.t.mat --dim 28 28 1
 ```
 To use SGD optimizer, please run:
 ```
-CUDA_VISIBLE_DEVICES=0 python train.py --optim SGD --lr 0.01 --C 0.01 \
+CUDA_VISIBLE_DEVICES=0 python3 train.py --optim SGD --lr 0.01 --C 0.01 \
 						--net CNN_3layers --bsize 256 \
 						--train_set ./data/mnist-demo.mat \
 						--val_set ./data/mnist-demo.t.mat --dim 28 28 1
@@ -117,7 +117,7 @@ In this section, we show option/parameters that are solely for Tensorflow implem
 
 ## Example
 ```
-CUDA_VISIBLE_DEVICES=0 python predict.py --net CNN_3layers --bsize 1024 \
+CUDA_VISIBLE_DEVICES=0 python3 predict.py --net CNN_3layers --bsize 1024 \
 						--test_set ./data/mnist-demo.t.mat \
 						--model ./log_and_model/best-model.ckpt
 ```
