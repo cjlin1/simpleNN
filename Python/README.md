@@ -69,7 +69,7 @@ In this section, we show option/parameters that are solely for Tensorflow implem
 ```
 4. **--model**: save log and model to directory log_and_model
 ```
---model ./log_and_model/logger.log
+--model ./saved_model/best-model.ckpt
 ```
 5. **--loss**: which loss function to use: MSELoss or CrossEntropy
 ```
@@ -94,6 +94,10 @@ In this section, we show option/parameters that are solely for Tensorflow implem
 10. **--num_cls**: number of classes in the dataset
 ```
 --num_cls 10
+```
+11. **--log**: log saving directory
+```
+--log ./running_log/logger.log
 ```
 
 ### Newton Method
@@ -126,7 +130,7 @@ CUDA_VISIBLE_DEVICES=0 python3 predict.py --net CNN_3layers --bsize 1024 \
 You may need the following arguments to run the predict script:
 1. **--model**: address of the saved model from training, e.g. ./log_and_model/best-model.ckpt
 ```
---model ./log_and_model/best-model.ckpt
+--model ./saved_model/best-model.ckpt
 ```
 2. **--net**: network configuration used in training (two examples are CNN_3layers and CNN_6layers)
 ```

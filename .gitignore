@@ -11,4 +11,6 @@
 .gitgnore
 *.index
 *.meta
-
+.log_and_model
+.running_log
+.saved_model
