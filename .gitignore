@@ -2,7 +2,6 @@
 .logger
 .data
 .scripts
-.log_and_model
 .summaries
 *.pyc
 .log
