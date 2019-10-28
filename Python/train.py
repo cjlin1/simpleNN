@@ -71,10 +71,13 @@ def parse_args():
 					  default='data/mnist-demo.mat', type=str)
 	parser.add_argument('--val_set', dest='val_set',
 					  help='provide the directory of .mat file for validation',
-					  default='data/mnist-demo.t.mat', type=str)
-	parser.add_argument('--model', dest='log_name',
-					  help='save log and model to directory model',
-					  default='./log_and_model/logger.log', type=str)
+					  default=None, type=str)
+	parser.add_argument('--model', dest='model_name',
+					  help='model saving address',
+					  default='./saved_model/best-model.ckpt', type=str)
+	parser.add_argument('--log', dest='log_name',
+					  help='log saving directory',
+					  default='./running_log/logger.log', type=str)
 	parser.add_argument('--screen_log_only', dest='screen_log_only',
 					  help='screen printing running log instead of storing it',
 					  action='store_true')
@@ -188,7 +191,7 @@ def gradient_trainer(config, sess, network, full_batch, val_batch, test_network)
 
 			loss_avg = loss_avg + batch_loss
 			# print log every 10% of the iterations
-			if i % (num_iters//10) == 0:
+			if i % math.ceil(num_iters/10) == 0:
 				end = time.time()
 				output_str = 'Epoch {}: {}/{} | loss {:.4f} | lr {:.6} | elapsed time {:.3f}'\
 					.format(epoch, i, num_iters, batch_loss , lr, end-start)
@@ -201,35 +204,47 @@ def gradient_trainer(config, sess, network, full_batch, val_batch, test_network)
 		total_running_time += epoch_end - start
 		config.elapsed_time = 0.0
 		
-		if test_network == None:
-			val_loss, val_acc = predict(
-				sess, 
-				network=(x, y, loss, outputs),
-				test_batch=val_batch,
-				bsize=config.bsize
-				)
+		if val_batch is None:
+			output_str = 'In epoch {} train loss: {:.3f} | epoch time {:.3f}'\
+				.format(epoch, loss_avg/(i+1), epoch_end-start)			
 		else:
-			val_loss, val_acc = predict(
-				sess, 
-				network=test_network,
-				test_batch=val_batch,
-				bsize=config.bsize
-				)
+			if test_network == None:
+				val_loss, val_acc = predict(
+					sess, 
+					network=(x, y, loss, outputs),
+					test_batch=val_batch,
+					bsize=config.bsize
+					)
+			else:
+				val_loss, val_acc = predict(
+					sess, 
+					network=test_network,
+					test_batch=val_batch,
+					bsize=config.bsize
+					)
+			
+			output_str = 'In epoch {} train loss: {:.3f} | val loss: {:.3f} | val accuracy: {:.3f}% | epoch time {:.3f}'\
+				.format(epoch, loss_avg/(i+1), val_loss, val_acc*100, epoch_end-start)
 		
-		output_str = 'In epoch {} train loss: {:.3f} | val loss: {:.3f} | val accuracy: {:.3f}% | epoch time {:.3f}'\
-			.format(epoch, loss_avg/(i+1), val_loss, val_acc*100, epoch_end-start)
+			if val_acc > best_acc:
+				best_acc = val_acc
+				checkpoint_path = config.model_name 
+				save_path = saver.save(sess, checkpoint_path)
+				print('Saved best model in {}'.format(save_path))
+
 		print(output_str)
 		if not config.screen_log_only:
 			print(output_str, file=log_file)
-		
-		if val_acc > best_acc:
-			best_acc = val_acc
-			checkpoint_path = config.dir_name + '/best-model.ckpt' 
-			save_path = saver.save(sess, checkpoint_path)
-			print('Saved best model in {}'.format(save_path))
 
-	output_str = 'Final acc: {:.3f}% | best acc {:.3f}% | total running time {:.3f}s'\
-		.format(val_acc*100, best_acc*100, total_running_time)
+	if val_batch is None:
+		checkpoint_path = config.model_name 
+		save_path = saver.save(sess, checkpoint_path)
+		print('Model at the last iteration saved in {}\r\n'.format(save_path))
+		output_str = 'total running time {:.3f}s'.format(total_running_time)
+	else:
+		output_str = 'Final acc: {:.3f}% | best acc {:.3f}% | total running time {:.3f}s'\
+			.format(val_acc*100, best_acc*100, total_running_time)
+	
 	print(output_str)
 	if not config.screen_log_only:
 		print(output_str, file=log_file)
@@ -249,12 +264,17 @@ def newton_trainer(config, sess, network, full_batch, val_batch, test_network):
 
 
 def main():
-
+	
 	full_batch = read_data(filename=args.train_set, num_cls=args.num_cls, dim=args.dim)
-	val_batch = read_data(filename=args.val_set, num_cls=args.num_cls, dim=args.dim)
+	
+	if args.val_set is None:
+		print('No validation set are provided. Will output model at the last iteration.')
+		val_batch = None
+	else:
+		val_batch = read_data(filename=args.val_set, num_cls=args.num_cls, dim=args.dim)
 
 	num_data = full_batch[0].shape[0]
-
+	
 	config = Config(args, num_data)
 	# tf.random.set_random_seed(0)
 	# np.random.seed(0)

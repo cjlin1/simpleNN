@@ -51,6 +51,7 @@ class Config(object):
 			raise ValueError('Only support SGD, Adam & NewtonCG optimizer!')
 		
 		self.log_file = args.log_name
+		self.model_name = args.model_name
 		self.screen_log_only = args.screen_log_only
 		dir_name, _ = os.path.split(self.log_file)
 		self.dir_name = dir_name
@@ -58,7 +59,7 @@ class Config(object):
 		if self.screen_log_only:
 			print('You choose not to store running log. Only store model to {}'.format(self.log_file))
 		else:
-			print('Saving log and model to: {}'.format(self.log_file))
+			print('Saving log and model to: {}'.format(self.model_name))
 		if not os.path.isdir(dir_name):
 			os.makedirs(dir_name, exist_ok=True)
 		
@@ -494,36 +495,43 @@ class newton_cg(object):
 			if not self.config.screen_log_only:
 				print(output_str, file=log_file)
 
-			# Evaluate the performance after every Newton Step
-			if test_network == None:
-				val_loss, val_acc = predict(
-					self.sess, 
-					network=(x, y, self.loss, outputs),
-					test_batch=val_batch,
-					bsize=self.config.bsize,
-					)
-			else:
-				val_loss, val_acc = predict(
-					self.sess, 
-					network=test_network,
-					test_batch=val_batch,
-					bsize=self.config.bsize
-					)
+			if val_batch is not None:
+				# Evaluate the performance after every Newton Step
+				if test_network == None:
+					val_loss, val_acc = predict(
+						self.sess, 
+						network=(x, y, self.loss, outputs),
+						test_batch=val_batch,
+						bsize=self.config.bsize,
+						)
+				else:
+					val_loss, val_acc = predict(
+						self.sess, 
+						network=test_network,
+						test_batch=val_batch,
+						bsize=self.config.bsize
+						)
 
-			output_str = '\r\n {}-iter val_acc: {:.3f}% val_loss {:.3f}\r\n'.\
-				format(k, val_acc*100, val_loss)
-			print(output_str)
-			if not self.config.screen_log_only:
-				print(output_str, file=log_file)
+				output_str = '\r\n {}-iter val_acc: {:.3f}% val_loss {:.3f}\r\n'.\
+					format(k, val_acc*100, val_loss)
+				print(output_str)
+				if not self.config.screen_log_only:
+					print(output_str, file=log_file)
 
-			if val_acc > best_acc:
-				best_acc = val_acc
-				checkpoint_path = self.config.dir_name + '/best-model.ckpt' 
-				save_path = saver.save(self.sess, checkpoint_path)
-				print('Best model saved in {}\r\n'.format(save_path))
+				if val_acc > best_acc:
+					best_acc = val_acc
+					checkpoint_path = self.config.model_name
+					save_path = saver.save(self.sess, checkpoint_path)
+					print('Best model saved in {}\r\n'.format(save_path))
 
-		output_str = 'Final acc: {:.3f}% | best acc {:.3f}% | total running time {:.3f}s'.\
-			format(val_acc*100, best_acc*100, total_running_time)
+		if val_batch is None:
+			checkpoint_path = self.config.model_name
+			save_path = saver.save(self.sess, checkpoint_path)
+			print('Model at the last iteration saved in {}\r\n'.format(save_path))
+			output_str = 'total running time {:.3f}s'.format(total_running_time)
+		else:
+			output_str = 'Final acc: {:.3f}% | best acc {:.3f}% | total running time {:.3f}s'.\
+				format(val_acc*100, best_acc*100, total_running_time)
 		print(output_str)
 		if not self.config.screen_log_only:
 			print(output_str, file=log_file)
