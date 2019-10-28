@@ -1,0 +1,402 @@
+Namespace(C=0.01, CGmax=250, _lambda=1, boost=1.5, bsize=1024, dim=[28, 28, 1], drop=0.6666666666666666, epoch=500, eta=0.0001, iter_max=100, log_name='./log_and_model/logger.log', loss='MSELoss', lr=0.01, lr_decay=500, momentum=0, net='CNN_3layers', num_cls=10, optim='NewtonCG', sample=100, screen_log_only=False, train_set='./data/mnist-demo.mat', val_set='./data/mnist-demo.t.mat', xi=0.1)
+0-iter f: 10.481 |g|: 16.96777 alpha: 1.000e+00 ratio: 0.994 lambda: 0.66667 #CG: 2 actred: -14.81563 prered: -14.90029 time: 2.255
+
+ 0-iter val_acc: 11.000% val_loss 1.912
+
+1-iter f: 8.501 |g|: 12.85091 alpha: 1.000e+00 ratio: 0.267 lambda: 0.66667 #CG: 19 actred: -1.97992 prered: -7.40724 time: 3.683
+
+ 1-iter val_acc: 47.800% val_loss 1.118
+
+2-iter f: 6.977 |g|: 3.51493 alpha: 1.000e+00 ratio: 0.616 lambda: 0.66667 #CG: 12 actred: -1.52378 prered: -2.47381 time: 2.966
+
+ 2-iter val_acc: 85.200% val_loss 0.487
+
+3-iter f: 5.999 |g|: 2.41805 alpha: 1.000e+00 ratio: 0.861 lambda: 0.44444 #CG: 12 actred: -0.97780 prered: -1.13629 time: 2.854
+
+ 3-iter val_acc: 89.300% val_loss 0.370
+
+4-iter f: 4.944 |g|: 2.37583 alpha: 1.000e+00 ratio: 0.895 lambda: 0.29630 #CG: 10 actred: -1.05503 prered: -1.17920 time: 2.724
+
+ 4-iter val_acc: 92.300% val_loss 0.328
+
+5-iter f: 3.767 |g|: 2.14160 alpha: 1.000e+00 ratio: 0.887 lambda: 0.19753 #CG: 12 actred: -1.17667 prered: -1.32589 time: 2.912
+
+ 5-iter val_acc: 93.300% val_loss 0.298
+
+6-iter f: 2.644 |g|: 3.40975 alpha: 1.000e+00 ratio: 0.864 lambda: 0.13169 #CG: 14 actred: -1.12379 prered: -1.30098 time: 3.139
+
+ 6-iter val_acc: 92.700% val_loss 0.326
+
+7-iter f: 1.874 |g|: 7.73631 alpha: 1.000e+00 ratio: 0.696 lambda: 0.13169 #CG: 12 actred: -0.76997 prered: -1.10703 time: 2.984
+
+ 7-iter val_acc: 87.300% val_loss 0.462
+
+8-iter f: 1.703 |g|: 0.64862 alpha: 1.000e+00 ratio: 0.998 lambda: 0.08779 #CG: 2 actred: -0.17071 prered: -0.17109 time: 1.905
+
+ 8-iter val_acc: 94.800% val_loss 0.291
+
+9-iter f: 1.111 |g|: 4.89510 alpha: 1.000e+00 ratio: 0.713 lambda: 0.08779 #CG: 19 actred: -0.59198 prered: -0.83026 time: 3.588
+
+ 9-iter val_acc: 91.100% val_loss 0.379
+
+10-iter f: 0.921 |g|: 4.67812 alpha: 1.000e+00 ratio: 0.510 lambda: 0.08779 #CG: 10 actred: -0.18980 prered: -0.37188 time: 2.682
+
+ 10-iter val_acc: 90.600% val_loss 0.337
+
+11-iter f: 0.768 |g|: 2.97031 alpha: 1.000e+00 ratio: 0.444 lambda: 0.08779 #CG: 12 actred: -0.15342 prered: -0.34566 time: 2.899
+
+ 11-iter val_acc: 93.400% val_loss 0.320
+
+12-iter f: 0.685 |g|: 2.22358 alpha: 1.000e+00 ratio: 0.303 lambda: 0.08779 #CG: 12 actred: -0.08273 prered: -0.27344 time: 2.875
+
+ 12-iter val_acc: 93.600% val_loss 0.316
+
+13-iter f: 0.609 |g|: 3.93691 alpha: 1.000e+00 ratio: 0.331 lambda: 0.08779 #CG: 14 actred: -0.07560 prered: -0.22873 time: 3.102
+
+ 13-iter val_acc: 92.300% val_loss 0.301
+
+14-iter f: 0.545 |g|: 0.78439 alpha: 1.000e+00 ratio: 0.851 lambda: 0.05853 #CG: 4 actred: -0.06395 prered: -0.07511 time: 2.121
+
+ 14-iter val_acc: 95.000% val_loss 0.238
+
+15-iter f: 0.514 |g|: 2.16123 alpha: 1.000e+00 ratio: 0.256 lambda: 0.05853 #CG: 20 actred: -0.03102 prered: -0.12113 time: 3.684
+
+ 15-iter val_acc: 94.100% val_loss 0.262
+
+16-iter f: 0.468 |g|: 1.48588 alpha: 5.000e-01 ratio: 0.535 lambda: 0.05853 #CG: 14 actred: -0.04589 prered: -0.08578 time: 3.533
+
+ 16-iter val_acc: 95.400% val_loss 0.225
+
+17-iter f: 0.453 |g|: 1.54881 alpha: 1.000e+00 ratio: 0.349 lambda: 0.05853 #CG: 12 actred: -0.01503 prered: -0.04309 time: 2.865
+
+ 17-iter val_acc: 95.400% val_loss 0.215
+
+18-iter f: 0.440 |g|: 0.87343 alpha: 1.000e+00 ratio: 0.375 lambda: 0.05853 #CG: 12 actred: -0.01359 prered: -0.03625 time: 2.868
+
+ 18-iter val_acc: 95.800% val_loss 0.209
+
+19-iter f: 0.438 |g|: 0.96607 alpha: 1.000e+00 ratio: 0.062 lambda: 0.08779 #CG: 19 actred: -0.00226 prered: -0.03617 time: 3.623
+
+ 19-iter val_acc: 95.500% val_loss 0.210
+
+20-iter f: 0.421 |g|: 0.76046 alpha: 5.000e-01 ratio: 0.522 lambda: 0.08779 #CG: 16 actred: -0.01645 prered: -0.03155 time: 3.809
+
+ 20-iter val_acc: 95.700% val_loss 0.203
+
+21-iter f: 0.417 |g|: 0.59509 alpha: 1.000e+00 ratio: 0.296 lambda: 0.08779 #CG: 14 actred: -0.00438 prered: -0.01481 time: 3.091
+
+ 21-iter val_acc: 95.900% val_loss 0.195
+
+22-iter f: 0.410 |g|: 0.46143 alpha: 5.000e-01 ratio: 0.546 lambda: 0.08779 #CG: 18 actred: -0.00632 prered: -0.01158 time: 3.970
+
+ 22-iter val_acc: 96.100% val_loss 0.192
+
+23-iter f: 0.408 |g|: 0.22576 alpha: 1.000e+00 ratio: 0.349 lambda: 0.08779 #CG: 14 actred: -0.00237 prered: -0.00680 time: 3.073
+
+ 23-iter val_acc: 95.900% val_loss 0.190
+
+24-iter f: 0.405 |g|: 0.53537 alpha: 5.000e-01 ratio: 0.417 lambda: 0.08779 #CG: 25 actred: -0.00290 prered: -0.00696 time: 4.706
+
+ 24-iter val_acc: 95.900% val_loss 0.188
+
+25-iter f: 0.403 |g|: 0.27820 alpha: 5.000e-01 ratio: 0.507 lambda: 0.08779 #CG: 14 actred: -0.00197 prered: -0.00388 time: 3.590
+
+ 25-iter val_acc: 95.900% val_loss 0.187
+
+26-iter f: 0.402 |g|: 0.16149 alpha: 5.000e-01 ratio: 0.561 lambda: 0.08779 #CG: 18 actred: -0.00156 prered: -0.00278 time: 4.017
+
+ 26-iter val_acc: 95.900% val_loss 0.185
+
+27-iter f: 0.400 |g|: 0.21051 alpha: 5.000e-01 ratio: 0.535 lambda: 0.08779 #CG: 22 actred: -0.00136 prered: -0.00254 time: 4.364
+
+ 27-iter val_acc: 96.000% val_loss 0.185
+
+28-iter f: 0.399 |g|: 0.17317 alpha: 5.000e-01 ratio: 0.548 lambda: 0.08779 #CG: 20 actred: -0.00119 prered: -0.00218 time: 4.136
+
+ 28-iter val_acc: 95.700% val_loss 0.183
+
+29-iter f: 0.398 |g|: 0.25685 alpha: 5.000e-01 ratio: 0.434 lambda: 0.08779 #CG: 20 actred: -0.00093 prered: -0.00215 time: 4.147
+
+ 29-iter val_acc: 96.000% val_loss 0.183
+
+30-iter f: 0.397 |g|: 0.16743 alpha: 5.000e-01 ratio: 0.465 lambda: 0.08779 #CG: 18 actred: -0.00095 prered: -0.00204 time: 3.991
+
+ 30-iter val_acc: 95.700% val_loss 0.182
+
+31-iter f: 0.397 |g|: 0.25275 alpha: 5.000e-01 ratio: 0.266 lambda: 0.08779 #CG: 22 actred: -0.00066 prered: -0.00247 time: 4.403
+
+ 31-iter val_acc: 95.900% val_loss 0.182
+
+32-iter f: 0.396 |g|: 0.24548 alpha: 5.000e-01 ratio: 0.382 lambda: 0.08779 #CG: 18 actred: -0.00088 prered: -0.00231 time: 4.003
+
+ 32-iter val_acc: 95.800% val_loss 0.181
+
+33-iter f: 0.395 |g|: 0.39449 alpha: 5.000e-01 ratio: 0.131 lambda: 0.13169 #CG: 18 actred: -0.00030 prered: -0.00233 time: 4.007
+
+ 33-iter val_acc: 96.100% val_loss 0.181
+
+34-iter f: 0.394 |g|: 0.28047 alpha: 5.000e-01 ratio: 0.504 lambda: 0.13169 #CG: 12 actred: -0.00096 prered: -0.00190 time: 3.385
+
+ 34-iter val_acc: 95.800% val_loss 0.180
+
+35-iter f: 0.394 |g|: 0.25968 alpha: 1.000e+00 ratio: 0.001 lambda: 0.19753 #CG: 14 actred: -0.00000 prered: -0.00174 time: 3.135
+
+ 35-iter val_acc: 96.100% val_loss 0.180
+
+36-iter f: 0.393 |g|: 0.18482 alpha: 5.000e-01 ratio: 0.613 lambda: 0.19753 #CG: 14 actred: -0.00125 prered: -0.00204 time: 3.556
+
+ 36-iter val_acc: 95.800% val_loss 0.179
+
+37-iter f: 0.393 |g|: 0.12732 alpha: 1.000e+00 ratio: 0.410 lambda: 0.19753 #CG: 14 actred: -0.00053 prered: -0.00129 time: 3.107
+
+ 37-iter val_acc: 96.100% val_loss 0.179
+
+38-iter f: 0.393 |g|: 0.32092 alpha: 1.000e+00 ratio: 0.009 lambda: 0.29630 #CG: 16 actred: -0.00002 prered: -0.00189 time: 3.320
+
+ 38-iter val_acc: 96.000% val_loss 0.179
+
+39-iter f: 0.392 |g|: 0.18591 alpha: 1.000e+00 ratio: 0.284 lambda: 0.29630 #CG: 14 actred: -0.00072 prered: -0.00255 time: 3.039
+
+ 39-iter val_acc: 96.000% val_loss 0.179
+
+40-iter f: 0.391 |g|: 0.16324 alpha: 5.000e-01 ratio: 0.563 lambda: 0.29630 #CG: 16 actred: -0.00081 prered: -0.00144 time: 3.775
+
+ 40-iter val_acc: 96.000% val_loss 0.178
+
+41-iter f: 0.391 |g|: 0.08809 alpha: 1.000e+00 ratio: 0.366 lambda: 0.29630 #CG: 14 actred: -0.00032 prered: -0.00088 time: 3.171
+
+ 41-iter val_acc: 96.000% val_loss 0.177
+
+42-iter f: 0.391 |g|: 0.27023 alpha: 1.000e+00 ratio: 0.085 lambda: 0.44444 #CG: 19 actred: -0.00012 prered: -0.00143 time: 3.627
+
+ 42-iter val_acc: 96.000% val_loss 0.178
+
+43-iter f: 0.390 |g|: 0.28619 alpha: 1.000e+00 ratio: 0.139 lambda: 0.66667 #CG: 12 actred: -0.00023 prered: -0.00164 time: 2.959
+
+ 43-iter val_acc: 96.000% val_loss 0.177
+
+44-iter f: 0.390 |g|: 0.21706 alpha: 1.000e+00 ratio: 0.306 lambda: 0.66667 #CG: 9 actred: -0.00048 prered: -0.00155 time: 2.602
+
+ 44-iter val_acc: 96.000% val_loss 0.177
+
+45-iter f: 0.390 |g|: 0.07842 alpha: 1.000e+00 ratio: 0.513 lambda: 0.66667 #CG: 9 actred: -0.00038 prered: -0.00074 time: 2.572
+
+ 45-iter val_acc: 96.000% val_loss 0.177
+
+46-iter f: 0.389 |g|: 0.06208 alpha: 1.000e+00 ratio: 0.563 lambda: 0.66667 #CG: 14 actred: -0.00026 prered: -0.00046 time: 3.158
+
+ 46-iter val_acc: 96.000% val_loss 0.177
+
+47-iter f: 0.389 |g|: 0.03308 alpha: 1.000e+00 ratio: 0.389 lambda: 0.66667 #CG: 11 actred: -0.00017 prered: -0.00045 time: 2.825
+
+ 47-iter val_acc: 96.000% val_loss 0.176
+
+48-iter f: 0.389 |g|: 0.07287 alpha: 1.000e+00 ratio: 0.530 lambda: 0.66667 #CG: 16 actred: -0.00024 prered: -0.00046 time: 3.323
+
+ 48-iter val_acc: 96.000% val_loss 0.176
+
+49-iter f: 0.389 |g|: 0.03143 alpha: 1.000e+00 ratio: 0.528 lambda: 0.66667 #CG: 14 actred: -0.00020 prered: -0.00039 time: 3.123
+
+ 49-iter val_acc: 96.000% val_loss 0.176
+
+50-iter f: 0.388 |g|: 0.06207 alpha: 1.000e+00 ratio: 0.539 lambda: 0.66667 #CG: 16 actred: -0.00020 prered: -0.00038 time: 3.339
+
+ 50-iter val_acc: 96.000% val_loss 0.176
+
+51-iter f: 0.388 |g|: 0.02433 alpha: 1.000e+00 ratio: 0.671 lambda: 0.66667 #CG: 11 actred: -0.00021 prered: -0.00031 time: 2.813
+
+ 51-iter val_acc: 96.000% val_loss 0.176
+
+52-iter f: 0.388 |g|: 0.02443 alpha: 1.000e+00 ratio: 0.664 lambda: 0.66667 #CG: 17 actred: -0.00020 prered: -0.00030 time: 3.487
+
+ 52-iter val_acc: 96.000% val_loss 0.176
+
+53-iter f: 0.388 |g|: 0.02037 alpha: 1.000e+00 ratio: 0.738 lambda: 0.66667 #CG: 14 actred: -0.00020 prered: -0.00027 time: 3.163
+
+ 53-iter val_acc: 96.000% val_loss 0.176
+
+54-iter f: 0.388 |g|: 0.02999 alpha: 1.000e+00 ratio: 0.721 lambda: 0.66667 #CG: 16 actred: -0.00019 prered: -0.00026 time: 3.290
+
+ 54-iter val_acc: 96.000% val_loss 0.176
+
+55-iter f: 0.387 |g|: 0.02890 alpha: 1.000e+00 ratio: 0.722 lambda: 0.66667 #CG: 14 actred: -0.00018 prered: -0.00026 time: 3.121
+
+ 55-iter val_acc: 96.000% val_loss 0.175
+
+56-iter f: 0.387 |g|: 0.02347 alpha: 1.000e+00 ratio: 0.708 lambda: 0.66667 #CG: 16 actred: -0.00018 prered: -0.00026 time: 3.278
+
+ 56-iter val_acc: 96.000% val_loss 0.175
+
+57-iter f: 0.387 |g|: 0.02082 alpha: 1.000e+00 ratio: 0.646 lambda: 0.66667 #CG: 15 actred: -0.00017 prered: -0.00027 time: 3.256
+
+ 57-iter val_acc: 95.900% val_loss 0.175
+
+58-iter f: 0.387 |g|: 0.03499 alpha: 1.000e+00 ratio: 0.625 lambda: 0.66667 #CG: 17 actred: -0.00018 prered: -0.00028 time: 3.439
+
+ 58-iter val_acc: 95.900% val_loss 0.175
+
+59-iter f: 0.387 |g|: 0.03300 alpha: 1.000e+00 ratio: 0.502 lambda: 0.66667 #CG: 15 actred: -0.00015 prered: -0.00030 time: 3.152
+
+ 59-iter val_acc: 95.900% val_loss 0.175
+
+60-iter f: 0.387 |g|: 0.09303 alpha: 1.000e+00 ratio: 0.248 lambda: 1.00000 #CG: 16 actred: -0.00010 prered: -0.00039 time: 3.329
+
+ 60-iter val_acc: 95.900% val_loss 0.175
+
+61-iter f: 0.387 |g|: 0.04042 alpha: 1.000e+00 ratio: 0.477 lambda: 1.00000 #CG: 11 actred: -0.00018 prered: -0.00037 time: 2.823
+
+ 61-iter val_acc: 95.900% val_loss 0.175
+
+62-iter f: 0.386 |g|: 0.03555 alpha: 1.000e+00 ratio: 0.537 lambda: 1.00000 #CG: 15 actred: -0.00013 prered: -0.00024 time: 3.200
+
+ 62-iter val_acc: 95.900% val_loss 0.175
+
+63-iter f: 0.386 |g|: 0.02452 alpha: 1.000e+00 ratio: 0.682 lambda: 1.00000 #CG: 13 actred: -0.00013 prered: -0.00019 time: 2.968
+
+ 63-iter val_acc: 95.900% val_loss 0.175
+
+64-iter f: 0.386 |g|: 0.02561 alpha: 1.000e+00 ratio: 0.822 lambda: 0.66667 #CG: 11 actred: -0.00012 prered: -0.00014 time: 2.830
+
+ 64-iter val_acc: 95.900% val_loss 0.175
+
+65-iter f: 0.386 |g|: 0.01756 alpha: 1.000e+00 ratio: 0.804 lambda: 0.44444 #CG: 14 actred: -0.00015 prered: -0.00019 time: 3.196
+
+ 65-iter val_acc: 95.900% val_loss 0.175
+
+66-iter f: 0.386 |g|: 0.02712 alpha: 1.000e+00 ratio: 0.606 lambda: 0.44444 #CG: 17 actred: -0.00018 prered: -0.00029 time: 3.914
+
+ 66-iter val_acc: 96.000% val_loss 0.175
+
+67-iter f: 0.386 |g|: 0.06603 alpha: 1.000e+00 ratio: 0.349 lambda: 0.44444 #CG: 18 actred: -0.00015 prered: -0.00042 time: 4.307
+
+ 67-iter val_acc: 95.900% val_loss 0.174
+
+68-iter f: 0.386 |g|: 0.12038 alpha: 1.000e+00 ratio: 0.081 lambda: 0.66667 #CG: 16 actred: -0.00005 prered: -0.00061 time: 3.796
+
+ 68-iter val_acc: 96.100% val_loss 0.175
+
+69-iter f: 0.385 |g|: 0.09668 alpha: 1.000e+00 ratio: 0.148 lambda: 1.00000 #CG: 14 actred: -0.00013 prered: -0.00090 time: 3.399
+
+ 69-iter val_acc: 95.900% val_loss 0.175
+
+70-iter f: 0.385 |g|: 0.12066 alpha: 1.000e+00 ratio: 0.360 lambda: 1.00000 #CG: 11 actred: -0.00023 prered: -0.00064 time: 2.925
+
+ 70-iter val_acc: 96.200% val_loss 0.175
+
+71-iter f: 0.385 |g|: 0.04239 alpha: 1.000e+00 ratio: 0.348 lambda: 1.00000 #CG: 11 actred: -0.00013 prered: -0.00038 time: 2.908
+
+ 71-iter val_acc: 95.900% val_loss 0.174
+
+72-iter f: 0.385 |g|: 0.06309 alpha: 1.000e+00 ratio: 0.424 lambda: 1.00000 #CG: 13 actred: -0.00012 prered: -0.00028 time: 3.105
+
+ 72-iter val_acc: 96.200% val_loss 0.174
+
+73-iter f: 0.385 |g|: 0.02158 alpha: 1.000e+00 ratio: 0.540 lambda: 1.00000 #CG: 11 actred: -0.00011 prered: -0.00020 time: 2.918
+
+ 73-iter val_acc: 96.000% val_loss 0.174
+
+74-iter f: 0.385 |g|: 0.02808 alpha: 1.000e+00 ratio: 0.668 lambda: 1.00000 #CG: 14 actred: -0.00011 prered: -0.00016 time: 3.178
+
+ 74-iter val_acc: 96.200% val_loss 0.174
+
+75-iter f: 0.385 |g|: 0.01804 alpha: 1.000e+00 ratio: 0.782 lambda: 0.66667 #CG: 11 actred: -0.00010 prered: -0.00012 time: 2.883
+
+ 75-iter val_acc: 96.200% val_loss 0.174
+
+76-iter f: 0.385 |g|: 0.03192 alpha: 1.000e+00 ratio: 0.749 lambda: 0.66667 #CG: 14 actred: -0.00012 prered: -0.00016 time: 3.307
+
+ 76-iter val_acc: 96.200% val_loss 0.174
+
+77-iter f: 0.384 |g|: 0.01945 alpha: 1.000e+00 ratio: 0.637 lambda: 0.66667 #CG: 13 actred: -0.00012 prered: -0.00019 time: 3.127
+
+ 77-iter val_acc: 96.200% val_loss 0.174
+
+78-iter f: 0.384 |g|: 0.03013 alpha: 1.000e+00 ratio: 0.624 lambda: 0.66667 #CG: 17 actred: -0.00013 prered: -0.00021 time: 3.739
+
+ 78-iter val_acc: 96.200% val_loss 0.174
+
+79-iter f: 0.384 |g|: 0.03724 alpha: 1.000e+00 ratio: 0.461 lambda: 0.66667 #CG: 14 actred: -0.00010 prered: -0.00023 time: 3.197
+
+ 79-iter val_acc: 96.100% val_loss 0.174
+
+80-iter f: 0.384 |g|: 0.04219 alpha: 1.000e+00 ratio: 0.368 lambda: 0.66667 #CG: 16 actred: -0.00011 prered: -0.00029 time: 3.609
+
+ 80-iter val_acc: 96.200% val_loss 0.174
+
+81-iter f: 0.384 |g|: 0.03735 alpha: 1.000e+00 ratio: 0.486 lambda: 0.66667 #CG: 14 actred: -0.00013 prered: -0.00027 time: 3.386
+
+ 81-iter val_acc: 96.000% val_loss 0.174
+
+82-iter f: 0.384 |g|: 0.02853 alpha: 1.000e+00 ratio: 0.517 lambda: 0.66667 #CG: 16 actred: -0.00012 prered: -0.00024 time: 4.017
+
+ 82-iter val_acc: 96.200% val_loss 0.174
+
+83-iter f: 0.384 |g|: 0.03677 alpha: 1.000e+00 ratio: 0.491 lambda: 0.66667 #CG: 16 actred: -0.00011 prered: -0.00023 time: 3.674
+
+ 83-iter val_acc: 96.100% val_loss 0.174
+
+84-iter f: 0.384 |g|: 0.03985 alpha: 1.000e+00 ratio: 0.442 lambda: 0.66667 #CG: 14 actred: -0.00010 prered: -0.00024 time: 3.194
+
+ 84-iter val_acc: 96.200% val_loss 0.174
+
+85-iter f: 0.384 |g|: 0.02984 alpha: 1.000e+00 ratio: 0.441 lambda: 0.66667 #CG: 14 actred: -0.00011 prered: -0.00025 time: 3.176
+
+ 85-iter val_acc: 96.100% val_loss 0.174
+
+86-iter f: 0.383 |g|: 0.02470 alpha: 1.000e+00 ratio: 0.383 lambda: 0.66667 #CG: 16 actred: -0.00010 prered: -0.00027 time: 4.005
+
+ 86-iter val_acc: 96.200% val_loss 0.174
+
+87-iter f: 0.383 |g|: 0.02619 alpha: 1.000e+00 ratio: 0.453 lambda: 0.66667 #CG: 17 actred: -0.00012 prered: -0.00027 time: 3.686
+
+ 87-iter val_acc: 96.100% val_loss 0.174
+
+88-iter f: 0.383 |g|: 0.02358 alpha: 1.000e+00 ratio: 0.378 lambda: 0.66667 #CG: 16 actred: -0.00010 prered: -0.00027 time: 3.855
+
+ 88-iter val_acc: 96.100% val_loss 0.174
+
+89-iter f: 0.383 |g|: 0.02869 alpha: 1.000e+00 ratio: 0.451 lambda: 0.66667 #CG: 16 actred: -0.00012 prered: -0.00026 time: 3.600
+
+ 89-iter val_acc: 96.100% val_loss 0.174
+
+90-iter f: 0.383 |g|: 0.02597 alpha: 1.000e+00 ratio: 0.381 lambda: 0.66667 #CG: 16 actred: -0.00010 prered: -0.00026 time: 3.354
+
+ 90-iter val_acc: 96.200% val_loss 0.174
+
+91-iter f: 0.383 |g|: 0.02909 alpha: 1.000e+00 ratio: 0.409 lambda: 0.66667 #CG: 17 actred: -0.00011 prered: -0.00026 time: 3.513
+
+ 91-iter val_acc: 96.100% val_loss 0.173
+
+92-iter f: 0.383 |g|: 0.04489 alpha: 1.000e+00 ratio: 0.345 lambda: 0.66667 #CG: 17 actred: -0.00010 prered: -0.00028 time: 3.396
+
+ 92-iter val_acc: 96.200% val_loss 0.174
+
+93-iter f: 0.383 |g|: 0.03407 alpha: 1.000e+00 ratio: 0.471 lambda: 0.66667 #CG: 14 actred: -0.00012 prered: -0.00025 time: 3.132
+
+ 93-iter val_acc: 96.200% val_loss 0.173
+
+94-iter f: 0.383 |g|: 0.03034 alpha: 1.000e+00 ratio: 0.338 lambda: 0.66667 #CG: 14 actred: -0.00009 prered: -0.00026 time: 3.530
+
+ 94-iter val_acc: 96.200% val_loss 0.173
+
+95-iter f: 0.382 |g|: 0.03155 alpha: 1.000e+00 ratio: 0.434 lambda: 0.66667 #CG: 16 actred: -0.00011 prered: -0.00026 time: 3.528
+
+ 95-iter val_acc: 96.300% val_loss 0.173
+
+96-iter f: 0.382 |g|: 0.02994 alpha: 1.000e+00 ratio: 0.311 lambda: 0.66667 #CG: 16 actred: -0.00008 prered: -0.00027 time: 3.610
+
+ 96-iter val_acc: 96.200% val_loss 0.173
+
+97-iter f: 0.382 |g|: 0.03017 alpha: 1.000e+00 ratio: 0.430 lambda: 0.66667 #CG: 14 actred: -0.00011 prered: -0.00026 time: 3.525
+
+ 97-iter val_acc: 96.300% val_loss 0.173
+
+98-iter f: 0.382 |g|: 0.02672 alpha: 1.000e+00 ratio: 0.254 lambda: 0.66667 #CG: 16 actred: -0.00007 prered: -0.00028 time: 3.651
+
+ 98-iter val_acc: 96.300% val_loss 0.173
+
+99-iter f: 0.382 |g|: 0.03309 alpha: 1.000e+00 ratio: 0.410 lambda: 0.66667 #CG: 16 actred: -0.00012 prered: -0.00029 time: 3.503
+
+ 99-iter val_acc: 96.300% val_loss 0.173
+
+Final acc: 96.300% | best acc 96.300% | total running time 333.578s
