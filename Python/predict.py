@@ -1,6 +1,6 @@
 import tensorflow as tf 
 from utilities import predict, read_data
-from model.net import CNN
+from net.net import CNN
 import argparse
 
 def parse_args():
@@ -23,17 +23,14 @@ def parse_args():
 	parser.add_argument('--dim', dest='dim', nargs='+', help='input dimension of data,'+\
 						'shape must be:  height width num_channels',
 					  default=[32, 32, 3], type=int)
-	parser.add_argument('--num_cls', dest='num_cls',
-					  help='number of classes in the dataset',
-					  default=10, type=int)	
 	args = parser.parse_args()
 	return args
 
 if __name__ == '__main__':
 	args = parse_args()
-	test_batch = read_data(args.test_set, num_cls=args.num_cls, dim=args.dim)
+	test_batch, num_cls = read_data(args.test_set, dim=args.dim)
 	if args.net in ('CNN_3layers', 'CNN_6layers'):
-		x, y, outputs = CNN(args)
+		x, y, outputs = CNN(args.net, num_cls, args.dim)
 		test_network = None
 	else:
 		raise ValueError('Unrecognized training model')

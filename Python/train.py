@@ -5,7 +5,7 @@ import time
 import math
 import argparse
 
-from model.net import CNN
+from net.net import CNN
 from newton_cg import newton_cg, Config
 from utilities import read_data, predict
 
@@ -89,10 +89,7 @@ def parse_args():
 					  default='MSELoss', type=str)
 	parser.add_argument('--dim', dest='dim', nargs='+', help='input dimension of data,'+\
 						'shape must be:  height width num_channels',
-					  default=[32, 32, 3], type=int)
-	parser.add_argument('--num_cls', dest='num_cls',
-					  help='number of classes in the dataset',
-					  default=10, type=int)		  
+					  default=[32, 32, 3], type=int)	  
 	args = parser.parse_args()
 	return args
 
@@ -265,22 +262,22 @@ def newton_trainer(config, sess, network, full_batch, val_batch, test_network):
 
 def main():
 	
-	full_batch = read_data(filename=args.train_set, num_cls=args.num_cls, dim=args.dim)
+	full_batch, num_cls = read_data(filename=args.train_set, dim=args.dim)
 	
 	if args.val_set is None:
 		print('No validation set are provided. Will output model at the last iteration.')
 		val_batch = None
 	else:
-		val_batch = read_data(filename=args.val_set, num_cls=args.num_cls, dim=args.dim)
+		val_batch, _ = read_data(filename=args.val_set, dim=args.dim)
 
 	num_data = full_batch[0].shape[0]
 	
-	config = Config(args, num_data)
+	config = Config(args, num_data, num_cls)
 	# tf.random.set_random_seed(0)
 	# np.random.seed(0)
 	
 	if args.net in ('CNN_3layers', 'CNN_6layers'):
-		x, y, outputs = CNN(config)
+		x, y, outputs = CNN(config.net, num_cls, config.dim)
 		test_network = None
 	else:
 		raise ValueError('Unrecognized training model')

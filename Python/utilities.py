@@ -3,7 +3,7 @@ import math
 import scipy.io as sio
 import pdb
 
-def read_data(filename, num_cls, dim):
+def read_data(filename, dim):
 
 	mat_contents = sio.loadmat(filename)
 	images, labels = mat_contents['Z'], mat_contents['y']
@@ -11,13 +11,19 @@ def read_data(filename, num_cls, dim):
 	labels = labels.reshape(-1)
 
 	# check data validity
-	nonrepeat = list(dict.fromkeys(labels))
-	if len(nonrepeat) != num_cls:
+	label_enum = list(dict.fromkeys(labels))
+	label_enum.sort()
+	num_cls = max(label_enum)
+
+	if len(label_enum) != num_cls:
 		raise ValueError('The number of classes is not equal to the number of\
 						labels in dataset. Please verify them.')
-	elif min(nonrepeat) != 1:
+	elif min(label_enum) != 1:
 		raise ValueError('The minimal label is not one. Please change it to one!')
-	
+	elif not np.array_equal(label_enum, np.arange(1, num_cls+1)):
+		raise ValueError('Labels are not range from 1 to the number of class.\
+						Please verify them!')
+
 	labels = labels - 1
 	
 	_IMAGE_HEIGHT, _IMAGE_WIDTH, _IMAGE_CHANNELS = dim
@@ -41,7 +47,7 @@ def read_data(filename, num_cls, dim):
 	labels = np.eye(num_cls)[labels]
 	labels = labels.astype('float32')
 	
-	return images, labels
+	return (images, labels), num_cls
 
 def predict(sess, network, test_batch, bsize):
 	x, y, loss, outputs = network

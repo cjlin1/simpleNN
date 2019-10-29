@@ -101,16 +101,16 @@ def CNN_6layers(x_image, num_cls, reuse=False):
 
 	return outputs
 
-def CNN(config):
+def CNN(net, num_cls, dim):
 
-	_NUM_CLASSES = config.num_cls
-	_IMAGE_HEIGHT, _IMAGE_WIDTH, _IMAGE_CHANNELS = config.dim
+	_NUM_CLASSES = num_cls
+	_IMAGE_HEIGHT, _IMAGE_WIDTH, _IMAGE_CHANNELS = dim
 
 	with tf.name_scope('main_params'):
 		x = tf.placeholder(tf.float32, shape=[None, _IMAGE_HEIGHT, _IMAGE_WIDTH, _IMAGE_CHANNELS], name='Input')
 		y = tf.placeholder(tf.float32, shape=[None, _NUM_CLASSES], name='Output')
 
-	net = CNN_3layers if config.net == 'CNN_3layers' else CNN_6layers
+	net = CNN_3layers if net == 'CNN_3layers' else CNN_6layers
 	outputs = net(x, _NUM_CLASSES)
 
 	return (x, y, outputs)

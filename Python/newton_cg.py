@@ -4,10 +4,10 @@ import time
 import numpy as np
 import os
 import math
-from utilities import read_data, predict
+from utilities import predict
 
 class Config(object):
-	def __init__(self, args, num_data):
+	def __init__(self, args, num_data, num_cls):
 		super(Config, self).__init__()
 		self.args = args
 		# self.sample = args.sample
@@ -21,7 +21,7 @@ class Config(object):
 
 		self.train_set = args.train_set
 		self.val_set = args.val_set
-		self.num_cls = args.num_cls
+		self.num_cls = num_cls
 		self.dim = args.dim
 
 		self.num_data = num_data
@@ -412,9 +412,10 @@ class newton_cg(object):
 		best_acc = 0.0
 
 		total_running_time = 0.0
+		self.config.elapsed_time = 0.0
 
 		saver = tf.train.Saver(var_list=self.param)
-
+		
 		for k in range(self.config.iter_max):
 
 			idx = np.arange(0, full_labels.shape[0])
@@ -484,7 +485,9 @@ class newton_cg(object):
 			train_writer.add_summary(summary, k)
 
 			# exclude data loading time for fair comparison
-			end = time.time() - self.config.elapsed_time
+			end = time.time() 
+			
+			end = end - self.config.elapsed_time
 			total_running_time += end-start
 
 			self.config.elapsed_time = 0.0
