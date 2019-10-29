@@ -91,11 +91,7 @@ In this section, we show option/parameters that are solely for Tensorflow implem
 ```
 --dim 28 28 1
 ```
-10. **--num_cls**: number of classes in the dataset
-```
---num_cls 10
-```
-11. **--log**: log saving directory
+10. **--log**: log saving directory
 ```
 --log ./running_log/logger.log
 ```
@@ -143,10 +139,6 @@ You may need the following arguments to run the predict script:
 4. **--dim**: input dimension of data. Shape must be: height width num_channels
 ```
 --dim 28 28 1
-```
-5. **--num_cls**: number of classes in the dataset
-```
---num_cls 10
 ```
 
 # Experiment Results
