@@ -50,18 +50,17 @@ class Config(object):
 		if self.optim not in ('SGD', 'NewtonCG', 'Adam'):
 			raise ValueError('Only support SGD, Adam & NewtonCG optimizer!')
 		
-		self.log_file = args.log_name
+		self.log_file = args.log_file
 		self.model_name = args.model_name
 		self.screen_log_only = args.screen_log_only
-		dir_name, _ = os.path.split(self.log_file)
-		self.dir_name = dir_name
 
 		if self.screen_log_only:
 			print('You choose not to store running log. Only store model to {}'.format(self.log_file))
 		else:
-			print('Saving log and model to: {}'.format(self.model_name))
-		if not os.path.isdir(dir_name):
-			os.makedirs(dir_name, exist_ok=True)
+			print('Saving log to: {}'.format(self.model_name))
+			dir_name, _ = os.path.split(self.log_file)
+			if not os.path.isdir(dir_name):
+				os.makedirs(dir_name, exist_ok=True)
 		
 		self.elapsed_time = 0.0
 
@@ -69,11 +68,12 @@ class Config(object):
 def Rop(f, weights, v):
 	"""Implementation of R operator
 	Args:
-		f: any function of param
-		weights: Weights, list of tensors.
+		f: any function of weights
+		weights: list of tensors.
 		v: vector for right multiplication
 	Returns:
-		Jv: Jaccobian vector product, same size, same shape as vector v.
+		Jv: Jaccobian vector product, same size, length same as
+			the number of output of f
 	"""
 	if type(f) == list:
 		u = [tf.ones_like(ff) for ff in f]
@@ -508,6 +508,7 @@ class newton_cg(object):
 						bsize=self.config.bsize,
 						)
 				else:
+					# A separat test network part have been done...
 					val_loss, val_acc = predict(
 						self.sess, 
 						network=test_network,

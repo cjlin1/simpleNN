@@ -74,8 +74,8 @@ def parse_args():
 					  default=None, type=str)
 	parser.add_argument('--model', dest='model_name',
 					  help='model saving address',
-					  default='./saved_model/best-model.ckpt', type=str)
-	parser.add_argument('--log', dest='log_name',
+					  default='./saved_model/model.ckpt', type=str)
+	parser.add_argument('--log', dest='log_file',
 					  help='log saving directory',
 					  default='./running_log/logger.log', type=str)
 	parser.add_argument('--screen_log_only', dest='screen_log_only',
@@ -213,6 +213,7 @@ def gradient_trainer(config, sess, network, full_batch, val_batch, test_network)
 					bsize=config.bsize
 					)
 			else:
+				# A separat test network part have been done...
 				val_loss, val_acc = predict(
 					sess, 
 					network=test_network,
@@ -265,7 +266,7 @@ def main():
 	full_batch, num_cls = read_data(filename=args.train_set, dim=args.dim)
 	
 	if args.val_set is None:
-		print('No validation set are provided. Will output model at the last iteration.')
+		print('No validation set is provided. Will output model at the last iteration.')
 		val_batch = None
 	else:
 		val_batch, _ = read_data(filename=args.val_set, dim=args.dim)
@@ -275,8 +276,8 @@ def main():
 	config = Config(args, num_data, num_cls)
 	# tf.random.set_random_seed(0)
 	# np.random.seed(0)
-	
-	if args.net in ('CNN_3layers', 'CNN_6layers'):
+
+	if config.net in ('CNN_3layers', 'CNN_6layers'):
 		x, y, outputs = CNN(config.net, num_cls, config.dim)
 		test_network = None
 	else:

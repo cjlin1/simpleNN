@@ -110,7 +110,7 @@ def CNN(net, num_cls, dim):
 		x = tf.placeholder(tf.float32, shape=[None, _IMAGE_HEIGHT, _IMAGE_WIDTH, _IMAGE_CHANNELS], name='Input')
 		y = tf.placeholder(tf.float32, shape=[None, _NUM_CLASSES], name='Output')
 
-	net = CNN_3layers if net == 'CNN_3layers' else CNN_6layers
-	outputs = net(x, _NUM_CLASSES)
+	# call CNN structure according to string net
+	outputs = globals()[net](x, _NUM_CLASSES)
 
 	return (x, y, outputs)

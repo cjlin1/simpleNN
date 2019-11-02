@@ -23,8 +23,6 @@ def read_data(filename, dim):
 	elif not np.array_equal(label_enum, np.arange(1, num_cls+1)):
 		raise ValueError('Labels are not range from 1 to the number of class.\
 						Please verify them!')
-
-	labels = labels - 1
 	
 	_IMAGE_HEIGHT, _IMAGE_WIDTH, _IMAGE_CHANNELS = dim
 
@@ -42,6 +40,9 @@ def read_data(filename, dim):
 	images = images.reshape(images_shape)
 	# Tensorflow accepts data shape: B x H x W x C
 	images = np.transpose(images, (0, 2, 3, 1))
+
+	# change labels to 0, ..., num_cls-1
+	labels = labels - 1
 
 	# convert groundtruth to one-hot encoding
 	labels = np.eye(num_cls)[labels]

@@ -9,8 +9,8 @@ def parse_args():
 					  help='provide the directory of .mat file for testing',
 					  default='data/mnist-demo.t.mat', type=str)
 	parser.add_argument('--model', dest='net_name',
-					  help='provide file storing network parameters, i.e. ./dir/best-model.ckpt',
-					  default='./saved_model/best-model.ckpt', type=str)
+					  help='provide file storing network parameters, i.e. ./dir/model.ckpt',
+					  default='./saved_model/model.ckpt', type=str)
 	parser.add_argument('--bsize', dest='bsize',
 					  help='batch size',
 					  default=256, type=int)

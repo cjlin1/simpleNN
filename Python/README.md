@@ -3,7 +3,7 @@
 A Tensorflow implementation of SimpleNN with GPU support. 
 
 # Requirements
-Python dependecies:
+Python dependecies (Tensorflow 2.0 are not supported yet):
 ```
 python 3.5.2
 tensorflow 1.13.1
@@ -12,7 +12,7 @@ tensorflow 1.13.1
 # Train
 **We do not feed the whole subsampled data into GPU memory to evaluate sub-sampled Gauss-Newton matrix vector product.** Instead we divide the samples into segments of size **bsize** and accumulate results to avoid the out-of-memory issue.
 
- For the data format, currently we assume the same format as the **MATLAB** code. See details in the README file of the **MATLAB** directory. The **read_data** function in the **utilities.py** will read **MATLAB** file, perform data normalization and reshape the input data. Please make sure the input data is in **MATLAB** format, and each input instance is vectorized.
+ If a validation set is provided, the program gets the validation accuracy at each iteration and returns the best model. If a validation set is not provided, then the model obtained at the last iteration is returned. For the data format, currently we assume the same format as the **MATLAB** code. See details in the README file of the **MATLAB** directory. The **read_data** function in the **utilities.py** will read **MATLAB** file, perform data normalization and reshape the input data. Please make sure the input data is in **MATLAB** format, and each input instance is vectorized.
 
 input:
 
@@ -63,38 +63,39 @@ In this section, we show option/parameters that are solely for Tensorflow implem
 ```
 --net CNN_3layers
 ```
-3. **--train_set** & **--val_set**: provide the address of .mat file for training or validation.
+3. **--train_set** & **--val_set**: provide the address of .mat file for training or validation (optional). 
 ```
 --train_set data/mnist-demo.mat
 ```
-4. **--model**: save log and model to directory log_and_model
+4. **--model**: save model to directory
 ```
---model ./saved_model/best-model.ckpt
+--model ./saved_model/model.ckpt
 ```
 5. **--loss**: which loss function to use: MSELoss or CrossEntropy
 ```
 --loss: MSELoss
 ```
-6. **--bsize**: Split data into segements of size **bsize** so that each segment can fit into memroy, for evaluating Gv, stochastic gradient and global graident. If you encounter Out of Memory (OOM) during training, you may decrease the **--bsize** paramter to an appropriate value.
+6. **--bsize**: Split data into segements of size **bsize** so that each segment can fit into memroy for evaluating Gv, stochastic gradient and global graident. If you encounter Out of Memory (OOM) during training, you may decrease the **--bsize** paramter to an appropriate value.
 ```
 --bsize 1024;
 ```
-7. **--screen_log_only**: log printed on screen only; not stored to the model
-```
---screen_log_only
-```
-8. **--C**: regularization parameter. Regularization term = 1/(2C × num_data) × L2_norm(weight)
-```
---C math.inf
-```
-9. **--dim**: input dimension of data. Shape must be: height width num_channels
-```
---dim 28 28 1
-```
-10. **--log**: log saving directory
+7. **--log**: log saving directory
 ```
 --log ./running_log/logger.log
 ```
+8. **--screen_log_only**: log printed on screen only; not stored to the log file
+```
+--screen_log_only
+```
+9. **--C**: regularization parameter. Regularization term = 1/(2C × num_data) × L2_norm(weight)
+```
+--C 0.01
+```
+10. **--dim**: input dimension of data. Shape must be: height width num_channels
+```
+--dim 28 28 1
+```
+
 
 ### Newton Method
 
@@ -119,14 +120,14 @@ In this section, we show option/parameters that are solely for Tensorflow implem
 ```
 CUDA_VISIBLE_DEVICES=0 python3 predict.py --net CNN_3layers --bsize 1024 \
 						--test_set ./data/mnist-demo.t.mat \
-						--model ./log_and_model/best-model.ckpt
+						--model ./log_and_model/model.ckpt
 ```
 
 ## Arguments
 You may need the following arguments to run the predict script:
-1. **--model**: address of the saved model from training, e.g. ./log_and_model/best-model.ckpt
+1. **--model**: address of the saved model from training
 ```
---model ./saved_model/best-model.ckpt
+--model ./saved_model/model.ckpt
 ```
 2. **--net**: network configuration used in training (two examples are CNN_3layers and CNN_6layers)
 ```
