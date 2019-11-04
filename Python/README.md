@@ -3,7 +3,7 @@
 A Tensorflow implementation of SimpleNN with GPU support. 
 
 # Requirements
-Python dependecies (Tensorflow 2.0 are not supported yet):
+Python dependecies (Tensorflow 2.0 is not supported yet):
 ```
 python 3.5.2
 tensorflow 1.13.1
