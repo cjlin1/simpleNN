@@ -17,7 +17,7 @@ def parse_args():
 					  default=math.inf, type=float)
 
 	# Newton method arguments
-	parser.add_argument('--s', dest='sample',
+	parser.add_argument('--GNsize', dest='sample',
 					  help='number of samples for estimating Gauss-Newton matrix',
 					  default=4096, type=int)
 	parser.add_argument('--iter_max', dest='iter_max',

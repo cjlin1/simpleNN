@@ -38,7 +38,7 @@ If you want to rewrite our model, the model needs to return a tuple **(x, y, out
 ## Examples
 To use Newton optimizer, please run:
 ```
-CUDA_VISIBLE_DEVICES=0 python3 train.py --optim NewtonCG --s 100 --C 0.01  \
+CUDA_VISIBLE_DEVICES=0 python3 train.py --optim NewtonCG --GNsize 100 --C 0.01  \
 						--net CNN_3layers --bsize 1024 \
 						--train_set ./data/mnist-demo.mat \
 						--val_set ./data/mnist-demo.t.mat --dim 28 28 1
@@ -99,9 +99,9 @@ In this section, we show option/parameters that are solely for Tensorflow implem
 
 ### Newton Method
 
-1. **--s**: number of samples used in the subsampled Gauss-Newton matrix.
+1. **--GNsize**: number of samples used in the subsampled Gauss-Newton matrix.
 ```
---s 5000
+--GNsize 5000
 ```
 
 ### SGD
@@ -143,7 +143,7 @@ You may need the following arguments to run the predict script:
 ```
 
 # Experiment Results
-In the following experiments, we run 100 Newton steps on Newton method and 500 epochs on SGD. We report our resutls on both 3-layer and 6-layer CNN with MSE loss function. We consider the same 3-layer CNN setting in [Wang et al.](https://www.csie.ntu.edu.tw/~cjlin/papers/cnn/newton-CNN.pdf). Other settings such as the initialization are also the same as [Wang et al.](https://www.csie.ntu.edu.tw/~cjlin/papers/cnn/newton-CNN.pdf) for both 3-layer and 6-layer CNN. Both netowrks are trained and tested on CIFAR10 dataset. To reproduce our results, you may download training set [cifar10.mat](https://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/multiclass/cifar10.mat) and test set[cifar10.t.mat](https://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/multiclass/cifar10.t.mat) to ./data directory.
+In the following experiments, we run 100 Newton steps on Newton method and 500 epochs on SGD. We report our resutls on both 3-layer and 6-layer CNN with MSE loss function. We consider the same 3-layer CNN setting in [Wang et al.](https://www.csie.ntu.edu.tw/~cjlin/papers/cnn/newton-CNN.pdf). Other settings such as the initialization are also the same as [Wang et al.](https://www.csie.ntu.edu.tw/~cjlin/papers/cnn/newton-CNN.pdf) for both 3-layer and 6-layer CNN. Both netowrks are trained and tested on CIFAR10 dataset. To reproduce our results, you may download training set [cifar10.mat](https://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/multiclass/cifar10.mat) and test set [cifar10.t.mat](https://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/multiclass/cifar10.t.mat) to ./data directory.
 
 ## Experiments on 3 layer CNN
 
