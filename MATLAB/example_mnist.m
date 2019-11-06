@@ -20,7 +20,7 @@ Z = (Z - tmp_min) ./ (tmp_max - tmp_min);
 mean_tr = mean(Z);
 Z = Z - mean_tr;
 
-model = cnn_train(y, Z, config_file, options, 111);
+model = cnn_train(y, Z, [], [], config_file, options, 111);
 
 %% Test
 % -----

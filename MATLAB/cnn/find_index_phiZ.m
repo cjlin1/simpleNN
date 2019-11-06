@@ -1,4 +1,4 @@
-function idx = find_index_phiZ(a,b,d,h,s)
+function idx = find_index_phiZ(a, b, d, h, s)
 
 first_channel_idx = ([0:h-1]*d+1)' + [0:h-1]*a*d;
 first_col_idx = first_channel_idx(:) + [0:d-1];

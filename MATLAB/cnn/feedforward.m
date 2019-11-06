@@ -1,13 +1,13 @@
 function net = feedforward(data, model, net)
 
-net.num_sampled_data = size(data, 2);
-net.Z{1} = reshape(data, model.ch_input(1), []);
+num_data = size(data, 2);
+net.Z{1} = reshape(gpu(ftype(data)), model.ch_input(1), []);
 
 L = model.L;
 LC = model.LC;
 
 for m = 1 : LC
-	net.phiZ{m} = padding_and_phiZ(model, net, m);
+	net.phiZ{m} = padding_and_phiZ(model, net, m, num_data);
 	net.Z{m+1} = max(model.weight{m}*net.phiZ{m} + model.bias{m}, 0);
 	if model.wd_subimage_pool(m) > 1
 		[net.Z{m+1}, net.idx_pool{m}] = maxpooling(model, net, m);

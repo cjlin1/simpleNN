@@ -1,38 +1,50 @@
 # Table of contents
 
 - [Requirements](#requirements)
-- [_**cnn_train**_ Usage](#_**cnn_train**_-usage)
-- [_**cnn_predict**_ Usage](#_**cnn_predict**_-usage)
+- [_**cnn_train**_ Usage](#cnn_train-usage)
+- [_**cnn_predict**_ Usage](#cnn_predict-usage)
 - [Configuration File](#configuration-file)
-- [Options](#options)
 - [Data Provided](#data-provided)
 - [A Full Example](#a-full-example)
 - [Additional Information](#additional-information)
 
 # Requirements
 
-_MATLAB R2016b_ or _Octave 4.0.3_. Other higher version may work as well.
+1. _MATLAB R2016b_ or _Octave 4.0.3_. Other higher version may work as well.
+
+2. The GPU version is currently only supported by _MATLAB_. Users need to 
+compile simpleNN/MATLAB/cnn/accum.cu first. We take _MATLAB_2017a version as an example.
+```
+cd simpleNN/MATLAB;
+make('/usr/local/cuda-8.0/bin');
+```
+For the cuda version suppored by _MATLAB_ release, please check the following website:
+https://www.mathworks.com/help/parallel-computing/gpu-support-by-release.html.
 
 # _**cnn_train**_ Usage
 
 ### Syntax
 
 ```matlab
-model = cnn_train(y, Z, config_file[, options]);
-model = cnn_train(y, Z, config_file[, options, seed]);
+model = cnn_train(y, Z, [], [], config_file[, options]);
+model = cnn_train(y, Z, [], [], config_file[, options, seed]);
+model = cnn_train(y, Z, y_v, Z_v, config_file[, options]);
+model = cnn_train(y, Z, y_v, Z_v, config_file[, options, seed]);
 ```
-
 ### Parameters
 
-- **y**: a label vector in the range {1, ..., K} for a K-class problem.
-- **Z**: a dense feature matrix with the shape of l by a\*b\*d , where l is #instances, a is image height, b is image width and d is #channels.
+- **y** and **y_v**: a label vector in the range {1, ..., K} for a K-class problem.
+- **Z** and **Z_v**: a dense feature matrix with the shape of l by a\*b\*d , where l is #instances, a is image height, b is image width and d is #channels.
+  - (**y**, **Z**) represents a training data and (**y_v**, **Z_v**) represents a validation data.
 - **config_file**: a string specifying the configuration file path. Please see the [Configuration File](#configuration-file) section.
-- **options**: a string. Please see the [Options](#options) section. If no option, use ''.
+- **options**: a string. Please see the [Options](#options) part in this section. If no option, use ''.
 - **seed**: a nonnegative integer for _MATLAB_, or an arbitrary vector of length less than or equal to 625 for _Octave_. It is used for the seed of random number generator, _**rng()**_ in _MATLAB_ and _**rand()**_, _**randi()**_ in _Octave_. If it is not given, a different result is produced after each run.
 
 ### Returns
 
-- **model**: a structure consists of trained model variables and parameters.
+- **model**: a structure consists of trained model variables and parameters. If (**y_v**, **Z_v**) is provided, 
+we select the output **model** with the best validation accuracy. 
+If not, we select the model of the last iteration to be the output **model**.  
 
 ### Example
 
@@ -48,20 +60,138 @@ model = cnn_train(y, Z, config_file[, options, seed]);
 
 3. Running with the specific options and no seed.
 ```matlab
->> model = cnn_train(y, Z, 'config/mnist-demo-layer3.config', '-C 0.01 -SR 0.01');
+>> model = cnn_train(y, Z, 'config/mnist-demo-layer3.config', '-C 0.01 -GNsize 100');
 ```
 
 4. Running with the specific options and a specific seed.
 ```matlab
->> model = cnn_train(y, Z, 'config/mnist-demo-layer3.config', '-C 0.01 -SR 0.01', 111);
+>> model = cnn_train(y, Z, 'config/mnist-demo-layer3.config', '-C 0.01 -GNsize 100', 111);
+```
+
+### Options
+
+In this section, we show all the available option/parameters. They are listed along with their default values. You can change the default value by giving the string **option** in _**cnn_train**_. The string format should be
+
+```
+'<option> <value>'
+```
+
+and separated by a space between each option-value pair inside the string. For example, we can set the **option** to be '-C 0.1 -GNsize 128' to change the regularization constant and the number of instances selected from the data for Newton method.
+
+1. **-s**: the optimization method used for training CNN. (1: Newton method (Default); 2: SG method.)
+```
+solver = 1;
+```
+
+2. **-C**: the regularization constant in the objective function.
+```
+C = 0.01;
+```
+
+3. **-bsize**: mini-batch size.
+```
+bsize = 128;
+```
+
+4. **-gpu_use**: the boolean GPU flag. (true: when we detect one or more GPU devices; false: otherwise.)
+```
+gpu_use = (gpuDeviceCount > 0);
+```
+
+5. **-ftype**: the precision of the floating point.
+```
+if gpu_use
+    float_type = 'single';
+else
+    float_type = 'double';
+end
+```
+
+#### Newton Method
+
+The following options are necessary parameters for Newton method.
+
+1. **-GNsize**: the number of instances selected from the data for the subsampled Gauss-Newton matrix.
+```
+GNsize = ceil(0.05*total_number_instances);
+```
+
+2. **-iter_max**: the maximal number of Newton iterations.
+```
+iter_max = 100;
+```
+
+3. **-xi**: the tolerance in the relative stopping condition for the conjugate gradient (CG) method.
+```
+xi = 0.1;
+```
+
+4. **-CGmax**: the maximal number of CG iterations.
+```
+CGmax = 250;
+```
+
+5. **-lambda**: the initial lambda for the Levenberg-Marquardt (LM) method.
+```
+lambda = 1;
+```
+
+6. **-drop**/**-boost**: the drop and boost constants for the LM method.
+```
+drop = 2/3;
+boost = 3/2;
+```
+
+7. **-eta**: the parameter for the line search stopping condition.
+```
+eta = 0.0001;
+```
+
+8. **-Jacobian**: the flag of storing the Jacobian matrix.
+```
+if gpu_use
+    param.Jacobian = false;
+else
+    param.Jacobian = true;
+end
+```
+
+#### Stochastic Gradient (SG) Method
+
+The following options are necessary parameters for SG method.
+
+1. **-epoch_max**: the maximal number of SG epochs.
+```
+epoch_max = 500;
+```
+
+2. **-lr**: learning rate.
+```
+lr = 0.01
+```
+
+3. **-decay**: learning rate decay over each mini-batch update.
+```
+decay = 0
+```
+
+4. **-momentum**: weight of information from past sub-gradients.
+```
+momentum = 0
 ```
 
 # _**cnn_predict**_ Usage
 
 ### Syntax
 
+1. Running with the default options.
 ```matlab
-[predict, acc] = cnn_predict(y, Z, model)
+>> [predict, acc] = cnn_predict(y, Z, model)
+```
+
+2. Running with the specific options.
+```matlab
+>> [predict, acc] = cnn_predict(y, Z, model, '-bsize 64')
 ```
 
 ### Parameters
@@ -69,6 +199,7 @@ model = cnn_train(y, Z, config_file[, options, seed]);
 - **y**: a label vector in the range {1, ..., K} for a K-class problem.
 - **Z**: a dense feature matrix with the shape of l by a\*b\*d, where l is #instances, a is image height, b is image width and d is #channels.
 - **model**: a structure consists of trained model variables and parameters.
+- **options**: a string. Please see the [Options](#options-1) part in this section. If no option, use ''.
 
 ### Returns
 
@@ -79,6 +210,15 @@ model = cnn_train(y, Z, config_file[, options, seed]);
 
 ```matlab
 >> [predict, acc] = cnn_predict(y, Z, model);
+```
+### Options
+
+In this subsection, we show all the available options/parameters. They are listed along with their default values. You can change the default value by giving the string **option** in _**cnn_predict**_ and the string format is the same as 
+the option string format for _**cnn_train**_.
+
+1. **-bsize**: mini-batch size.
+```
+bsize = 128;
 ```
 
 # Configuration File
@@ -117,100 +257,6 @@ wd_filter = [5,3,3];
 strides = [1,1,1];
 wd_subimage_pool = [2,2,2];
 full_neurons = [10];
-```
-
-# Options
-
-In this section, we show all the available option/parameters. They are listed along with their default values. You can change the default value by giving the string **option** in _**cnn_train**_. The string format should be
-
-```
-'<option> <value>'
-```
-
-and separated by a space between each option-value pair inside the string. For example, we can set the **option** to be '-C 0.1 -SR 0.1' to change the regularization constant and the sampling rate for Newton method.
-
-1. **-s**: the optimization method used for training CNN. (1: Newton method (Default); 2: SG method.)
-```
-solver = 1;
-```
-
-### Newton Method
-
-The following options are necessary parameters for Newton method.
-
-1. **-SR**: the sampling rate of the subsampled Gauss-Newton matrix.
-```
-SR = 0.05;
-```
-
-2. **-iter_max**: the maximal number of Newton iterations.
-```
-iter_max = 100;
-```
-
-3. **-C**: the regularization constant in the objective function.
-```
-C = 0.01;
-```
-
-4. **-xi**: the tolerance in the relative stopping condition for the conjugate gradient (CG) method.
-```
-xi = 0.1;
-```
-
-5. **-CGmax**: the maximal number of CG iterations.
-```
-CGmax = 250;
-```
-
-6. **-lambda**: the initial lambda for the Levenberg-Marquardt (LM) method.
-```
-lambda = 1;
-```
-
-7. **-drop**/**-boost**: the drop and boost constants for the LM method.
-```
-drop = 2/3;
-boost = 3/2;
-```
-
-8. **-eta**: the parameter for the line search stopping condition.
-```
-eta = 0.0001;
-```
-
-### Stochastic Gradient (SG) Method
-
-The following options are necessary parameters for SG method.
-
-1. **-epoch_max**: the maximal number of SG epochs.
-```
-epoch_max = 500;
-```
-
-2. **-C**: the regularization constant in the objective function.
-```
-C = 0.01;
-```
-
-3. **-lr**: learning rate.
-```
-lr = 0.01
-```
-
-4. **-decay**: learning rate decay over each mini-batch update.
-```
-decay = 0
-```
-
-5. **-bsize**: mini-batch size.
-```
-bsize = 128
-```
-
-6. **-momentum**: weight of information from past sub-gradients.
-```
-momentum = 0
 ```
 
 # Data Provided

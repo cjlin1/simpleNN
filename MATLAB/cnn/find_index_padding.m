@@ -1,4 +1,4 @@
-function [idx_pad] = find_index_padding(model,m)
+function [idx_pad] = find_index_padding(model, m)
 
 a = model.ht_input(m);
 b = model.wd_input(m);

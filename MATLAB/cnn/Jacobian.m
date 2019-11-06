@@ -1,35 +1,23 @@
-function net = Jacobian(model, net)
+function net = Jacobian(data, param, model, net)
 
 L = model.L;
-LC = model.LC;
-nL = model.nL;
-num_data = net.num_sampled_data;
+num_data = size(data, 2);
 
-% Compute dzdz
-net.dzdS{L} = repmat(eye(nL, nL), 1, num_data);
+bsize = param.bsize;
+num_batches = ceil(num_data/bsize);
+net.dzdS = cell(L*num_batches, 1);
 
-for m = L : -1 : LC+1
-	% Compute dzdZ
-	net.dzdS{m-1} = (model.weight{m}' * net.dzdS{m}).*reshape(repmat(net.Z{m} > 0,nL,1),[],nL*num_data);
-end
-% Compute dzdS or dzdZ_pool in (LC+1)th layer
-net.dzdS{m-1} = reshape(net.dzdS{m-1}, [], nL, num_data);
+for i = 1 : num_batches
+	range = (i-1)*bsize + 1 : min(num_data, i*bsize);
 
-for m = LC : -1 : 1
-	if model.wd_subimage_pool(m) > 1
-		net.dzdS{m} = vTP(model, net, m, net.dzdS{m}, 'pool_Jacobian');
-	end
+	% net.Z
+	net = feedforward(data(:, range), model, net);
 
-	net.dzdS{m} = reshape(net.dzdS{m}, model.ch_input(m+1), []);
+	% Compute dzdS
+	dzdS = cal_dzdS(data(:, range), model, net);
 
-	if m > 1
-		V = model.weight{m}' * net.dzdS{m};
-		net.dzdS{m-1} = reshape(vTP(model, net, m, V, 'phi_Jacobian'), model.ch_input(m), []);
-
-		% vTP_pad
-		a = model.ht_pad(m); b = model.wd_pad(m);
-		net.dzdS{m-1} = net.dzdS{m-1}(:, net.idx_pad{m} + a*b*[0:nL*num_data-1]);
-
-		net.dzdS{m-1} = reshape(net.dzdS{m-1}, [], nL, num_data) .* reshape(net.Z{m} > 0, [], 1, num_data);
+	% store dzdS
+	for m = 1 : L
+		net.dzdS{(i-1)*L + m} = dzdS{m};
 	end
 end

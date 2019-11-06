@@ -1,20 +1,13 @@
-function results = predict(prob, SR, model, net)
+function results = predict(prob, param, model, net)
 
 L = model.L;
-l = prob.l;
-l_batch = floor(SR * l);  % Regular batch size for each pipeline iteration
-results = zeros(model.nL, l);
+results = gpu(zeros(model.nL, prob.l));
 
-ed = 0;
-% Though subsampled is not required in function evaluation, we use pipeline
-% to save memory
-for i = 1 : ceil(1/SR)
-	% Form batch of instance sequentially
-	st = ed + 1;
-	ed = min(l, ed + l_batch);
-	batch_idx = [st:ed];
-
-	net = feedforward(prob.data(:, batch_idx), model, net);
-
-	results(:, batch_idx) = net.Z{L+1};
+bsize = param.bsize;
+for i = 1 : ceil(prob.l/bsize)
+	range = (i-1)*bsize + 1 : min(prob.l, i*bsize);
+	
+	net = feedforward(prob.data(:, range), model, net);
+	
+	results(:, range) = net.Z{L+1};
 end

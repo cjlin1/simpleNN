@@ -1,26 +1,29 @@
-function model = newton(prob, param, model, net)
+function best_model = newton(prob, prob_v, param, model, net)
 
-% Assign each instance to a batch
-batch_idx = assign_inst_idx(param.num_splits, prob.l);
+[net, f, grad] = fungrad_minibatch(prob, param, model, net, 'fungrad');
 
-subsampled_batch = 1;
-[net, f, grad] = fungrad_minibatch(prob, param, model, net, batch_idx, ...
-                                   subsampled_batch, 'fungrad');
+best_model = model;
+has_val_data = false;
+if ~isempty(fieldnames(prob_v))
+	has_val_data = true;
+	best_val_acc = 0.0;
+end
 
 for k = 1 : param.iter_max
-	net = Jacobian(model, net);
-	[x, CGiter, gs, sGs] = CG(param, model, net, grad);
+	if mod(k, ceil(prob.l)/param.GNsize) == 1
+		batch_idx = assign_inst_idx(param.GNsize, prob.l);
+	end
+	current_batch = mod(k-1, ceil(prob.l/param.GNsize)) + 1;
+	[x, CGiter, gs, sGs] = CG(prob.data(:, batch_idx{current_batch}), param, model, net, grad);
 
 	% line search
 	fold = f;
-	subsampled_batch = mod(k, param.num_splits)+1;
 	alpha = 1;
 	while 1
 		model = update_weights(model, alpha, x);
 		prered = alpha*gs + (alpha^2)*sGs;
 
-		[~, f, ~] = fungrad_minibatch(prob, param, model, net, ...
-                                              batch_idx, subsampled_batch, 'funonly');
+		[~, f, ~] = fungrad_minibatch(prob, param, model, net, 'funonly');
 		actred = f - fold;
 		if (actred <= param.eta*alpha*gs)
 			break;
@@ -28,13 +31,25 @@ for k = 1 : param.iter_max
 		alpha = alpha * 0.5;
 	end
 	param = update_lambda(param, actred, prered);
-	[net, f, grad] = fungrad_minibatch(prob, param, model, net, ...
-                                           batch_idx, subsampled_batch, 'fungrad');
+	[net, f, grad] = fungrad_minibatch(prob, param, model, net, 'fungrad');
 
 	% gradient norm
 	gnorm = calc_gnorm(grad, model.L);
 
-	fprintf('%d-iter f: %g |g|: %g alpha: %g ratio: %g lambda: %g #CG: %d actred: %g prered: %g\n', k, f, gnorm, alpha, actred/prered, param.lambda, CGiter, actred, prered);
+	if has_val_data
+		% update best_model by val_acc
+		val_results = predict(prob_v, param, model, net);
+		[~, val_results] = max(val_results, [], 1);
+		val_acc = sum(val_results' == prob_v.y) / prob_v.l;
+		if val_acc > best_val_acc
+			best_model = model;
+			best_val_acc = val_acc;
+		end
+		fprintf('%d-iter f: %g |g|: %g alpha: %g ratio: %g lambda: %g #CG: %d actred: %g prered: %g val_acc: %g\n', k, f, gnorm, alpha, actred/prered, param.lambda, CGiter, actred, prered, val_acc);
+	else
+		best_model = model;
+		fprintf('%d-iter f: %g |g|: %g alpha: %g ratio: %g lambda: %g #CG: %d actred: %g prered: %g\n', k, f, gnorm, alpha, actred/prered, param.lambda, CGiter, actred, prered);
+	end
 end
 
 function param = update_lambda(param, actred, prered)
@@ -72,12 +87,14 @@ for m = 1 : L
 end
 gnorm = sqrt(gnorm);
 
+function batch_idx = assign_inst_idx(GNsize, l)
 
-function batch_idx = assign_inst_idx(num_splits, num_data)
-
-batch_idx = cell(num_splits, 1);
-perm_idx = randi(num_splits,num_data,1);
+num_splits = ceil(l/GNsize);
+% random selection instead of random split
+perm_idx = randperm(l);
+perm_idx = [perm_idx perm_idx(1:GNsize)];
+batch_idx = cell(num_splits,1);
 
 for i = 1 : num_splits
-    batch_idx{i} = find(perm_idx == i);
+	batch_idx{i} = perm_idx((i-1)*GNsize+1 : i*GNsize);
 end

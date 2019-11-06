@@ -1,10 +1,9 @@
-function model = adam(prob, param, model, net)
+function best_model = adam(prob, prob_v, param, model, net)
 
 beta1 = 0.9;
 beta2 = 0.999;
 alpha = 1e-3;
 eps = 1e-8;
-batch_size = param.bsize;
 var_ptr = model.var_ptr;
 ch_input = [model.ch_input;model.full_neurons];
 num_w = var_ptr(2:end) - var_ptr(1:end-1) - ch_input(2:end);
@@ -16,12 +15,20 @@ for m = 1 : model.L
 	V{m} = zeros(var_ptr(m+1)-var_ptr(m),1);
 end
 
-for k = 1 : param.iter_max
-	for j = 1 : ceil(prob.l/batch_size) 
-		batch_idx = randsample(prob.l,batch_size);
+best_model = model;
+has_val_data = false;
+if ~isempty(fieldnames(prob_v))
+    has_val_data = true;
+    best_val_acc = 0.0;
+end
+
+bsize = param.bsize;
+for k = 1 : param.epoch_max
+	for j = 1 : ceil(prob.l/bsize) 
+		batch_idx = randsample(prob.l, bsize);
 		[net, loss] = lossgrad_subset(prob, model, net, batch_idx, 'fungrad');
 		for m = 1 : model.L
-			gradW = [model.weight{m}(:);model.bias{m}]/param.C + [net.dlossdW{m}(:);net.dlossdb{m}]/batch_size;
+			gradW = [model.weight{m}(:);model.bias{m}]/param.C + [net.dlossdW{m}(:);net.dlossdb{m}]/bsize;
 			M{m} = beta1*M{m} + (1-beta1)*gradW;
 			V{m} = beta2*V{m} + (1-beta2)*(gradW.*gradW);
 			M_hat = M{m}/(1-beta1^k);
@@ -30,5 +37,19 @@ for k = 1 : param.iter_max
 			model.bias{m} = model.bias{m} - alpha*(M_hat(num_w(m)+1:end)./(sqrt(V_hat(num_w(m)+1:end))+eps));
 		end
 	end
-	fprintf('%d-epoch loss: %g\n', k, loss/batch_size);
+
+	if has_val_data
+        % update best_model by val_acc
+        val_results = predict(prob_v, param, model, net);
+        [~, val_results] = max(val_results, [], 1);
+        val_acc = sum(val_results' == prob_v.y) / prob_v.l;
+        if val_acc > best_val_acc
+            best_model = model;
+            best_val_acc = val_acc;
+        end
+        fprintf('%d-epoch loss/batch_size: %g val_acc: %g\n', k, loss/bsize, val_acc);
+    else
+        best_model = model;
+        fprintf('%d-epoch loss/batch_size: %g\n', k, loss/bsize);
+    end
 end
