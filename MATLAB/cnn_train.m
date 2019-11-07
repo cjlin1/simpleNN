@@ -163,7 +163,7 @@ for i = 1 : length(options)/2
 				error('we do not support this float type');
 			end
 		case '-gpu_use'
-			gpu_use = logical(value);
+			gpu_use = logical(value) & (exist('OCTAVE_VERSION', 'builtin') == 0);
 		otherwise
 			error('%s is not a supported option.', option);
 	end
