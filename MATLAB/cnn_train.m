@@ -27,7 +27,7 @@ net_config = read_config(config_file);
 prob = check_data(y, Z, net_config);
 % check if the vaildation data exists
 prob_v = struct;
-if ~isempty(y_v) & ~isempty(Z_v)
+if ~isempty(y_v) && ~isempty(Z_v)
 	prob_v = check_data(y_v, Z_v, net_config);
 end
 
@@ -163,7 +163,7 @@ for i = 1 : length(options)/2
 				error('we do not support this float type');
 			end
 		case '-gpu_use'
-			gpu_use = logical(value) & (exist('OCTAVE_VERSION', 'builtin') == 0);
+			gpu_use = logical(value) && (exist('OCTAVE_VERSION', 'builtin') == 0);
 		otherwise
 			error('%s is not a supported option.', option);
 	end
