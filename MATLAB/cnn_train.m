@@ -59,7 +59,11 @@ param.eta = 1e-4;
 
 % Check GPU device
 global gpu_use;
-gpu_use = (gpuDeviceCount > 0);
+if exist('OCTAVE_VERSION', 'builtin')
+	gpu_use = false;
+else
+	gpu_use = (gpuDeviceCount > 0);
+end
 
 % floating-point type and the flag of storing Jacobian
 global float_type;

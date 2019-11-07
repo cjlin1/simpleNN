@@ -5,7 +5,7 @@ n = var_ptr(end) - 1;
 GNsize = size(data, 2);
 s = zeros(n, 1);
 Gv = zeros(n, 1);
-g = zeros(n, 1);
+g = gpu(ftype(zeros(n, 1)));
 for m = 1 : model.L
 	var_range = var_ptr(m) : var_ptr(m+1) - 1;
 	g(var_range) = [grad.dfdW{m}(:); grad.dfdb{m}];
@@ -117,4 +117,3 @@ for i = 1 : ceil(GNsize/bsize)
 		u(var_range) = u(var_range) + u_m(:);
 	end
 end
-u = gather(u);

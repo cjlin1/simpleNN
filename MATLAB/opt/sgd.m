@@ -18,8 +18,8 @@ end
 bsize = param.bsize;
 for k = 1 : param.epoch_max
 	for j = 1 : ceil(prob.l/bsize) 
-		batch_idx = randsample(prob.l, bsize);
-		[net, loss] = lossgrad_subset(prob, model, net, batch_idx, 'fungrad');
+		batch_idx = randperm(prob.l);
+		[net, loss] = lossgrad_subset(prob, model, net, batch_idx(1:bsize), 'fungrad');
 		for m = 1 : model.L
 			Grad = [net.dlossdW{m} net.dlossdb{m}]/bsize;
 			Grad = Grad + [model.weight{m} model.bias{m}]/param.C;
