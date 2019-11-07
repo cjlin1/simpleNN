@@ -72,7 +72,7 @@ def parse_args():
 	parser.add_argument('--val_set', dest='val_set',
 					  help='provide the directory of .mat file for validation',
 					  default=None, type=str)
-	parser.add_argument('--model', dest='model_name',
+	parser.add_argument('--model', dest='model_file',
 					  help='model saving address',
 					  default='./saved_model/model.ckpt', type=str)
 	parser.add_argument('--log', dest='log_file',
@@ -226,7 +226,7 @@ def gradient_trainer(config, sess, network, full_batch, val_batch, test_network)
 		
 			if val_acc > best_acc:
 				best_acc = val_acc
-				checkpoint_path = config.model_name 
+				checkpoint_path = config.model_file 
 				save_path = saver.save(sess, checkpoint_path)
 				print('Saved best model in {}'.format(save_path))
 
@@ -235,7 +235,7 @@ def gradient_trainer(config, sess, network, full_batch, val_batch, test_network)
 			print(output_str, file=log_file)
 
 	if val_batch is None:
-		checkpoint_path = config.model_name 
+		checkpoint_path = config.model_file 
 		save_path = saver.save(sess, checkpoint_path)
 		print('Model at the last iteration saved in {}\r\n'.format(save_path))
 		output_str = 'total running time {:.3f}s'.format(total_running_time)
