@@ -12,7 +12,7 @@ tensorflow 1.13.1
 # Train
 **We do not feed the whole subsampled data into GPU memory to evaluate sub-sampled Gauss-Newton matrix vector product.** Instead we divide the samples into segments of size **bsize** and accumulate results to avoid the out-of-memory issue. For the core operation of Gauss-Newton matrix-vector products, we use Tensorflow's vector-Jacobian products; see implementation details in this [document](https://www.csie.ntu.edu.tw/~cjlin/papers/cnn/Calculating_Gauss_Newton_Matrix_Vector_product_by_Vector_Jacobian_Products.pdf).
 
- If a validation set is provided, the program gets the validation accuracy at each iteration and returns the best model. If a validation set is not provided, then the model obtained at the last iteration is returned. For the data format, currently we assume the same format as the **MATLAB** code. See details in the README file of the **MATLAB** directory. The **read_data** function in the **utilities.py** will read **MATLAB** file, perform data normalization and reshape the input data. Please make sure the input data is in **MATLAB** format, and each input instance is vectorized.
+If a validation set is provided, the program gets the validation accuracy at each iteration and returns the best model. If a validation set is not provided, then the model obtained at the last iteration is returned. For the data format, currently we assume the same format as the **MATLAB** code. See details in the README file of the **MATLAB** directory. The **read_data** function in the **utilities.py** will read **MATLAB** file, perform data normalization and reshape the input data. Please make sure the input data is in **MATLAB** format, and each input instance is vectorized.
 
 input:
 
@@ -67,7 +67,7 @@ In this section, we show option/parameters that are solely for Tensorflow implem
 ```
 --train_set data/mnist-demo.mat
 ```
-4. **--model**: save model to directory
+4. **--model**: save model to a file
 ```
 --model ./saved_model/model.ckpt
 ```
@@ -79,7 +79,7 @@ In this section, we show option/parameters that are solely for Tensorflow implem
 ```
 --bsize 1024;
 ```
-7. **--log**: log saving directory
+7. **--log**: saving log to a file
 ```
 --log ./running_log/logger.log
 ```
@@ -87,7 +87,7 @@ In this section, we show option/parameters that are solely for Tensorflow implem
 ```
 --screen_log_only
 ```
-9. **--C**: regularization parameter. Regularization term = 1/(2C × num_data) × L2_norm(weight)
+9. **--C**: regularization parameter. Regularization term = 1/(2C × num_data) × L2_norm(weight)^2
 ```
 --C 0.01
 ```

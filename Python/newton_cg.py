@@ -51,16 +51,20 @@ class Config(object):
 			raise ValueError('Only support SGD, Adam & NewtonCG optimizer!')
 		
 		self.log_file = args.log_file
-		self.model_name = args.model_name
+		self.model_file = args.model_file
 		self.screen_log_only = args.screen_log_only
 
 		if self.screen_log_only:
 			print('You choose not to store running log. Only store model to {}'.format(self.log_file))
 		else:
-			print('Saving log to: {}'.format(self.model_name))
+			print('Saving log to: {}'.format(self.log_file))
 			dir_name, _ = os.path.split(self.log_file)
 			if not os.path.isdir(dir_name):
 				os.makedirs(dir_name, exist_ok=True)
+
+		dir_name, _ = os.path.split(self.model_file)
+		if not os.path.isdir(dir_name):
+			os.makedirs(dir_name, exist_ok=True)
 		
 		self.elapsed_time = 0.0
 
@@ -72,7 +76,7 @@ def Rop(f, weights, v):
 		weights: list of tensors.
 		v: vector for right multiplication
 	Returns:
-		Jv: Jaccobian vector product, same size, length same as
+		Jv: Jaccobian vector product, length same as
 			the number of output of f
 	"""
 	if type(f) == list:
@@ -524,12 +528,12 @@ class newton_cg(object):
 
 				if val_acc > best_acc:
 					best_acc = val_acc
-					checkpoint_path = self.config.model_name
+					checkpoint_path = self.config.model_file
 					save_path = saver.save(self.sess, checkpoint_path)
 					print('Best model saved in {}\r\n'.format(save_path))
 
 		if val_batch is None:
-			checkpoint_path = self.config.model_name
+			checkpoint_path = self.config.model_file
 			save_path = saver.save(self.sess, checkpoint_path)
 			print('Model at the last iteration saved in {}\r\n'.format(save_path))
 			output_str = 'total running time {:.3f}s'.format(total_running_time)
