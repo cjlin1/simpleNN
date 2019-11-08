@@ -8,7 +8,7 @@ def parse_args():
 	parser.add_argument('--test_set', dest='test_set',
 					  help='provide the directory of .mat file for testing',
 					  default='data/mnist-demo.t.mat', type=str)
-	parser.add_argument('--model', dest='net_name',
+	parser.add_argument('--model', dest='model_file',
 					  help='provide file storing network parameters, i.e. ./dir/model.ckpt',
 					  default='./saved_model/model.ckpt', type=str)
 	parser.add_argument('--bsize', dest='bsize',
@@ -46,7 +46,7 @@ if __name__ == '__main__':
 
 	with tf.Session(config=sess_config) as sess:
 		saver = tf.train.Saver(tf.trainable_variables())
-		saver.restore(sess, args.net_name)
+		saver.restore(sess, args.model_file)
 		avg_loss, avg_acc = predict(sess, network, test_batch, args.bsize)
 	
 	print('In test phase, average loss: {:.3f} | average accuracy: {:.3f}%'.\
