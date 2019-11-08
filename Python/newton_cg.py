@@ -10,7 +10,6 @@ class Config(object):
 	def __init__(self, args, num_data, num_cls):
 		super(Config, self).__init__()
 		self.args = args
-		# self.sample = args.sample
 		self.iter_max = args.iter_max
 		
 		# Different notations of regularization term:
@@ -25,7 +24,7 @@ class Config(object):
 		self.dim = args.dim
 
 		self.num_data = num_data
-		self.sample = min(args.sample, self.num_data)
+		self.GNsize = min(args.GNsize, self.num_data)
 		self.C = args.C * self.num_data
 		self.net = args.net
 
@@ -148,7 +147,7 @@ class newton_cg(object):
 		self._lambda = tf.placeholder(FLOAT, shape=[])
 
 		self.num_grad_segment = math.ceil(self.config.num_data/self.config.bsize)
-		self.num_Gv_segment = math.ceil(self.config.sample/self.config.bsize)
+		self.num_Gv_segment = math.ceil(self.config.GNsize/self.config.bsize)
 
 		cal_loss, cal_lossgrad, cal_lossGv, \
 		add_reg_avg_loss, add_reg_avg_grad, add_reg_avg_Gv, \
@@ -246,7 +245,7 @@ class newton_cg(object):
 
 		def add_reg_avg_lossGv():
 			return tf.assign(self.Gv, (self._lambda + 1/self.config.C)*self.v
-			 + self.Gv/self.config.sample) 
+			 + self.Gv/self.config.GNsize) 
 
 		# zero out loss, grad and Gv 
 		def zero_loss():
@@ -283,7 +282,7 @@ class newton_cg(object):
 			assert num_segment == self.num_grad_segment
 			self.sess.run([self.zero_loss, self.zero_grad])
 		else:
-			assert num_data == self.config.sample
+			assert num_data == self.config.GNsize
 			assert num_segment == self.num_Gv_segment
 			self.sess.run(self.zero_Gv)
 
@@ -424,7 +423,7 @@ class newton_cg(object):
 
 			idx = np.arange(0, full_labels.shape[0])
 			np.random.shuffle(idx)
-			idx = idx[:self.config.sample]
+			idx = idx[:self.config.GNsize]
 			mini_inputs = full_inputs[idx]
 			mini_labels = full_labels[idx]
 
