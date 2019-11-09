@@ -7,17 +7,15 @@
 #else
 __device__ double atomicAdd(double* address, double val)
 {
-	unsigned long long int* address_as_ull =
-							  (unsigned long long int*)address;
+	unsigned long long int* address_as_ull = (unsigned long long int*)address;
 	unsigned long long int old = *address_as_ull, assumed;
 
 	do {
 		assumed = old;
 		old = atomicCAS(address_as_ull, assumed,
-						__double_as_longlong(val +
-							__longlong_as_double(assumed)));
+				__double_as_longlong(val + __longlong_as_double(assumed)));
 
-	// Note: uses integer comparison to avoid hang in case of NaN (since NaN != NaN)
+		// Note: uses integer comparison to avoid hang in case of NaN (since NaN != NaN)
 	} while (assumed != old);
 
 	return __longlong_as_double(old);
@@ -25,10 +23,12 @@ __device__ double atomicAdd(double* address, double val)
 #endif
 
 template<class Tval>
-void __global__ mex_accum(const double *idx, const Tval *val, unsigned long long int const N, Tval *vTP) {
+void __global__ mex_accum(const double *idx, const Tval *val, unsigned long long int const N, Tval *vTP)
+{
 	unsigned long long int i = blockDim.x * blockIdx.x + threadIdx.x;
 
-	while (i < N){
+	while (i < N)
+	{
 		unsigned long long int td_idx = idx[i] - 1;
 		if(val[i] != 0.0)
 			atomicAdd(&vTP[td_idx], val[i]);
@@ -36,7 +36,8 @@ void __global__ mex_accum(const double *idx, const Tval *val, unsigned long long
 	}
 }
 
-void mexFunction( int nlhs, mxArray *plhs[], int nrhs, mxArray const *prhs[]) {
+void mexFunction(int nlhs, mxArray *plhs[], int nrhs, mxArray const *prhs[])
+{
 
 	const mxGPUArray *idx, *val;
 	mxGPUArray *vTP;
@@ -57,7 +58,8 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, mxArray const *prhs[]) {
 
 	const double *d_idx;
 	d_idx = (const double*) (mxGPUGetDataReadOnly(idx));
-	switch (mxGPUGetClassID(val)) {
+	switch (mxGPUGetClassID(val))
+	{
 		case mxDOUBLE_CLASS:
 			const double *d_val;
 			double *d_vTP;
