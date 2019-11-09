@@ -120,7 +120,7 @@ In this section, we show option/parameters that are solely for Tensorflow implem
 ```
 CUDA_VISIBLE_DEVICES=0 python3 predict.py --net CNN_3layers --bsize 1024 \
 						--test_set ./data/mnist-demo.t.mat \
-						--model ./log_and_model/model.ckpt
+						--model ./saved_model/model.ckpt --dim 28 28 1
 ```
 
 ## Arguments
