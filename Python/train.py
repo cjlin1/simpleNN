@@ -6,8 +6,8 @@ import math
 import argparse
 
 from net.net import CNN
-from newton_cg import newton_cg, Config
-from utilities import read_data, predict
+from newton_cg import newton_cg
+from utilities import read_data, predict, ConfigClass
 
 def parse_args():
 	parser = argparse.ArgumentParser(description='Newton method on DNN')
@@ -273,7 +273,7 @@ def main():
 
 	num_data = full_batch[0].shape[0]
 	
-	config = Config(args, num_data, num_cls)
+	config = ConfigClass(args, num_data, num_cls)
 	# tf.random.set_random_seed(0)
 	# np.random.seed(0)
 

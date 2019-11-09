@@ -1,7 +1,71 @@
 import numpy as np
 import math
 import scipy.io as sio
+import os
+import math
 import pdb
+
+class ConfigClass(object):
+	def __init__(self, args, num_data, num_cls):
+		super(ConfigClass, self).__init__()
+		self.args = args
+		# self.sample = args.sample
+		self.iter_max = args.iter_max
+		
+		# Different notations of regularization term:
+		# In SGD, weight decay:
+		# 	weight_decay <- lr/(C*num_of_training_samples)
+		# In Newton method:
+		# 	C <- C * num_of_training_samples
+
+		self.train_set = args.train_set
+		self.val_set = args.val_set
+		self.num_cls = num_cls
+		self.dim = args.dim
+
+		self.num_data = num_data
+		self.sample = min(args.sample, self.num_data)
+		self.C = args.C * self.num_data
+		self.net = args.net
+
+		self.xi = 0.1
+		self.CGmax = args.CGmax
+		self._lambda = args._lambda
+		self.drop = args.drop
+		self.boost = args.boost
+		self.eta = args.eta
+		self.lr = args.lr
+		self.lr_decay = args.lr_decay
+
+		self.bsize = args.bsize
+		if args.momentum < 0:
+			raise ValueError('Momentum needs to be larger than 0!')
+		self.momentum = args.momentum
+
+		self.loss = args.loss
+		if self.loss not in ('MSELoss', 'CrossEntropy'):
+			raise ValueError('Unrecognized loss type!')
+		self.optim = args.optim
+		if self.optim not in ('SGD', 'NewtonCG', 'Adam'):
+			raise ValueError('Only support SGD, Adam & NewtonCG optimizer!')
+		
+		self.log_file = args.log_file
+		self.model_file = args.model_file
+		self.screen_log_only = args.screen_log_only
+
+		if self.screen_log_only:
+			print('You choose not to store running log. Only store model to {}'.format(self.log_file))
+		else:
+			print('Saving log to: {}'.format(self.log_file))
+			dir_name, _ = os.path.split(self.log_file)
+			if not os.path.isdir(dir_name):
+				os.makedirs(dir_name, exist_ok=True)
+
+		dir_name, _ = os.path.split(self.model_file)
+		if not os.path.isdir(dir_name):
+			os.makedirs(dir_name, exist_ok=True)
+		
+		self.elapsed_time = 0.0
 
 def read_data(filename, dim):
 

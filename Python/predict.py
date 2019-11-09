@@ -2,6 +2,7 @@ import tensorflow as tf
 from utilities import predict, read_data
 from net.net import CNN
 import argparse
+import pdb
 
 def parse_args():
 	parser = argparse.ArgumentParser(description='prediction')
@@ -22,31 +23,35 @@ def parse_args():
 					  default='MSELoss', type=str)
 	parser.add_argument('--dim', dest='dim', nargs='+', help='input dimension of data,'+\
 						'shape must be:  height width num_channels',
-					  default=[32, 32, 3], type=int)
+					  default=[28, 28, 1], type=int)
 	args = parser.parse_args()
 	return args
 
 if __name__ == '__main__':
 	args = parse_args()
 	test_batch, num_cls = read_data(args.test_set, dim=args.dim)
-	if args.net in ('CNN_3layers', 'CNN_6layers'):
-		x, y, outputs = CNN(args.net, num_cls, args.dim)
-		test_network = None
-	else:
+	if args.net not in ('CNN_3layers', 'CNN_6layers'):
 		raise ValueError('Unrecognized training model')
-	
-	if args.loss == 'MSELoss':
-		loss = tf.reduce_sum(tf.pow(outputs-y, 2))
-	else:
-		loss = tf.reduce_sum(tf.nn.softmax_cross_entropy_with_logits_v2(logits=outputs, labels=y))
-	
-	network = (x, y, loss, outputs)
+
 	sess_config = tf.ConfigProto()
 	sess_config.gpu_options.allow_growth = True
 
 	with tf.Session(config=sess_config) as sess:
-		saver = tf.train.Saver(tf.trainable_variables())
-		saver.restore(sess, args.net_name)
+		graph_address = args.net_name + '.meta'
+		imported_graph = tf.train.import_meta_graph(graph_address)
+		imported_graph.restore(sess, args.net_name)
+
+		x = tf.get_default_graph().get_tensor_by_name('main_params/input_of_net:0')
+		y = tf.get_default_graph().get_tensor_by_name('main_params/labels:0')
+		outputs = tf.get_default_graph().get_tensor_by_name('output_of_net:0')
+		
+		if args.loss == 'MSELoss':
+			loss = tf.reduce_sum(tf.pow(outputs-y, 2))
+		else:
+			loss = tf.reduce_sum(tf.nn.softmax_cross_entropy_with_logits_v2(logits=outputs, labels=y))
+		
+		network = (x, y, loss, outputs)
+
 		avg_loss, avg_acc = predict(sess, network, test_batch, args.bsize)
 	
 	print('In test phase, average loss: {:.3f} | average accuracy: {:.3f}%'.\

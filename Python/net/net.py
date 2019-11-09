@@ -107,10 +107,11 @@ def CNN(net, num_cls, dim):
 	_IMAGE_HEIGHT, _IMAGE_WIDTH, _IMAGE_CHANNELS = dim
 
 	with tf.name_scope('main_params'):
-		x = tf.placeholder(tf.float32, shape=[None, _IMAGE_HEIGHT, _IMAGE_WIDTH, _IMAGE_CHANNELS], name='Input')
-		y = tf.placeholder(tf.float32, shape=[None, _NUM_CLASSES], name='Output')
+		x = tf.placeholder(tf.float32, shape=[None, _IMAGE_HEIGHT, _IMAGE_WIDTH, _IMAGE_CHANNELS], name='input_of_net')
+		y = tf.placeholder(tf.float32, shape=[None, _NUM_CLASSES], name='labels')
 
 	# call CNN structure according to string net
 	outputs = globals()[net](x, _NUM_CLASSES)
+	outputs = tf.identity(outputs, name='output_of_net')
 
 	return (x, y, outputs)
