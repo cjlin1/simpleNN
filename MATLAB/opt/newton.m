@@ -3,14 +3,12 @@ function best_model = newton(prob, prob_v, param, model, net)
 [net, f, grad] = fungrad_minibatch(prob, param, model, net, 'fungrad');
 
 best_model = model;
-has_val_data = false;
 if ~isempty(fieldnames(prob_v))
-	has_val_data = true;
 	best_val_acc = 0.0;
 end
 
 for k = 1 : param.iter_max
-	if mod(k, ceil(prob.l)/param.GNsize) == 1
+	if mod(k, ceil(prob.l /param.GNsize) ) == 1
 		batch_idx = assign_inst_idx(param.GNsize, prob.l);
 	end
 	current_batch = mod(k-1, ceil(prob.l/param.GNsize)) + 1;
@@ -36,11 +34,11 @@ for k = 1 : param.iter_max
 	% gradient norm
 	gnorm = calc_gnorm(grad, model.L);
 
-	if has_val_data
+	if ~isempty(fieldnames(prob_v))
 		% update best_model by val_acc
 		val_results = predict(prob_v, param, model, net);
 		[~, val_results] = max(val_results, [], 1);
-		val_acc = sum(val_results' == prob_v.y) / prob_v.l;
+		val_acc = cal_accuracy(val_results', prob_v.y);
 		if val_acc > best_val_acc
 			best_model = model;
 			best_val_acc = val_acc;
@@ -90,11 +88,13 @@ gnorm = sqrt(gnorm);
 function batch_idx = assign_inst_idx(GNsize, l)
 
 num_splits = ceil(l/GNsize);
-% random selection instead of random split
 perm_idx = randperm(l);
+% ensure each subsampled Hessian has the same size
 perm_idx = [perm_idx perm_idx(1:GNsize)];
 batch_idx = cell(num_splits,1);
 
 for i = 1 : num_splits
+	% random selection instead of random split
+	% batch_idx{i} = randperm(l, GNsize); 
 	batch_idx{i} = perm_idx((i-1)*GNsize+1 : i*GNsize);
 end

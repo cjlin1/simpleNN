@@ -16,9 +16,7 @@ for m = 1 : model.L
 end
 
 best_model = model;
-has_val_data = false;
 if ~isempty(fieldnames(prob_v))
-    has_val_data = true;
     best_val_acc = 0.0;
 end
 
@@ -38,11 +36,11 @@ for k = 1 : param.epoch_max
 		end
 	end
 
-	if has_val_data
+	if ~isempty(fieldnames(prob_v))
         % update best_model by val_acc
         val_results = predict(prob_v, param, model, net);
         [~, val_results] = max(val_results, [], 1);
-        val_acc = sum(val_results' == prob_v.y) / prob_v.l;
+		val_acc = cal_accuracy(val_results', prob_v.y);
         if val_acc > best_val_acc
             best_model = model;
             best_val_acc = val_acc;

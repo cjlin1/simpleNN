@@ -23,8 +23,7 @@ results = predict(prob, param, model, net);
 [~, results] = max(results, [], 1);
 results = results';
 
-% Calculate accuracy
-acc = sum(results == y) / length(y);
+acc = cal_accuracy(results, y);
 
 function param = parameter(options)
 
