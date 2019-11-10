@@ -361,7 +361,7 @@ class newton_cg(object):
 
 			idx = np.arange(0, full_labels.shape[0])
 			np.random.shuffle(idx)
-			idx = idx[:self.config.sample]
+			idx = idx[:self.config.GNsize]
 			mini_inputs = full_inputs[idx]
 			mini_labels = full_labels[idx]
 
