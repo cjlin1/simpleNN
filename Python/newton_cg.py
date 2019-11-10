@@ -183,7 +183,7 @@ class newton_cg(object):
 
 		def add_reg_avg_lossGv():
 			return tf.assign(self.Gv, (self._lambda + 1/self.config.C)*self.v
-			+ self.Gv/self.config.GNsize) 
+			 + self.Gv/self.config.GNsize) 
 
 		# zero out loss, grad and Gv 
 		def zero_loss():
