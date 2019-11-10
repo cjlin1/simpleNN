@@ -118,7 +118,7 @@ In this section, we show option/parameters that are solely for Tensorflow implem
 
 ## Example
 ```
-CUDA_VISIBLE_DEVICES=0 python3 predict.py --net CNN_3layers --bsize 1024 \
+CUDA_VISIBLE_DEVICES=0 python3 predict.py --bsize 1024 \
 						--test_set ./data/mnist-demo.t.mat \
 						--model ./saved_model/model.ckpt --dim 28 28 1
 ```
@@ -129,17 +129,13 @@ You may need the following arguments to run the predict script:
 ```
 --model ./saved_model/model.ckpt
 ```
-2. **--net**: network configuration used in training (two examples are CNN_3layers and CNN_6layers)
+2. **--dim**: input dimension of data. Shape must be: height width num_channels
 ```
---net CNN_3layers
+--dim 28 28 1
 ```
 3. **--test_set**: provide the directory of .mat file for test.
 ```
 --test_set data/mnist-demo.t.mat
-```
-4. **--dim**: input dimension of data. Shape must be: height width num_channels
-```
---dim 28 28 1
 ```
 
 # Experiment Results

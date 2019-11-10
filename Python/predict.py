@@ -15,9 +15,6 @@ def parse_args():
 	parser.add_argument('--bsize', dest='bsize',
 					  help='batch size',
 					  default=256, type=int)
-	parser.add_argument('--net', dest='net',
-					  help='classifier type',
-					  default='CNN_3layers', type=str)
 	parser.add_argument('--loss', dest='loss', 
 					  help='which loss function to use: MSELoss or CrossEntropy',
 					  default='MSELoss', type=str)
@@ -30,8 +27,6 @@ def parse_args():
 if __name__ == '__main__':
 	args = parse_args()
 	test_batch, num_cls = read_data(args.test_set, dim=args.dim)
-	if args.net not in ('CNN_3layers', 'CNN_6layers'):
-		raise ValueError('Unrecognized training model')
 
 	sess_config = tf.ConfigProto()
 	sess_config.gpu_options.allow_growth = True
