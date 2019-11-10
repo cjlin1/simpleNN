@@ -6,69 +6,6 @@ import os
 import math
 from utilities import predict
 
-class Config(object):
-	def __init__(self, args, num_data, num_cls):
-		super(Config, self).__init__()
-		self.args = args
-		# self.sample = args.sample
-		self.iter_max = args.iter_max
-		
-		# Different notations of regularization term:
-		# In SGD, weight decay:
-		# 	weight_decay <- lr/(C*num_of_training_samples)
-		# In Newton method:
-		# 	C <- C * num_of_training_samples
-
-		self.train_set = args.train_set
-		self.val_set = args.val_set
-		self.num_cls = num_cls
-		self.dim = args.dim
-
-		self.num_data = num_data
-		self.sample = min(args.sample, self.num_data)
-		self.C = args.C * self.num_data
-		self.net = args.net
-
-		self.xi = 0.1
-		self.CGmax = args.CGmax
-		self._lambda = args._lambda
-		self.drop = args.drop
-		self.boost = args.boost
-		self.eta = args.eta
-		self.lr = args.lr
-		self.lr_decay = args.lr_decay
-
-		self.bsize = args.bsize
-		if args.momentum < 0:
-			raise ValueError('Momentum needs to be larger than 0!')
-		self.momentum = args.momentum
-
-		self.loss = args.loss
-		if self.loss not in ('MSELoss', 'CrossEntropy'):
-			raise ValueError('Unrecognized loss type!')
-		self.optim = args.optim
-		if self.optim not in ('SGD', 'NewtonCG', 'Adam'):
-			raise ValueError('Only support SGD, Adam & NewtonCG optimizer!')
-		
-		self.log_file = args.log_file
-		self.model_file = args.model_file
-		self.screen_log_only = args.screen_log_only
-
-		if self.screen_log_only:
-			print('You choose not to store running log. Only store model to {}'.format(self.log_file))
-		else:
-			print('Saving log to: {}'.format(self.log_file))
-			dir_name, _ = os.path.split(self.log_file)
-			if not os.path.isdir(dir_name):
-				os.makedirs(dir_name, exist_ok=True)
-
-		dir_name, _ = os.path.split(self.model_file)
-		if not os.path.isdir(dir_name):
-			os.makedirs(dir_name, exist_ok=True)
-		
-		self.elapsed_time = 0.0
-
-
 def Rop(f, weights, v):
 	"""Implementation of R operator
 	Args:
@@ -148,7 +85,7 @@ class newton_cg(object):
 		self._lambda = tf.placeholder(FLOAT, shape=[])
 
 		self.num_grad_segment = math.ceil(self.config.num_data/self.config.bsize)
-		self.num_Gv_segment = math.ceil(self.config.sample/self.config.bsize)
+		self.num_Gv_segment = math.ceil(self.config.GNsize/self.config.bsize)
 
 		cal_loss, cal_lossgrad, cal_lossGv, \
 		add_reg_avg_loss, add_reg_avg_grad, add_reg_avg_Gv, \
@@ -246,7 +183,7 @@ class newton_cg(object):
 
 		def add_reg_avg_lossGv():
 			return tf.assign(self.Gv, (self._lambda + 1/self.config.C)*self.v
-			 + self.Gv/self.config.sample) 
+			+ self.Gv/self.config.GNsize) 
 
 		# zero out loss, grad and Gv 
 		def zero_loss():
@@ -283,7 +220,7 @@ class newton_cg(object):
 			assert num_segment == self.num_grad_segment
 			self.sess.run([self.zero_loss, self.zero_grad])
 		else:
-			assert num_data == self.config.sample
+			assert num_data == self.config.GNsize
 			assert num_segment == self.num_Gv_segment
 			self.sess.run(self.zero_Gv)
 

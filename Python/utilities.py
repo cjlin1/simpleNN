@@ -9,7 +9,6 @@ class ConfigClass(object):
 	def __init__(self, args, num_data, num_cls):
 		super(ConfigClass, self).__init__()
 		self.args = args
-		# self.sample = args.sample
 		self.iter_max = args.iter_max
 		
 		# Different notations of regularization term:
@@ -24,7 +23,7 @@ class ConfigClass(object):
 		self.dim = args.dim
 
 		self.num_data = num_data
-		self.sample = min(args.sample, self.num_data)
+		self.GNsize = min(args.GNsize, self.num_data)
 		self.C = args.C * self.num_data
 		self.net = args.net
 

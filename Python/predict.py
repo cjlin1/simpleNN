@@ -9,7 +9,7 @@ def parse_args():
 	parser.add_argument('--test_set', dest='test_set',
 					  help='provide the directory of .mat file for testing',
 					  default='data/mnist-demo.t.mat', type=str)
-	parser.add_argument('--model', dest='net_name',
+	parser.add_argument('--model', dest='model_file',
 					  help='provide file storing network parameters, i.e. ./dir/model.ckpt',
 					  default='./saved_model/model.ckpt', type=str)
 	parser.add_argument('--bsize', dest='bsize',
@@ -37,9 +37,9 @@ if __name__ == '__main__':
 	sess_config.gpu_options.allow_growth = True
 
 	with tf.Session(config=sess_config) as sess:
-		graph_address = args.net_name + '.meta'
+		graph_address = args.model_file + '.meta'
 		imported_graph = tf.train.import_meta_graph(graph_address)
-		imported_graph.restore(sess, args.net_name)
+		imported_graph.restore(sess, args.model_file)
 
 		x = tf.get_default_graph().get_tensor_by_name('main_params/input_of_net:0')
 		y = tf.get_default_graph().get_tensor_by_name('main_params/labels:0')
