@@ -7,12 +7,15 @@ if ~isempty(fieldnames(prob_v))
 	best_val_acc = 0.0;
 end
 
+total_CG = 0;
+
 for k = 1 : param.iter_max
 	if mod(k, ceil(prob.l/param.GNsize)) == 1
 		batch_idx = assign_inst_idx(param.GNsize, prob.l);
 	end
 	current_batch = mod(k-1, ceil(prob.l/param.GNsize)) + 1;
 	[x, CGiter, gs, sGs] = CG(prob.data(:, batch_idx{current_batch}), param, model, net, grad);
+	total_CG = total_CG + CGiter;
 
 	% line search
 	fold = f;
@@ -49,6 +52,8 @@ for k = 1 : param.iter_max
 		fprintf('%d-iter f: %g |g|: %g alpha: %g ratio: %g lambda: %g #CG: %d actred: %g prered: %g\n', k, f, gnorm, alpha, actred/prered, param.lambda, CGiter, actred, prered);
 	end
 end
+
+fprintf('total_#CG: %d\n', total_CG);
 
 function param = update_lambda(param, actred, prered)
 
