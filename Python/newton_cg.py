@@ -354,6 +354,7 @@ class newton_cg(object):
 
 		total_running_time = 0.0
 		self.config.elapsed_time = 0.0
+		total_CG = 0
 
 		saver = tf.train.Saver(var_list=self.param)
 		
@@ -433,6 +434,8 @@ class newton_cg(object):
 
 			self.config.elapsed_time = 0.0
 			
+			total_CG += CGiter
+
 			output_str = '{}-iter f: {:.3f} |g|: {:.5f} alpha: {:.3e} ratio: {:.3f} lambda: {:.5f} #CG: {} actred: {:.5f} prered: {:.5f} time: {:.3f}'.\
 							format(k, f, gnorm, alpha, actred/prered, self.config._lambda, CGiter, actred, prered, end-start)
 			print(output_str)
@@ -473,10 +476,10 @@ class newton_cg(object):
 			checkpoint_path = self.config.model_file
 			save_path = saver.save(self.sess, checkpoint_path)
 			print('Model at the last iteration saved in {}\r\n'.format(save_path))
-			output_str = 'total running time {:.3f}s'.format(total_running_time)
+			output_str = 'total_#CG {} | total running time {:.3f}s'.format(total_CG, total_running_time)
 		else:
-			output_str = 'Final acc: {:.3f}% | best acc {:.3f}% | total running time {:.3f}s'.\
-				format(val_acc*100, best_acc*100, total_running_time)
+			output_str = 'Final acc: {:.3f}% | best acc {:.3f}% | total_#CG {} | total running time {:.3f}s'.\
+				format(val_acc*100, best_acc*100, total_CG, total_running_time)
 		print(output_str)
 		if not self.config.screen_log_only:
 			print(output_str, file=log_file)
