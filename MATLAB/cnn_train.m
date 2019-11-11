@@ -5,8 +5,8 @@ if nargin == 5 || nargin == 6
 		options = '';
 	end
 	if exist('OCTAVE_VERSION', 'builtin')
-		rand('state');
-		randn('state');
+		rand('state', seed);
+		randn('state', seed);
 	else
 		rng('shuffle');
 	end
