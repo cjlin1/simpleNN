@@ -8,7 +8,7 @@ if ~isempty(fieldnames(prob_v))
 end
 
 for k = 1 : param.iter_max
-	if mod(k, ceil(prob.l /param.GNsize) ) == 1
+	if mod(k, ceil(prob.l/param.GNsize)) == 1
 		batch_idx = assign_inst_idx(param.GNsize, prob.l);
 	end
 	current_batch = mod(k-1, ceil(prob.l/param.GNsize)) + 1;
@@ -71,7 +71,7 @@ var_ptr = model.var_ptr;
 channel_and_neurons = [model.ch_input; model.full_neurons];
 for m = 1 : model.L
 	range = var_ptr(m):var_ptr(m+1)-1;
-	X = reshape(x(range), channel_and_neurons(m+1), []);   
+	X = reshape(x(range), channel_and_neurons(m+1), []);
 	model.weight{m} = model.weight{m} + (alpha - old_alpha) * X(:, 1:end-1);
  	model.bias{m} = model.bias{m} + (alpha - old_alpha) * X(:, end);
 end

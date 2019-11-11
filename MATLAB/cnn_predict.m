@@ -32,7 +32,7 @@ param.bsize = 128;
 
 % Read options given by users
 if ~isempty(options)
-    param = parse_options(param, options);
+	param = parse_options(param, options);
 end
 
 function param = parse_options(param, options)
@@ -40,16 +40,16 @@ function param = parse_options(param, options)
 options = strsplit(strtrim(options), ' ');
 
 if mod(length(options), 2) == 1
-    error('Each option is specified by its name and value.');
+	error('Each option is specified by its name and value.');
 end
 
 for i = 1 : length(options)/2
-    option = options{2*i-1};
-    value = str2num(options{2*i});
-    switch option
-        case '-bsize'
-            param.bsize = value;
+	option = options{2*i-1};
+	value = str2num(options{2*i});
+	switch option
+		case '-bsize'
+			param.bsize = value;
 		otherwise
-            error('%s is not a supported option.', option);
-    end
+			error('%s is not a supported option.', option);
+	end
 end

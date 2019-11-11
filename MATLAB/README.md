@@ -88,7 +88,8 @@ solver = 1;
 C = 0.01;
 ```
 
-3. **-bsize**: mini-batch size.
+3. **-bsize**: mini-batch size. For SG, the number of data per update. For Newton, it is the batch size in function and gradient evaluations, 
+and subsampled Gauss-Newton matrix-vector products.
 ```
 bsize = 128;
 ```

@@ -17,7 +17,7 @@ end
 
 best_model = model;
 if ~isempty(fieldnames(prob_v))
-    best_val_acc = 0.0;
+	best_val_acc = 0.0;
 end
 
 bsize = param.bsize;
@@ -37,17 +37,17 @@ for k = 1 : param.epoch_max
 	end
 
 	if ~isempty(fieldnames(prob_v))
-        % update best_model by val_acc
-        val_results = predict(prob_v, param, model, net);
-        [~, val_results] = max(val_results, [], 1);
+		% update best_model by val_acc
+		val_results = predict(prob_v, param, model, net);
+		[~, val_results] = max(val_results, [], 1);
 		val_acc = cal_accuracy(val_results', prob_v.y);
-        if val_acc > best_val_acc
-            best_model = model;
-            best_val_acc = val_acc;
-        end
-        fprintf('%d-epoch loss/batch_size: %g val_acc: %g\n', k, loss/bsize, val_acc);
-    else
-        best_model = model;
-        fprintf('%d-epoch loss/batch_size: %g\n', k, loss/bsize);
-    end
+		if val_acc > best_val_acc
+			best_model = model;
+			best_val_acc = val_acc;
+		end
+		fprintf('%d-epoch loss/batch_size: %g val_acc: %g\n', k, loss/bsize, val_acc);
+	else
+		best_model = model;
+		fprintf('%d-epoch loss/batch_size: %g\n', k, loss/bsize);
+	end
 end

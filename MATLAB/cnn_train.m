@@ -39,7 +39,7 @@ param = struct;
 
 param.solver = 1;
 param.C = 0.01;
-param.bsize = 128;
+param.bsize = [];
 
 % parameters for Newton methods
 
@@ -87,6 +87,12 @@ if ~isempty(options)
 	param = parse_options(param, options);
 end
 
+if isempty(param.bsize)
+	param.bsize = 128;
+	if ~gpu_use && (param.solver == 1)
+		param.bsize = 1024;
+	end
+end
 param.C = param.C*size(Z,1);
 
 function net_config = read_config(config_file)
