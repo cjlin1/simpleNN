@@ -1,6 +1,7 @@
 function best_model = newton(prob, prob_v, param, model, net)
 
 [net, f, grad] = fungrad_minibatch(prob, param, model, net, 'fungrad');
+fprintf('initial f: %g\n', f);
 
 best_model = model;
 if ~isempty(fieldnames(prob_v))

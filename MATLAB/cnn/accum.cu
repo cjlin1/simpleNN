@@ -29,9 +29,9 @@ void __global__ mex_accum(const double *idx, const Tval *val, unsigned long long
 
 	while (i < N)
 	{
-		unsigned long long int td_idx = idx[i] - 1;
+		unsigned long long int vTP_idx = idx[i] - 1;
 		if(val[i] != 0.0)
-			atomicAdd(&vTP[td_idx], val[i]);
+			atomicAdd(&vTP[vTP_idx], val[i]);
 		i += blockDim.x*gridDim.x;
 	}
 }
