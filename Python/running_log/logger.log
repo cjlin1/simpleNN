@@ -1,9 +1,0 @@
-Namespace(C=0.01, CGmax=250, GNsize=100, _lambda=1, boost=1.5, bsize=1024, dim=[28, 28, 1], drop=0.6666666666666666, epoch=500, eta=0.0001, iter_max=100, log_file='./running_log/logger.log', loss='MSELoss', lr=0.01, lr_decay=500, model_file='./saved_model/model.ckpt', momentum=0, net='CNN_3layers', optim='NewtonCG', screen_log_only=False, train_set='./data/mnist-demo.mat', val_set='./data/mnist-demo.t.mat', xi=0.1)
-0-iter f: 10.099 |g|: 13.17321 alpha: 1.000e+00 ratio: 0.994 lambda: 0.66667 #CG: 2 actred: -13.34350 prered: -13.42965 time: 2.296
-
- 0-iter val_acc: 11.600% val_loss 1.658
-
-1-iter f: 8.321 |g|: 13.39134 alpha: 1.000e+00 ratio: 0.353 lambda: 0.66667 #CG: 18 actred: -1.77791 prered: -5.04252 time: 3.643
-
- 1-iter val_acc: 43.000% val_loss 0.995
-
