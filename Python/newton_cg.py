@@ -349,7 +349,8 @@ class newton_cg(object):
 		
 		self.minibatch(full_batch, x, y, mode='fungrad')
 		f = self.sess.run(self.f)
-
+		print('initial f: {:.3f}'.format(f))
+		
 		best_acc = 0.0
 
 		total_running_time = 0.0

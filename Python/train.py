@@ -89,7 +89,9 @@ def parse_args():
 					  default='MSELoss', type=str)
 	parser.add_argument('--dim', dest='dim', nargs='+', help='input dimension of data,'+\
 						'shape must be:  height width num_channels',
-					  default=[32, 32, 3], type=int)	  
+					  default=[32, 32, 3], type=int)
+	parser.add_argument('--seed', dest='seed', help='a nonnegative integer for \
+						reproducibility', type=int)	  
 	args = parser.parse_args()
 	return args
 
@@ -257,7 +259,6 @@ def newton_trainer(config, sess, network, full_batch, val_batch, test_network):
 	print('-------------- initializing network by methods in He et al. (2015) --------------')
 	param = tf.trainable_variables()
 	sess.run(init_model(param))
-
 	newton_solver.newton(full_batch, val_batch, network, test_network)
 
 
@@ -274,8 +275,10 @@ def main():
 	num_data = full_batch[0].shape[0]
 	
 	config = ConfigClass(args, num_data, num_cls)
-	# tf.random.set_random_seed(0)
-	# np.random.seed(0)
+
+	if isinstance(config.seed, int):
+		tf.random.set_random_seed(config.seed)
+		np.random.seed(config.seed)
 
 	if config.net in ('CNN_3layers', 'CNN_6layers'):
 		x, y, outputs = CNN(config.net, num_cls, config.dim)

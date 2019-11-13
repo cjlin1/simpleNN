@@ -17,6 +17,17 @@ class ConfigClass(object):
 		# In Newton method:
 		# 	C <- C * num_of_training_samples
 
+		self.seed = args.seed
+
+		if self.seed is None:
+			print('You choose not to specify a random seed.'+\
+				'A different result is produced after each run.')
+		elif isinstance(self.seed, int) and self.seed >= 0:
+			print('You specify random seed {}.'.format(self.seed))
+		else:
+			raise ValueError('Only accept None type or nonnegative integers for'+\
+					' random seed argument!')
+
 		self.train_set = args.train_set
 		self.val_set = args.val_set
 		self.num_cls = num_cls
