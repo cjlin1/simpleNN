@@ -95,6 +95,10 @@ In this section, we show option/parameters that are solely for Tensorflow implem
 ```
 --dim 28 28 1
 ```
+11. **--seed**: specify random seed to make results deterministic. If no random seeds are given, a different result is produced after each run.
+```
+--seed 0
+```
 
 
 ### Newton Method
