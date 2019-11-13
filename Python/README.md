@@ -21,7 +21,7 @@ input:
 
 return:
 - **data**: (NUM_OF_DATA, HEIGHT, WIDTH, CHANNEL)
-- **labels**: (NUM_OF_DATA,)
+- **labels**: (NUM_OF_DATA, NUM_OF_CLASSES)
 
 
 <!-- For your own dataset, you may want to rewrite the **read_data** function in the **utilities.py** file which returns tuple **(data, labels)** in numpy format. 

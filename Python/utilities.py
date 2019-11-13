@@ -121,7 +121,7 @@ def read_data(filename, dim):
 	# convert groundtruth to one-hot encoding
 	labels = np.eye(num_cls)[labels]
 	labels = labels.astype('float32')
-	
+
 	return (images, labels), num_cls
 
 def predict(sess, network, test_batch, bsize):
