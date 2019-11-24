@@ -11,7 +11,7 @@ end
 total_CG = 0;
 
 for k = 1 : param.iter_max
-	if mod(k, ceil(prob.l/param.GNsize)) == 1
+	if mod(k, ceil(prob.l/param.GNsize)) == 1 || (prob.l == param.GNsize)
 		batch_idx = assign_inst_idx(param.GNsize, prob.l);
 	end
 	current_batch = mod(k-1, ceil(prob.l/param.GNsize)) + 1;
