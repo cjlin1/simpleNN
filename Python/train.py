@@ -140,7 +140,14 @@ def gradient_trainer(config, sess, network, full_batch, val_batch, test_network)
 								global_step=global_step,
 								colocate_gradients_with_ops=True)
 
-	train_inputs, train_labels = full_batch
+	full_inputs, full_labels = full_batch
+	val_inputs, val_labels = val_batch
+	# normalize images and reshape them 
+	mean_tr = full_inputs.mean(axis=0)
+	full_inputs = normalize_and_reshape(full_inputs, dim=self.config.dim, mean_tr=mean_tr)
+	val_inputs = normalize_and_reshape(val_inputs, dim=self.config.dim, mean_tr=mean_tr)
+	full_batch = (full_inputs, full_labels)
+	val_batch = (val_inputs, val_labels)
 	
 	num_data = train_labels.shape[0]
 	batch_size = config.bsize
@@ -160,7 +167,10 @@ def gradient_trainer(config, sess, network, full_batch, val_batch, test_network)
 	total_running_time = 0.0
 	best_acc = 0.0
 
-	saver = tf.train.Saver(var_list=param)
+	# Initialize a mean_param. The tensor is for future prediction in predict.py.
+	mean_param = tf.get_variable(name='mean_tr', initializer=mean_tr)
+	self.sess.run(tf.variables_initializer([mean_param]))
+	saver = tf.train.Saver(var_list=param+[mean_param])
 
 	for epoch in range(0, args.epoch):
 		
@@ -264,13 +274,13 @@ def newton_trainer(config, sess, network, full_batch, val_batch, test_network):
 
 def main():
 	
-	full_batch, num_cls = read_data(filename=args.train_set, dim=args.dim)
+	full_batch, num_cls = read_data(filename=args.train_set)
 	
 	if args.val_set is None:
 		print('No validation set is provided. Will output model at the last iteration.')
 		val_batch = None
 	else:
-		val_batch, _ = read_data(filename=args.val_set, dim=args.dim)
+		val_batch, _ = read_data(filename=args.val_set)
 
 	num_data = full_batch[0].shape[0]
 	

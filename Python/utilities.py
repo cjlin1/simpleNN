@@ -77,7 +77,7 @@ class ConfigClass(object):
 		
 		self.elapsed_time = 0.0
 
-def read_data(filename, dim):
+def read_data(filename):
 
 	mat_contents = sio.loadmat(filename)
 	images, labels = mat_contents['Z'], mat_contents['y']
@@ -97,23 +97,6 @@ def read_data(filename, dim):
 	elif not np.array_equal(label_enum, np.arange(1, num_cls+1)):
 		raise ValueError('Labels are not range from 1 to the number of class.\
 						Please verify them!')
-	
-	_IMAGE_HEIGHT, _IMAGE_WIDTH, _IMAGE_CHANNELS = dim
-
-	images_shape = [images.shape[0], _IMAGE_CHANNELS, _IMAGE_HEIGHT, _IMAGE_WIDTH]
-
-	# images normalization and zero centering
-	images = images.reshape(images_shape[0], -1)
-
-	max_value = images.max(axis=1).reshape(-1,1)
-	min_value = images.min(axis=1).reshape(-1,1)
-	
-	images = (images - min_value) / (max_value - min_value)
-	images = images - images.mean(axis=0)
-
-	images = images.reshape(images_shape)
-	# Tensorflow accepts data shape: B x H x W x C
-	images = np.transpose(images, (0, 2, 3, 1))
 
 	# change labels to 0, ..., num_cls-1
 	labels = labels - 1
@@ -122,13 +105,40 @@ def read_data(filename, dim):
 	labels = np.eye(num_cls)[labels]
 	labels = labels.astype('float32')
 
-	return (images, labels), num_cls
+	return [images, labels], num_cls
+
+def normalize_and_reshape(images, dim, mean_tr=None):
+	_IMAGE_HEIGHT, _IMAGE_WIDTH, _IMAGE_CHANNELS = dim
+	images_shape = [images.shape[0], _IMAGE_CHANNELS, _IMAGE_HEIGHT, _IMAGE_WIDTH]
+
+	if mean_tr is None:
+		print('No mean of data provided! Normalize images by their own mean.')
+		mean_tr = images.mean(axis=0)
+	else:
+		print('Normalzie images according to the provided mean.')
+		if np.prod(mean_tr.shape) != np.prod(dim):
+			raise ValueError('Dimension of provided mean does not agree with the data! Please verify them!')
+
+	# images normalization and zero centering
+	images = images.reshape(images_shape[0], -1)
+
+	max_value = images.max(axis=1).reshape(-1,1)
+	min_value = images.min(axis=1).reshape(-1,1)
+	
+	images = images - mean_tr
+	images = (images - min_value) / (max_value - min_value)
+
+	images = images.reshape(images_shape)
+	# Tensorflow accepts data shape: B x H x W x C
+	images = np.transpose(images, (0, 2, 3, 1))
+
+	return images
+
 
 def predict(sess, network, test_batch, bsize):
 	x, y, loss, outputs = network
 
 	test_inputs, test_labels = test_batch
- 
 	batch_size = bsize
 
 	num_data = test_labels.shape[0]

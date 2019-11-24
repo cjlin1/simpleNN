@@ -4,7 +4,7 @@ import time
 import numpy as np
 import os
 import math
-from utilities import predict
+from utilities import predict, normalize_and_reshape
 
 def Rop(f, weights, v):
 	"""Implementation of R operator
@@ -330,11 +330,19 @@ class newton_cg(object):
 		"""
 		# check whether data is valid
 		full_inputs, full_labels = full_batch
+		val_inputs, val_labels = val_batch
 		assert full_inputs.shape[0] == full_labels.shape[0]
 
 		if full_inputs.shape[0] != self.config.num_data:
 			raise ValueError('The number of full batch inputs does not agree with the config argument.\
 							This is important because global loss is averaged over those inputs')
+
+		# normalize images and reshape them 
+		mean_tr = full_inputs.mean(axis=0)
+		full_inputs = normalize_and_reshape(full_inputs, dim=self.config.dim, mean_tr=mean_tr)
+		val_inputs = normalize_and_reshape(val_inputs, dim=self.config.dim, mean_tr=mean_tr)
+		full_batch = (full_inputs, full_labels)
+		val_batch = (val_inputs, val_labels)
 
 		x, y, _, outputs = network
 
@@ -356,8 +364,13 @@ class newton_cg(object):
 		total_running_time = 0.0
 		self.config.elapsed_time = 0.0
 		total_CG = 0
+		
+		# Initialize a mean_param. The tensor is for future prediction in predict.py.
+		mean_param = tf.get_variable(name='mean_tr', initializer=mean_tr)
+		self.sess.run(tf.variables_initializer([mean_param]))
 
-		saver = tf.train.Saver(var_list=self.param)
+		# saver = tf.train.Saver(var_list=self.param)
+		saver = tf.train.Saver(var_list=self.param+[mean_param])
 		
 		for k in range(self.config.iter_max):
 
