@@ -83,6 +83,7 @@ def read_data(filename):
 	images, labels = mat_contents['Z'], mat_contents['y']
 	
 	labels = labels.reshape(-1)
+	images = images.reshape(images.shape[0], -1)
 
 	# check data validity
 	label_enum = list(dict.fromkeys(labels))
@@ -113,7 +114,6 @@ def normalize_and_reshape(images, dim, mean_tr=None):
 
 	if mean_tr is None:
 		print('No mean of data provided! Normalize images by their own mean.')
-		mean_tr = images.mean(axis=0)
 	else:
 		print('Normalzie images according to the provided mean.')
 		if np.prod(mean_tr.shape) != np.prod(dim):
@@ -125,14 +125,18 @@ def normalize_and_reshape(images, dim, mean_tr=None):
 	max_value = images.max(axis=1).reshape(-1,1)
 	min_value = images.min(axis=1).reshape(-1,1)
 	
-	images = images - mean_tr
 	images = (images - min_value) / (max_value - min_value)
+
+	if mean_tr is None:
+		# if no mean_tr is provided, we calculate it according to the current data
+		mean_tr = images.mean(axis=0) 
+	images = images - mean_tr
 
 	images = images.reshape(images_shape)
 	# Tensorflow accepts data shape: B x H x W x C
 	images = np.transpose(images, (0, 2, 3, 1))
 
-	return images
+	return images, mean_tr
 
 
 def predict(sess, network, test_batch, bsize):

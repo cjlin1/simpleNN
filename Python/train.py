@@ -7,7 +7,7 @@ import argparse
 
 from net.net import CNN
 from newton_cg import newton_cg
-from utilities import read_data, predict, ConfigClass
+from utilities import read_data, predict, ConfigClass, normalize_and_reshape
 
 def parse_args():
 	parser = argparse.ArgumentParser(description='Newton method on DNN')
@@ -109,7 +109,7 @@ def init_model(param):
 		init_ops.append(opt)
 	return tf.group(*init_ops)
 
-def gradient_trainer(config, sess, network, full_batch, val_batch, test_network):
+def gradient_trainer(config, sess, network, full_batch, val_batch, saver, test_network):
 	x, y, loss, outputs,  = network
 	
 	global_step = tf.Variable(initial_value=0, trainable=False, name='global_step')
@@ -140,15 +140,7 @@ def gradient_trainer(config, sess, network, full_batch, val_batch, test_network)
 								global_step=global_step,
 								colocate_gradients_with_ops=True)
 
-	full_inputs, full_labels = full_batch
-	val_inputs, val_labels = val_batch
-	# normalize images and reshape them 
-	mean_tr = full_inputs.mean(axis=0)
-	full_inputs = normalize_and_reshape(full_inputs, dim=self.config.dim, mean_tr=mean_tr)
-	val_inputs = normalize_and_reshape(val_inputs, dim=self.config.dim, mean_tr=mean_tr)
-	full_batch = (full_inputs, full_labels)
-	val_batch = (val_inputs, val_labels)
-	
+	train_inputs, train_labels = full_batch
 	num_data = train_labels.shape[0]
 	batch_size = config.bsize
 	num_iters = math.ceil(num_data/batch_size)
@@ -166,11 +158,6 @@ def gradient_trainer(config, sess, network, full_batch, val_batch, test_network)
 
 	total_running_time = 0.0
 	best_acc = 0.0
-
-	# Initialize a mean_param. The tensor is for future prediction in predict.py.
-	mean_param = tf.get_variable(name='mean_tr', initializer=mean_tr)
-	self.sess.run(tf.variables_initializer([mean_param]))
-	saver = tf.train.Saver(var_list=param+[mean_param])
 
 	for epoch in range(0, args.epoch):
 		
@@ -260,7 +247,7 @@ def gradient_trainer(config, sess, network, full_batch, val_batch, test_network)
 		print(output_str, file=log_file)
 		log_file.close()
 
-def newton_trainer(config, sess, network, full_batch, val_batch, test_network):
+def newton_trainer(config, sess, network, full_batch, val_batch, saver, test_network):
 
 	_, _, loss, outputs = network
 	newton_solver = newton_cg(config, sess, outputs, loss)
@@ -269,7 +256,7 @@ def newton_trainer(config, sess, network, full_batch, val_batch, test_network):
 	print('-------------- initializing network by methods in He et al. (2015) --------------')
 	param = tf.trainable_variables()
 	sess.run(init_model(param))
-	newton_solver.newton(full_batch, val_batch, network, test_network)
+	newton_solver.newton(full_batch, val_batch, saver, network, test_network)
 
 
 def main():
@@ -307,13 +294,20 @@ def main():
 	sess_config.gpu_options.allow_growth = False
 
 	with tf.Session(config=sess_config) as sess:
+		
+		full_batch[0], mean_tr = normalize_and_reshape(full_batch[0], dim=config.dim, mean_tr=None)
+		val_batch[0], _ = normalize_and_reshape(val_batch[0], dim=config.dim, mean_tr=mean_tr)
+
+		param = tf.trainable_variables()
+		mean_param = tf.get_variable(name='mean_tr', initializer=mean_tr, trainable=False)
+		saver = tf.train.Saver(var_list=param+[mean_param])
 
 		if config.optim in ('SGD', 'Adam'):
 			gradient_trainer(
-				config, sess, network, full_batch, val_batch, test_network)
+				config, sess, network, full_batch, val_batch, saver, test_network)
 		elif config.optim == 'NewtonCG':
 			newton_trainer(
-				config, sess, network, full_batch, val_batch, test_network=test_network)
+				config, sess, network, full_batch, val_batch, saver, test_network=test_network)
 
 
 if __name__ == '__main__':

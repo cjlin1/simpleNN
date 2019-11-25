@@ -37,7 +37,7 @@ if __name__ == '__main__':
 		imported_graph.restore(sess, args.model_file)
 		mean_param=tf.get_default_graph().get_tensor_by_name('mean_tr:0')
 		mean_tr = sess.run(mean_param)
-		test_batch[0] = normalize_and_reshape(test_batch[0], dim=args.dim, mean_tr=mean_tr)
+		test_batch[0], _ = normalize_and_reshape(test_batch[0], dim=args.dim, mean_tr=mean_tr)
 
 		x = tf.get_default_graph().get_tensor_by_name('main_params/input_of_net:0')
 		y = tf.get_default_graph().get_tensor_by_name('main_params/labels:0')
