@@ -185,6 +185,13 @@ def gradient_trainer(config, sess, network, full_batch, val_batch, saver, test_n
 				feed_dict = {x: batch_input, y: batch_labels, learning_rate: lr}
 				)
 
+			# print initial loss
+			if epoch == 0 and i == 0:
+				output_str = 'initial f: {:.3f}'.format(batch_loss)
+				print(output_str)
+				if not config.screen_log_only:
+					print(output_str, file=log_file)
+
 			loss_avg = loss_avg + batch_loss
 			# print log every 10% of the iterations
 			if i % math.ceil(num_iters/10) == 0:
@@ -277,7 +284,7 @@ def main():
 		tf.random.set_random_seed(config.seed)
 		np.random.seed(config.seed)
 
-	if config.net in ('CNN_3layers', 'CNN_6layers'):
+	if config.net in ('CNN_3layers', 'CNN_6layers', 'VGG11', 'VGG13', 'VGG16','VGG19'):
 		x, y, outputs = CNN(config.net, num_cls, config.dim)
 		test_network = None
 	else:

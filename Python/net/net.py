@@ -3,6 +3,7 @@ import math
 import pdb
 from tensorflow.python.client import device_lib
 import numpy as np
+from net.vgg import *
 
 def CNN_3layers(x_image, num_cls, reuse=False):
 	_NUM_CLASSES = num_cls
