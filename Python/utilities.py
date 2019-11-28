@@ -112,11 +112,6 @@ def normalize_and_reshape(images, dim, mean_tr=None):
 	_IMAGE_HEIGHT, _IMAGE_WIDTH, _IMAGE_CHANNELS = dim
 	images_shape = [images.shape[0], _IMAGE_CHANNELS, _IMAGE_HEIGHT, _IMAGE_WIDTH]
 
-	if mean_tr is not None:
-		print('Normalzie images according to the provided mean.')
-		if np.prod(mean_tr.shape) != np.prod(dim):
-			raise ValueError('Dimension of provided mean does not agree with the data! Please verify them!')
-
 	# images normalization and zero centering
 	images = images.reshape(images_shape[0], -1)
 
@@ -129,7 +124,12 @@ def normalize_and_reshape(images, dim, mean_tr=None):
 		print('No mean of data provided! Normalize images by their own mean.')
 		# if no mean_tr is provided, we calculate it according to the current data
 		mean_tr = images.mean(axis=0) 
-	images = images - mean_tr
+	else:
+		print('Normalzie images according to the provided mean.')
+		if np.prod(mean_tr.shape) != np.prod(dim):
+			raise ValueError('Dimension of provided mean does not agree with the data! Please verify them!')
+
+        images = images - mean_tr
 
 	images = images.reshape(images_shape)
 	# Tensorflow accepts data shape: B x H x W x C
