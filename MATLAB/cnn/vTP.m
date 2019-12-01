@@ -31,8 +31,7 @@ otherwise
 	error('Unknown operation in function vTP.');
 end
 
-global gpu_use;
-if gpu_use
+if model.gpu_use
 	try
 		vTP = accum(idx(:), V(:), [d_prev*a_prev*b_prev*num_v 1])';
 	catch ME

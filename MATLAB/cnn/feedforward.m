@@ -7,8 +7,14 @@ L = model.L;
 LC = model.LC;
 
 for m = 1 : LC
-	net.phiZ{m} = padding_and_phiZ(model, net, m, num_data);
-	net.Z{m+1} = max(model.weight{m}*net.phiZ{m} + model.bias{m}, 0);
+	if model.gpu_use
+		phiZ = padding_and_phiZ(model, net, m, num_data);
+		net.Z{m+1} = max(model.weight{m}*phiZ + model.bias{m}, 0);
+	else
+		net.phiZ{m} = padding_and_phiZ(model, net, m, num_data);
+		net.Z{m+1} = max(model.weight{m}*net.phiZ{m} + model.bias{m}, 0);
+	end
+
 	if model.wd_subimage_pool(m) > 1
 		[net.Z{m+1}, net.idx_pool{m}] = maxpooling(model, net, m);
 	end

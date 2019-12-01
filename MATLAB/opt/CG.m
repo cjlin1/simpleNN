@@ -86,7 +86,12 @@ for i = 1 : ceil(GNsize/bsize)
 		d = model.ch_input(m+1);
 		ab = model.ht_conv(m)*model.wd_conv(m);
 
-		p = reshape(v(var_range), d, []) * [net.phiZ{m}; ones(1, ab*num_data)];
+		if model.gpu_use
+			phiZ = padding_and_phiZ(model, net, m, num_data);
+			p = reshape(v(var_range), d, []) * [phiZ; ones(1, ab*num_data)];
+		else
+			p = reshape(v(var_range), d, []) * [net.phiZ{m}; ones(1, ab*num_data)];
+		end
 		p = sum(reshape(dzdS{m}, d*ab, nL, []) .* reshape(p, d*ab, 1, []),1);
 		Jv = Jv + p(:);
 	end
@@ -113,7 +118,12 @@ for i = 1 : ceil(GNsize/bsize)
 		u_m = reshape(dzdS{m}, [], nL*num_data) .* Jv';
 		u_m = sum(reshape(u_m, [], nL, num_data), 2);
 
-		u_m = reshape(u_m, d, []) * [net.phiZ{m}' ones(a*b*num_data, 1)];
+		if model.gpu_use
+			phiZ = padding_and_phiZ(model, net, m, num_data);
+			u_m = reshape(u_m, d, []) * [phiZ' ones(a*b*num_data, 1)];
+		else
+			u_m = reshape(u_m, d, []) * [net.phiZ{m}' ones(a*b*num_data, 1)];
+		end
 		u(var_range) = u(var_range) + u_m(:);
 	end
 end

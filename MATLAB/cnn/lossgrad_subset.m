@@ -30,7 +30,12 @@ if strcmp(task, 'fungrad')
 		end
 		dXidS = reshape(dXidS, model.ch_input(m+1), []);
 		
-		net.dlossdW{m} = dXidS*net.phiZ{m}';
+		if model.gpu_use
+			phiZ = padding_and_phiZ(model, net, m, num_data);
+			net.dlossdW{m} = dXidS*phiZ';
+		else
+			net.dlossdW{m} = dXidS*net.phiZ{m}';
+		end
 		net.dlossdb{m} = sum(dXidS, 2);
 
 		if m > 1
