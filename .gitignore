@@ -2,9 +2,8 @@
 .logger
 .data
 .scripts
-.summaries
 *.pyc
-.log
+*.log
 .__pycache__
 .vscode
 .DS_Store
@@ -13,5 +12,6 @@
 *.meta
 .log_and_model
 .running_log
-.saved_model
+./Python/saved_model/
+./Python/summary/
 read_mat.py

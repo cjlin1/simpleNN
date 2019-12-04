@@ -129,7 +129,7 @@ def normalize_and_reshape(images, dim, mean_tr=None):
 		if np.prod(mean_tr.shape) != np.prod(dim):
 			raise ValueError('Dimension of provided mean does not agree with the data! Please verify them!')
 
-        images = images - mean_tr
+		images = images - mean_tr
 
 	images = images.reshape(images_shape)
 	# Tensorflow accepts data shape: B x H x W x C
