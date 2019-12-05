@@ -349,7 +349,10 @@ class newton_cg(object):
 		
 		self.minibatch(full_batch, x, y, mode='fungrad')
 		f = self.sess.run(self.f)
-		print('initial f: {:.3f}'.format(f))
+		output_str = 'initial f: {:.3f}'.format(f)
+		print(output_str)
+		if not self.config.screen_log_only:
+			print(output_str, file=log_file)
 		
 		best_acc = 0.0
 
