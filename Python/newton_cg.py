@@ -364,6 +364,7 @@ class newton_cg(object):
 		
 		for k in range(self.config.iter_max):
 
+			# randomly select the batch for Gv estimation
 			idx = np.random.choice(np.arange(0, full_labels.shape[0]),
 					size=self.config.GNsize, replace=False)
 

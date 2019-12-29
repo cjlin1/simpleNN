@@ -102,8 +102,6 @@ def init_model(param):
 	init_ops = []
 	for p in param:
 		if 'kernel' in p.name:
-			# pdb.set_trace()
-			# weight = np.random.standard_normal(p.shape)* np.sqrt(2.0 / ((np.prod(p.shape[:-1])).value))
 			weight = np.random.standard_normal(p.shape)* np.sqrt(2.0 / ((np.prod(p.get_shape().as_list()[:-1]))))
 			opt = tf.compat.v1.assign(p, weight)
 		elif 'bias' in p.name:
@@ -170,7 +168,7 @@ def gradient_trainer(config, sess, network, full_batch, val_batch, saver, test_n
 		for i in range(num_iters):
 			
 			load_time = time.time()
-			# shuffle training data
+			# randomly select the batch
 			idx = np.random.choice(np.arange(0, num_data), 
 					size=config.bsize, replace=False)
 
