@@ -134,7 +134,6 @@ def normalize_and_reshape(images, dim, mean_tr=None):
 	images = images.reshape(images_shape)
 	# Tensorflow accepts data shape: B x H x W x C
 	images = np.transpose(images, (0, 2, 3, 1))
-
 	return images, mean_tr
 
 

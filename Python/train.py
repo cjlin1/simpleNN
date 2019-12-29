@@ -1,6 +1,7 @@
 import pdb
 import numpy as np
 import tensorflow as tf
+tf.compat.v1.disable_eager_execution()
 import time
 import math
 import argparse
@@ -101,11 +102,13 @@ def init_model(param):
 	init_ops = []
 	for p in param:
 		if 'kernel' in p.name:
-			weight = np.random.standard_normal(p.shape)* np.sqrt(2.0 / ((np.prod(p.shape[:-1])).value))
-			opt = tf.assign(p, weight)
+			# pdb.set_trace()
+			# weight = np.random.standard_normal(p.shape)* np.sqrt(2.0 / ((np.prod(p.shape[:-1])).value))
+			weight = np.random.standard_normal(p.shape)* np.sqrt(2.0 / ((np.prod(p.get_shape().as_list()[:-1]))))
+			opt = tf.compat.v1.assign(p, weight)
 		elif 'bias' in p.name:
 			zeros = np.zeros(p.shape)
-			opt = tf.assign(p, zeros)
+			opt = tf.compat.v1.assign(p, zeros)
 		init_ops.append(opt)
 	return tf.group(*init_ops)
 
@@ -113,32 +116,30 @@ def gradient_trainer(config, sess, network, full_batch, val_batch, saver, test_n
 	x, y, loss, outputs,  = network
 	
 	global_step = tf.Variable(initial_value=0, trainable=False, name='global_step')
-	learning_rate = tf.placeholder(tf.float32, shape=[], name='learning_rate')
+	learning_rate = tf.compat.v1.placeholder(tf.float32, shape=[], name='learning_rate')
 
 	# Probably not a good way to add regularization.
 	# Just to confirm the implementation is the same as MATLAB.
 	reg = 0.0
-	param = tf.trainable_variables()
+	param = tf.compat.v1.trainable_variables()
 	for p in param:
-		reg = reg + tf.reduce_sum(tf.pow(p,2))
+		reg = reg + tf.reduce_sum(input_tensor=tf.pow(p,2))
 	reg_const = 1/(2*config.C)
 	loss_with_reg = reg_const*reg + loss/config.bsize
 
 	if config.optim == 'SGD':
-		optimizer = tf.train.MomentumOptimizer(
+		optimizer = tf.compat.v1.train.MomentumOptimizer(
 					learning_rate=learning_rate, 
 					momentum=config.momentum).minimize(
 					loss_with_reg, 
-					global_step=global_step,
-					colocate_gradients_with_ops=True)
+					global_step=global_step)
 	elif config.optim == 'Adam':
-		optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate,
+		optimizer = tf.compat.v1.train.AdamOptimizer(learning_rate=learning_rate,
 								beta1=0.9,
 								beta2=0.999,
 								epsilon=1e-08).minimize(
 								loss_with_reg, 
-								global_step=global_step,
-								colocate_gradients_with_ops=True)
+								global_step=global_step)
 
 	train_inputs, train_labels = full_batch
 	num_data = train_labels.shape[0]
@@ -149,11 +150,11 @@ def gradient_trainer(config, sess, network, full_batch, val_batch, saver, test_n
 	if not config.screen_log_only:
 		log_file = open(config.log_file, 'w')
 		print(config.args, file=log_file)
-	sess.run(tf.global_variables_initializer())
+	sess.run(tf.compat.v1.global_variables_initializer())
 	
 
 	print('-------------- initializing network by methods in He et al. (2015) --------------')
-	param = tf.trainable_variables()
+	param = tf.compat.v1.trainable_variables()
 	sess.run(init_model(param))
 
 	total_running_time = 0.0
@@ -170,9 +171,8 @@ def gradient_trainer(config, sess, network, full_batch, val_batch, saver, test_n
 			
 			load_time = time.time()
 			# shuffle training data
-			idx = np.arange(0, num_data)
-			np.random.shuffle(idx)
-			idx = idx[:config.bsize]
+			idx = np.random.choice(np.arange(0, num_data), 
+					size=config.bsize, replace=False)
 
 			batch_input = train_inputs[idx]
 			batch_labels = train_labels[idx]
@@ -258,16 +258,16 @@ def newton_trainer(config, sess, network, full_batch, val_batch, saver, test_net
 
 	_, _, loss, outputs = network
 	newton_solver = newton_cg(config, sess, outputs, loss)
-	sess.run(tf.global_variables_initializer())
+	sess.run(tf.compat.v1.global_variables_initializer())
 
 	print('-------------- initializing network by methods in He et al. (2015) --------------')
-	param = tf.trainable_variables()
+	param = tf.compat.v1.trainable_variables()
 	sess.run(init_model(param))
 	newton_solver.newton(full_batch, val_batch, saver, network, test_network)
 
 
 def main():
-	
+
 	full_batch, num_cls = read_data(filename=args.train_set)
 	
 	if args.val_set is None:
@@ -281,7 +281,7 @@ def main():
 	config = ConfigClass(args, num_data, num_cls)
 
 	if isinstance(config.seed, int):
-		tf.random.set_random_seed(config.seed)
+		tf.compat.v1.random.set_random_seed(config.seed)
 		np.random.seed(config.seed)
 
 	if config.net in ('CNN_3layers', 'CNN_6layers', 'VGG11', 'VGG13', 'VGG16','VGG19'):
@@ -291,24 +291,27 @@ def main():
 		raise ValueError('Unrecognized training model')
 
 	if config.loss == 'MSELoss':
-		loss = tf.reduce_sum(tf.pow(outputs-y, 2))
+		loss = tf.reduce_sum(input_tensor=tf.pow(outputs-y, 2))
 	else:
-		loss = tf.reduce_sum(tf.nn.softmax_cross_entropy_with_logits_v2(logits=outputs, labels=y))
+		loss = tf.reduce_sum(input_tensor=tf.nn.softmax_cross_entropy_with_logits(logits=outputs, labels=y))
 	
 	network = (x, y, loss, outputs)
 
-	sess_config = tf.ConfigProto()
-	sess_config.gpu_options.allow_growth = False
+	sess_config = tf.compat.v1.ConfigProto()
+	sess_config.gpu_options.allow_growth = True
 
-	with tf.Session(config=sess_config) as sess:
+	with tf.compat.v1.Session(config=sess_config) as sess:
 		
 		full_batch[0], mean_tr = normalize_and_reshape(full_batch[0], dim=config.dim, mean_tr=None)
 		val_batch[0], _ = normalize_and_reshape(val_batch[0], dim=config.dim, mean_tr=mean_tr)
 
-		param = tf.trainable_variables()
-		mean_param = tf.get_variable(name='mean_tr', initializer=mean_tr, trainable=False)
-		saver = tf.train.Saver(var_list=param+[mean_param])
+		param = tf.compat.v1.trainable_variables()
 
+		mean_param = tf.compat.v1.get_variable(name='mean_tr', initializer=mean_tr, trainable=False, 
+					validate_shape=True, use_resource=False)
+
+		saver = tf.compat.v1.train.Saver(var_list=param+[mean_param])
+		
 		if config.optim in ('SGD', 'Adam'):
 			gradient_trainer(
 				config, sess, network, full_batch, val_batch, saver, test_network)
@@ -319,3 +322,4 @@ def main():
 
 if __name__ == '__main__':
 	main()
+

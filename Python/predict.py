@@ -1,4 +1,5 @@
 import tensorflow as tf 
+tf.compat.v1.disable_eager_execution()
 from utilities import predict, read_data, normalize_and_reshape
 from net.net import CNN
 import argparse
@@ -28,25 +29,26 @@ if __name__ == '__main__':
 	args = parse_args()
 	test_batch, num_cls = read_data(args.test_set)
 
-	sess_config = tf.ConfigProto()
+	sess_config = tf.compat.v1.ConfigProto()
 	sess_config.gpu_options.allow_growth = True
 
-	with tf.Session(config=sess_config) as sess:
+	with tf.compat.v1.Session(config=sess_config) as sess:
 		graph_address = args.model_file + '.meta'
-		imported_graph = tf.train.import_meta_graph(graph_address)
+		imported_graph = tf.compat.v1.train.import_meta_graph(graph_address)
 		imported_graph.restore(sess, args.model_file)
-		mean_param=tf.get_default_graph().get_tensor_by_name('mean_tr:0')
+		mean_param=tf.compat.v1.get_default_graph().get_tensor_by_name('mean_tr:0')
+
 		mean_tr = sess.run(mean_param)
 		test_batch[0], _ = normalize_and_reshape(test_batch[0], dim=args.dim, mean_tr=mean_tr)
 
-		x = tf.get_default_graph().get_tensor_by_name('main_params/input_of_net:0')
-		y = tf.get_default_graph().get_tensor_by_name('main_params/labels:0')
-		outputs = tf.get_default_graph().get_tensor_by_name('output_of_net:0')
-		
+		x = tf.compat.v1.get_default_graph().get_tensor_by_name('main_params/input_of_net:0')
+		y = tf.compat.v1.get_default_graph().get_tensor_by_name('main_params/labels:0')
+		outputs = tf.compat.v1.get_default_graph().get_tensor_by_name('output_of_net:0')
+
 		if args.loss == 'MSELoss':
-			loss = tf.reduce_sum(tf.pow(outputs-y, 2))
+			loss = tf.reduce_sum(input_tensor=tf.pow(outputs-y, 2))
 		else:
-			loss = tf.reduce_sum(tf.nn.softmax_cross_entropy_with_logits_v2(logits=outputs, labels=y))
+			loss = tf.reduce_sum(input_tensor=tf.nn.softmax_cross_entropy_with_logits(logits=outputs, labels=tf.stop_gradient(y)))
 		
 		network = (x, y, loss, outputs)
 

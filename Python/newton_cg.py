@@ -1,5 +1,7 @@
 import pdb
 import tensorflow as tf
+# tf.compat.v1.disable_eager_execution()
+# tf.disable_v2_behavior()
 import time
 import numpy as np
 import os
@@ -20,8 +22,8 @@ def Rop(f, weights, v):
 		u = [tf.ones_like(ff) for ff in f]
 	else:
 		u = tf.ones_like(f)  # dummy variable
-	g = tf.gradients(f, weights, grad_ys=u)
-	return tf.gradients(g, u, grad_ys=v)
+	g = tf.gradients(ys=f, xs=weights, grad_ys=u)
+	return tf.gradients(ys=g, xs=u, grad_ys=v)
 
 def Gauss_Newton_vec(outputs, loss, weights, v):
 	"""Implements Gauss-Newton vector product.
@@ -38,9 +40,9 @@ def Gauss_Newton_vec(outputs, loss, weights, v):
 		if len(v) != len(weights):
 			raise ValueError("weights and v must have the same length.")
 
-	grads_outputs = tf.gradients(loss, outputs)
+	grads_outputs = tf.gradients(ys=loss, xs=outputs)
 	BJv = Rop(grads_outputs, weights, v)
-	JBJv = tf.gradients(outputs, weights, BJv)
+	JBJv = tf.gradients(ys=outputs, xs=weights, grad_ys=BJv)
 	return JBJv
 	
 
@@ -58,7 +60,7 @@ class newton_cg(object):
 		self.config = config
 		self.outputs = outputs
 		self.loss = loss
-		self.param = tf.trainable_variables()
+		self.param = tf.compat.v1.trainable_variables()
 
 		self.CGiter = 0
 		FLOAT = tf.float32
@@ -80,9 +82,9 @@ class newton_cg(object):
 		self.beta = tf.Variable(0., dtype=FLOAT, trainable=False)
 
 		# placeholder alpha, old_alpha and lambda
-		self.alpha = tf.placeholder(FLOAT, shape=[])
-		self.old_alpha = tf.placeholder(FLOAT, shape=[])
-		self._lambda = tf.placeholder(FLOAT, shape=[])
+		self.alpha = tf.compat.v1.placeholder(FLOAT, shape=[])
+		self.old_alpha = tf.compat.v1.placeholder(FLOAT, shape=[])
+		self._lambda = tf.compat.v1.placeholder(FLOAT, shape=[])
 
 		self.num_grad_segment = math.ceil(self.config.num_data/self.config.bsize)
 		self.num_Gv_segment = math.ceil(self.config.GNsize/self.config.bsize)
@@ -137,10 +139,10 @@ class newton_cg(object):
 		if isinstance(v, list):
 			norm = 0.
 			for p in v:
-				norm = norm + tf.norm(p)**2
+				norm = norm + tf.norm(tensor=p)**2
 			return norm**0.5
 		else:
-			return tf.norm(v)
+			return tf.norm(tensor=v)
 
 	def _ops_in_minibatch(self):
 		"""
@@ -152,14 +154,14 @@ class newton_cg(object):
 		"""
 
 		def cal_loss():
-			return tf.assign(self.f, self.f + self.loss)
+			return tf.compat.v1.assign(self.f, self.f + self.loss)
 
 		def cal_lossgrad():
-			update_f = tf.assign(self.f, self.f + self.loss)
+			update_f = tf.compat.v1.assign(self.f, self.f + self.loss)
 
-			grad = tf.gradients(self.loss, self.param)
+			grad = tf.gradients(ys=self.loss, xs=self.param)
 			grad = self.vectorize(grad)
-			update_grad = tf.assign(self.g, self.g + grad)
+			update_grad = tf.compat.v1.assign(self.g, self.g + grad)
 
 			return tf.group(*[update_f, update_grad])
 
@@ -167,31 +169,31 @@ class newton_cg(object):
 			v = self.inverse_vectorize(self.v, self.param)
 			Gv = Gauss_Newton_vec(self.outputs, self.loss, self.param, v)
 			Gv = self.vectorize(Gv)
-			return tf.assign(self.Gv, self.Gv + Gv) 
+			return tf.compat.v1.assign(self.Gv, self.Gv + Gv) 
 
 		# add regularization term to loss, gradient and Gv and further average over batches 
 		def add_reg_avg_loss():
 			model_weight = self.vectorize(self.param)
 			reg = (self.calc_norm(model_weight))**2
 			reg = 1.0/(2*self.config.C) * reg
-			return tf.assign(self.f, reg + self.f/self.config.num_data)
+			return tf.compat.v1.assign(self.f, reg + self.f/self.config.num_data)
 
 		def add_reg_avg_lossgrad():
 			model_weight = self.vectorize(self.param)
 			reg_grad = model_weight/self.config.C
-			return tf.assign(self.g, reg_grad + self.g/self.config.num_data)
+			return tf.compat.v1.assign(self.g, reg_grad + self.g/self.config.num_data)
 
 		def add_reg_avg_lossGv():
-			return tf.assign(self.Gv, (self._lambda + 1/self.config.C)*self.v
+			return tf.compat.v1.assign(self.Gv, (self._lambda + 1/self.config.C)*self.v
 			 + self.Gv/self.config.GNsize) 
 
 		# zero out loss, grad and Gv 
 		def zero_loss():
-			return tf.assign(self.f, tf.zeros_like(self.f))
+			return tf.compat.v1.assign(self.f, tf.zeros_like(self.f))
 		def zero_grad():
-			return tf.assign(self.g, tf.zeros_like(self.g))
+			return tf.compat.v1.assign(self.g, tf.zeros_like(self.g))
 		def zero_Gv():
-			return tf.assign(self.Gv, tf.zeros_like(self.Gv))
+			return tf.compat.v1.assign(self.Gv, tf.zeros_like(self.Gv))
 
 		return (cal_loss(), cal_lossgrad(), cal_lossGv(),
 				add_reg_avg_loss(), add_reg_avg_lossgrad(), add_reg_avg_lossGv(),
@@ -266,19 +268,19 @@ class newton_cg(object):
 		update_model_ops = []
 		x = self.inverse_vectorize(self.s, self.param)
 		for i, p in enumerate(self.param):
-			op = tf.assign(p, p + (self.alpha-self.old_alpha) * x[i])
+			op = tf.compat.v1.assign(p, p + (self.alpha-self.old_alpha) * x[i])
 			update_model_ops.append(op)
 		return tf.group(*update_model_ops)
 
 	def _init_cg_vars(self):
 		init_ops = []
 
-		init_r = tf.assign(self.r, -self.g)
-		init_v = tf.assign(self.v, -self.g)
-		init_s = tf.assign(self.s, tf.zeros_like(self.g))
+		init_r = tf.compat.v1.assign(self.r, -self.g)
+		init_v = tf.compat.v1.assign(self.v, -self.g)
+		init_s = tf.compat.v1.assign(self.s, tf.zeros_like(self.g))
 		gnorm = self.calc_norm(self.g)
-		init_rTr = tf.assign(self.rTr, gnorm**2)
-		init_cgtol = tf.assign(self.cgtol, self.config.xi*gnorm)
+		init_rTr = tf.compat.v1.assign(self.rTr, gnorm**2)
+		init_cgtol = tf.compat.v1.assign(self.cgtol, self.config.xi*gnorm)
 
 		init_ops = [init_r, init_v, init_s, init_rTr, init_cgtol]
 
@@ -299,19 +301,19 @@ class newton_cg(object):
 
 			alpha = self.rTr / vGv
 			with tf.control_dependencies([alpha]):
-				update_s = tf.assign(self.s, self.s + alpha * self.v, name='update_s_ops')
-				update_r = tf.assign(self.r, self.r - alpha * self.Gv, name='update_r_ops')
+				update_s = tf.compat.v1.assign(self.s, self.s + alpha * self.v, name='update_s_ops')
+				update_r = tf.compat.v1.assign(self.r, self.r - alpha * self.Gv, name='update_r_ops')
 
 				with tf.control_dependencies([update_s, update_r]):
 					rnewTrnew = self.calc_norm(update_r)**2
-					update_beta = tf.assign(self.beta, rnewTrnew / self.rTr)
+					update_beta = tf.compat.v1.assign(self.beta, rnewTrnew / self.rTr)
 					with tf.control_dependencies([update_beta]):
-						update_rTr = tf.assign(self.rTr, rnewTrnew, name='update_rTr_ops')
+						update_rTr = tf.compat.v1.assign(self.rTr, rnewTrnew, name='update_rTr_ops')
 
 			return tf.group(*[update_s, update_beta, update_rTr])
 
 		def update_v():
-			return tf.assign(self.v, self.r + self.beta*self.v, name='update_v')
+			return tf.compat.v1.assign(self.v, self.r + self.beta*self.v, name='update_v')
 
 		return (CG_ops(), update_v())
 
@@ -338,9 +340,9 @@ class newton_cg(object):
 
 		x, y, _, outputs = network
 
-		tf.summary.scalar('loss', self.f)
-		merged = tf.summary.merge_all()
-		train_writer = tf.summary.FileWriter('./summary/train', self.sess.graph)
+		tf.compat.v1.summary.scalar('loss', self.f)
+		merged = tf.compat.v1.summary.merge_all()
+		train_writer = tf.compat.v1.summary.FileWriter('./summary/train', self.sess.graph)
 
 		print(self.config.args)
 		if not self.config.screen_log_only:
@@ -362,9 +364,9 @@ class newton_cg(object):
 		
 		for k in range(self.config.iter_max):
 
-			idx = np.arange(0, full_labels.shape[0])
-			np.random.shuffle(idx)
-			idx = idx[:self.config.GNsize]
+			idx = np.random.choice(np.arange(0, full_labels.shape[0]),
+					size=self.config.GNsize, replace=False)
+
 			mini_inputs = full_inputs[idx]
 			mini_labels = full_labels[idx]
 
@@ -373,9 +375,12 @@ class newton_cg(object):
 			self.sess.run(self.init_cg_vars)
 			cgtol = self.sess.run(self.cgtol)
 
+			avg_cg_time = 0.0
 			for CGiter in range(1, self.config.CGmax+1):
-
+				
+				cg_time = time.time()
 				self.minibatch((mini_inputs, mini_labels), x, y, mode='Gv')
+				avg_cg_time += time.time() - cg_time
 				
 				self.sess.run(self.CG)
 
@@ -385,6 +390,8 @@ class newton_cg(object):
 					break
 
 				self.sess.run(self.update_v)
+
+			print('avg time per cg iteration: {:.5f}\r\n'.format(avg_cg_time/CGiter))
 
 			gs, sGs = self.sess.run([self.update_gs, self.update_sGs], feed_dict={
 					self._lambda: self.config._lambda
@@ -454,7 +461,7 @@ class newton_cg(object):
 						bsize=self.config.bsize,
 						)
 				else:
-					# A separat test network part have been done...
+					# A separat test network part has not been done...
 					val_loss, val_acc = predict(
 						self.sess, 
 						network=test_network,
