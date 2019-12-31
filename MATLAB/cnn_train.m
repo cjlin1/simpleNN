@@ -161,9 +161,9 @@ for i = 1 : length(options)/2
 		case '-Jacobian'
 			param.Jacobian = logical(value);
 		case '-ftype'
-			if value == 1
+			if value == 0
 				float_type = 'single';
-			elseif value == 2
+			elseif value == 1
 				float_type = 'double';
 			else
 				error('we do not support this float type');

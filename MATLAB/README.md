@@ -88,23 +88,23 @@ solver = 1;
 C = 0.01;
 ```
 
-3. **-bsize**: mini-batch size. For SG, the number of data per update. For Newton, it is the batch size in function and gradient evaluations, 
-and subsampled Gauss-Newton matrix-vector products.
+3. **-gpu_use**: the boolean GPU flag (1: true; 0: false).
+```
+if exist('OCTAVE_VERSION', 'builtin')
+	gpu_use = false;
+else
+	gpu_use = (gpuDeviceCount > 0);
+end
+```
+
+4. **-ftype**: the precision of the floating point (1: double; 0: single). Default: 0 if gpu_use = True and 1 otherwise.
+
+5. **-bsize**: mini-batch size. For SG, the number of data per update. For Newton, it is the batch size in function and gradient evaluations, 
+and subsampled Gauss-Newton matrix-vector products. If bsize is not defined by user, the following setting is applied.
 ```
 bsize = 128;
-```
-
-4. **-gpu_use**: the boolean GPU flag. (true: when we detect one or more GPU devices; false: otherwise.)
-```
-gpu_use = (gpuDeviceCount > 0);
-```
-
-5. **-ftype**: the precision of the floating point.
-```
-if gpu_use
-    float_type = 'single';
-else
-    float_type = 'double';
+if gpu_use == false && solver == 1
+	bsize = 1024;
 end
 ```
 
