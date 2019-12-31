@@ -97,7 +97,7 @@ else
 end
 ```
 
-4. **-ftype**: the precision of the floating point (1: double; 0: single). Default: 0 if gpu_use = True and 1 otherwise.
+4. **-ftype**: the precision of the floating point (1: double; 0: single). Default: 0 if gpu_use = true and 1 otherwise.
 
 5. **-bsize**: mini-batch size. For SG, the number of data per update. For Newton, it is the batch size in function and gradient evaluations, 
 and subsampled Gauss-Newton matrix-vector products. If bsize is not defined by user, the following setting is applied.
