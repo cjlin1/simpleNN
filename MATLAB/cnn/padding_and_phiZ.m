@@ -17,5 +17,5 @@ b = model.wd_pad(m);
 d = model.ch_input(m);
 idx = reshape(net.idx_pad{m} + [0:num_data-1]*a*b, [], 1);
 %output = gpu(ftype(zeros(d, a*b*num_data)));
-output = net.padding_zeros{m}(:,1:a*b*num_data);
+output = net.zeros_pad{m}(:,1:a*b*num_data);
 output(:,idx) = net.Z{m};
