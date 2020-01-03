@@ -88,25 +88,12 @@ solver = 1;
 C = 0.01;
 ```
 
-3. **-gpu_use**: the boolean GPU flag (1: true; 0: false).
-```
-if exist('OCTAVE_VERSION', 'builtin')
-	gpu_use = false;
-else
-	gpu_use = (gpuDeviceCount > 0);
-end
-```
+3. **-gpu_use**: using GPU or not (0: GPU not used; 1: GPU used). Default 1 if GPU devices detected; 0 otherwise.
 
-4. **-ftype**: the precision of the floating point (1: double; 0: single). Default: 0 if gpu_use = true and 1 otherwise.
+4. **-ftype**: the precision of the floating point (0: single; 1: double). Default: 0 if gpu_use = 1; 1 otherwise.
 
 5. **-bsize**: mini-batch size. For SG, the number of data per update. For Newton, it is the batch size in function and gradient evaluations, 
-and subsampled Gauss-Newton matrix-vector products. If bsize is not defined by user, the following setting is applied.
-```
-bsize = 128;
-if gpu_use == false && solver == 1
-	bsize = 1024;
-end
-```
+and subsampled Gauss-Newton matrix-vector products. Default: 1024 for Newton without using GPU; 128 otherwise.
 
 #### Newton Method
 
