@@ -1,12 +1,8 @@
 function prob = check_data(y, Z, net_config)
 
 % Check class labels
-label_enum = sort(unique(y))';
-if length(label_enum) ~= net_config.nL
-	error('One or more data labels are missing.');
-end
-if ~all(label_enum == 1 : net_config.nL)
-	error('Data labels should be the same as {1, ..., #classes}.');
+if length(unique(y)) ~= net_config.nL
+	error('# labels in data different from # last-layer nodes specified in configuration.');
 end
 
 prob.y = y;

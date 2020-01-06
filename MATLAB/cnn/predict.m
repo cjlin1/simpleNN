@@ -11,3 +11,6 @@ for i = 1 : ceil(prob.l/bsize)
 	
 	results(:, range) = net.Z{L+1};
 end
+
+[~, results] = max(results, [], 1);
+results = model.labels(results');

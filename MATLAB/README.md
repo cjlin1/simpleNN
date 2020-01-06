@@ -33,7 +33,7 @@ model = cnn_train(y, Z, y_v, Z_v, config_file[, options, seed]);
 ```
 ### Parameters
 
-- **y** and **y_v**: a label vector in the range {1, ..., K} for a K-class problem.
+- **y** and **y_v**: a vector of integers to indicate class labels.
 - **Z** and **Z_v**: a dense feature matrix with the shape of l by a\*b\*d , where l is #instances, a is image height, b is image width and d is #channels.
   - (**y**, **Z**) represents a training data and (**y_v**, **Z_v**) represents a validation data.
 - **config_file**: a string specifying the configuration file path. Please see the [Configuration File](#configuration-file) section.
@@ -184,7 +184,7 @@ momentum = 0
 
 ### Parameters
 
-- **y**: a label vector in the range {1, ..., K} for a K-class problem.
+- **y**: a vector of integers to indicate class labels.
 - **Z**: a dense feature matrix with the shape of l by a\*b\*d, where l is #instances, a is image height, b is image width and d is #channels.
 - **model**: a structure consists of trained model variables and parameters.
 - **options**: a string. Please see the [Options](#options-1) part in this section. If no option, use ''.
@@ -251,7 +251,7 @@ full_neurons = [10];
 
 We provide two small data sets, _mnist-demo.mat_ for training and _mnist-demo.t.mat_ for testing. The data sets are generated using stratified selection to select 2,000 instances and 1,000 instances from [mnist.scale.bz2](https://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/multiclass/mnist.scale.bz2) and [mnist.scale.t.bz2](https://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/multiclass/mnist.scale.t.bz2) respectively.
 
-The _*.mat_ files contain a label vector, y and a dense feature matrix, Z. In the original data, the range of the label vector, y, is {0, ..., 9}. We change it to {1, ..., 10} following the requirement of _**cnn_train**_ or _**cnn_predict**_.
+The _*.mat_ files contain a label vector, y and a dense feature matrix, Z.
 
 For example:
 

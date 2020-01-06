@@ -41,8 +41,7 @@ for k = 1 : param.iter_max
 	if ~isempty(fieldnames(prob_v))
 		% update best_model by val_acc
 		val_results = predict(prob_v, param, model, net);
-		[~, val_results] = max(val_results, [], 1);
-		val_acc = cal_accuracy(val_results', prob_v.y);
+		val_acc = cal_accuracy(val_results, prob_v.y);
 		if val_acc > best_val_acc
 			best_model = model;
 			best_val_acc = val_acc;

@@ -19,10 +19,6 @@ net = init_net(model, param.bsize);
 
 results = predict(prob, param, model, net);
 
-% Obtain predicted label
-[~, results] = max(results, [], 1);
-results = results';
-
 acc = cal_accuracy(results, y);
 
 function param = parameter(options)

@@ -6,7 +6,7 @@ LC = model.LC;
 num_data = length(batch_idx);
 
 Y = zeros(model.nL, num_data);
-Y(prob.y(batch_idx) + model.nL*[0:num_data-1]') = 1;
+Y(prob.y_mapped(batch_idx) + model.nL*[0:num_data-1]') = 1;
 %Y = prob.label_mat(:, batch_idx);
 
 % fun

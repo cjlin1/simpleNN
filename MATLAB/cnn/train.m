@@ -3,6 +3,8 @@ function model = train(prob, prob_v, param, net_config)
 model = init_model(net_config);
 net = init_net(model, param.bsize);
 
+[model.labels, _, prob.y_mapped] = unique(prob.y);
+
 switch param.solver
 	case 1
 		model = newton(prob, prob_v, param, model, net);
