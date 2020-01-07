@@ -1,7 +1,5 @@
 import pdb
 import tensorflow as tf
-# tf.compat.v1.disable_eager_execution()
-# tf.disable_v2_behavior()
 import time
 import numpy as np
 import os
@@ -392,7 +390,7 @@ class newton_cg(object):
 
 				self.sess.run(self.update_v)
 
-			print('avg time per cg iteration: {:.5f}\r\n'.format(avg_cg_time/CGiter))
+			print('Avg time per Gv iteration: {:.5f} s\r\n'.format(avg_cg_time/CGiter))
 
 			gs, sGs = self.sess.run([self.update_gs, self.update_sGs], feed_dict={
 					self._lambda: self.config._lambda

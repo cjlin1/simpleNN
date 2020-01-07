@@ -86,21 +86,12 @@ def read_data(filename):
 	images = images.reshape(images.shape[0], -1)
 
 	# check data validity
-	label_enum = list(dict.fromkeys(labels))
-	label_enum.sort()
-	num_cls = max(label_enum)
+	label_enum, labels = np.unique(labels, return_inverse=True)
+	num_cls = labels.max() + 1
 
 	if len(label_enum) != num_cls:
 		raise ValueError('The number of classes is not equal to the number of\
 						labels in dataset. Please verify them.')
-	elif min(label_enum) != 1:
-		raise ValueError('The minimal label is not one. Please change it to one!')
-	elif not np.array_equal(label_enum, np.arange(1, num_cls+1)):
-		raise ValueError('Labels are not range from 1 to the number of class.\
-						Please verify them!')
-
-	# change labels to 0, ..., num_cls-1
-	labels = labels - 1
 
 	# convert groundtruth to one-hot encoding
 	labels = np.eye(num_cls)[labels]
