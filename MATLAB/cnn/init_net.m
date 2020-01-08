@@ -1,4 +1,4 @@
-function net = init_net(model, bsize)
+function net = init_net(model)
 
 L = model.L;
 LC = model.LC;

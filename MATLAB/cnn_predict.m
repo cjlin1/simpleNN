@@ -15,7 +15,7 @@ float_type = model.float_type;
 
 param = parameter(options);
 prob = check_data(y, Z, model.net_config);
-net = init_net(model, param.bsize);
+net = init_net(model);
 
 results = predict(prob, param, model, net);
 
