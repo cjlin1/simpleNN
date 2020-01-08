@@ -2,6 +2,8 @@ import tensorflow as tf
 tf.compat.v1.disable_eager_execution()
 from utilities import predict, read_data, normalize_and_reshape
 from net.net import CNN
+import numpy as np 
+import pandas as pd
 import argparse
 import pdb
 
@@ -27,7 +29,6 @@ def parse_args():
 
 if __name__ == '__main__':
 	args = parse_args()
-	test_batch, num_cls = read_data(args.test_set)
 
 	sess_config = tf.compat.v1.ConfigProto()
 	sess_config.gpu_options.allow_growth = True
@@ -36,9 +37,14 @@ if __name__ == '__main__':
 		graph_address = args.model_file + '.meta'
 		imported_graph = tf.compat.v1.train.import_meta_graph(graph_address)
 		imported_graph.restore(sess, args.model_file)
-		mean_param=tf.compat.v1.get_default_graph().get_tensor_by_name('mean_tr:0')
-
+		mean_param = [v for v in tf.compat.v1.global_variables() if 'mean_tr:0' in v.name][0]
+		label_enum_var = [v for v in tf.compat.v1.global_variables() if 'label_enum:0' in v.name][0]
+		
+		sess.run(tf.compat.v1.variables_initializer([mean_param, label_enum_var]))
 		mean_tr = sess.run(mean_param)
+		label_enum = sess.run(label_enum_var)
+
+		test_batch, num_cls, _ = read_data(args.test_set, label_enum=label_enum)
 		test_batch[0], _ = normalize_and_reshape(test_batch[0], dim=args.dim, mean_tr=mean_tr)
 
 		x = tf.compat.v1.get_default_graph().get_tensor_by_name('main_params/input_of_net:0')
@@ -52,7 +58,12 @@ if __name__ == '__main__':
 		
 		network = (x, y, loss, outputs)
 
-		avg_loss, avg_acc = predict(sess, network, test_batch, args.bsize)
+		avg_loss, avg_acc, results = predict(sess, network, test_batch, args.bsize)
+
+		# convert results back to the original labels
+		inverse_map = dict(zip(np.arange(num_cls), label_enum))
+		results = pd.Series(results)
+		results = results.apply(lambda x: inverse_map[x]).to_numpy()
 	
 	print('In test phase, average loss: {:.3f} | average accuracy: {:.3f}%'.\
 		format(avg_loss, avg_acc*100))

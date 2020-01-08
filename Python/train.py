@@ -210,7 +210,7 @@ def gradient_trainer(config, sess, network, full_batch, val_batch, saver, test_n
 				.format(epoch, loss_avg/(i+1), epoch_end-start)			
 		else:
 			if test_network == None:
-				val_loss, val_acc = predict(
+				val_loss, val_acc, _ = predict(
 					sess, 
 					network=(x, y, loss, outputs),
 					test_batch=val_batch,
@@ -218,7 +218,7 @@ def gradient_trainer(config, sess, network, full_batch, val_batch, saver, test_n
 					)
 			else:
 				# A separat test network part have been done...
-				val_loss, val_acc = predict(
+				val_loss, val_acc, _ = predict(
 					sess, 
 					network=test_network,
 					test_batch=val_batch,
@@ -266,13 +266,13 @@ def newton_trainer(config, sess, network, full_batch, val_batch, saver, test_net
 
 def main():
 
-	full_batch, num_cls = read_data(filename=args.train_set)
+	full_batch, num_cls, label_enum = read_data(filename=args.train_set)
 	
 	if args.val_set is None:
 		print('No validation set is provided. Will output model at the last iteration.')
 		val_batch = None
 	else:
-		val_batch, _ = read_data(filename=args.val_set)
+		val_batch, _, _ = read_data(filename=args.val_set, label_enum=label_enum)
 
 	num_data = full_batch[0].shape[0]
 	
@@ -307,7 +307,8 @@ def main():
 
 		mean_param = tf.compat.v1.get_variable(name='mean_tr', initializer=mean_tr, trainable=False, 
 					validate_shape=True, use_resource=False)
-
+		label_enum_var=tf.compat.v1.get_variable(name='label_enum', initializer=label_enum, trainable=False,
+					validate_shape=True, use_resource=False)
 		saver = tf.compat.v1.train.Saver(var_list=param+[mean_param])
 		
 		if config.optim in ('SGD', 'Adam'):

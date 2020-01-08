@@ -453,7 +453,7 @@ class newton_cg(object):
 			if val_batch is not None:
 				# Evaluate the performance after every Newton Step
 				if test_network == None:
-					val_loss, val_acc = predict(
+					val_loss, val_acc, _ = predict(
 						self.sess, 
 						network=(x, y, self.loss, outputs),
 						test_batch=val_batch,
@@ -461,7 +461,7 @@ class newton_cg(object):
 						)
 				else:
 					# A separat test network part has not been done...
-					val_loss, val_acc = predict(
+					val_loss, val_acc, _ = predict(
 						self.sess, 
 						network=test_network,
 						test_batch=val_batch,

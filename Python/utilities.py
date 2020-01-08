@@ -1,6 +1,7 @@
 import numpy as np
 import math
 import scipy.io as sio
+import pandas as pd
 import os
 import math
 import pdb
@@ -77,7 +78,16 @@ class ConfigClass(object):
 		
 		self.elapsed_time = 0.0
 
-def read_data(filename):
+def read_data(filename, label_enum=None):
+	"""
+	args:
+		filenmae: the path where .mat files store
+		label_enmum (default None): the list that stores the original label. 
+			If label_enum is None, the function will generate a new list which stores the 
+			original labels in sequence, and map original labels to [0, 1, ... number_of_classes-1]. 
+			If label_enum is a list, the function will use it to convert 
+			original labels to [0, 1,..., number_of_classes-1].
+	"""
 
 	mat_contents = sio.loadmat(filename)
 	images, labels = mat_contents['Z'], mat_contents['y']
@@ -86,18 +96,24 @@ def read_data(filename):
 	images = images.reshape(images.shape[0], -1)
 
 	# check data validity
-	label_enum, labels = np.unique(labels, return_inverse=True)
-	num_cls = labels.max() + 1
+	if label_enum is None:
+		label_enum, labels = np.unique(labels, return_inverse=True)
+		num_cls = labels.max() + 1
 
-	if len(label_enum) != num_cls:
-		raise ValueError('The number of classes is not equal to the number of\
-						labels in dataset. Please verify them.')
+		if len(label_enum) != num_cls:
+			raise ValueError('The number of classes is not equal to the number of\
+							labels in dataset. Please verify them.')
+	else:
+		num_cls = len(label_enum)
+		forward_map = dict(zip(label_enum, np.arange(num_cls)))
+		labels = pd.Series(labels)
+		labels = labels.apply(lambda x: forward_map[x]).to_numpy()
 
 	# convert groundtruth to one-hot encoding
 	labels = np.eye(num_cls)[labels]
 	labels = labels.astype('float32')
 
-	return [images, labels], num_cls
+	return [images, labels], num_cls, label_enum
 
 def normalize_and_reshape(images, dim, mean_tr=None):
 	_IMAGE_HEIGHT, _IMAGE_WIDTH, _IMAGE_CHANNELS = dim
@@ -156,9 +172,6 @@ def predict(sess, network, test_batch, bsize):
 
 	avg_acc = (np.argmax(test_labels, axis=1) == results).mean()
 	avg_loss = infer_loss/num_data
-	return avg_loss, avg_acc
+	
+	return avg_loss, avg_acc, results
 
-if __name__ == '__main__':
-
-	images, labels = read_data('data/cifar10.t.mat', 10, [3, 32, 32])
-	pdb.set_trace()
