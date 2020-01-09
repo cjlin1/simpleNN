@@ -81,10 +81,10 @@ class ConfigClass(object):
 def read_data(filename, label_enum=None):
 	"""
 	args:
-		filenmae: the path where .mat files store
-		label_enmum (default None): the list that stores the original label. 
+		filename: the path where .mat files are stored
+		label_enum (default None): the list that stores the original labels. 
 			If label_enum is None, the function will generate a new list which stores the 
-			original labels in sequence, and map original labels to [0, 1, ... number_of_classes-1]. 
+			original labels in a sequence, and map original labels to [0, 1, ... number_of_classes-1]. 
 			If label_enum is a list, the function will use it to convert 
 			original labels to [0, 1,..., number_of_classes-1].
 	"""
