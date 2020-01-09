@@ -53,70 +53,69 @@ CUDA_VISIBLE_DEVICES=0 python3 train.py --optim SGD --lr 0.01 --C 0.01 \
 ```
 
 ## Arguments
-In this section, we show option/parameters that are solely for Tensorflow implementation. The remaining arguments are maintained the same as the MATLAB version of [SimpleNN](https://github.com/cjlin1/simpleNN/tree/master/MATLAB). The sample usage given below also indicates the default value of each parameter.
+In this section, we show option/parameters that are solely for Tensorflow implementation. The remaining arguments are maintained the same as the MATLAB version of [SimpleNN](https://github.com/cjlin1/simpleNN/tree/master/MATLAB).
 
 ### General
 1. **--optim**: the optimization method used for training CNN. (NewtonCG, SGD or Adam)
 ```
---optim NewtonCG
+Default: --optim NewtonCG
 ```
-2. **--net**: network configuration (two examples are CNN_3layers and CNN_6layers)
+2. **--net**: network configuration (CNN_3layers, CNN_6layers, VGG11, VGG13, VGG16, and VGG19)
 ```
---net CNN_3layers
+Default: --net CNN_3layers
 ```
 3. **--train_set** & **--val_set**: provide the address of .mat file for training or validation (optional). 
 ```
---train_set data/mnist-demo.mat
+Default: --train_set data/mnist-demo.mat
 ```
 4. **--model**: save model to a file
 ```
---model ./saved_model/model.ckpt
+Default: --model ./saved_model/model.ckpt
 ```
 5. **--loss**: which loss function to use: MSELoss or CrossEntropy
 ```
---loss: MSELoss
+Default: --loss MSELoss
 ```
 6. **--bsize**: Split data into segements of size **bsize** so that each segment can fit into memroy for evaluating Gv, stochastic gradient and global graident. If you encounter Out of Memory (OOM) during training, you may decrease the **--bsize** paramter to an appropriate value.
 ```
---bsize 1024;
+Default: --bsize 1024
 ```
 7. **--log**: saving log to a file
 ```
---log ./running_log/logger.log
+Default: --log ./running_log/logger.log
 ```
-8. **--screen_log_only**: log printed on screen only; not stored to the log file
+8. **--screen_log_only**: if specified, log printed on screen only but not stored to the log file
 ```
---screen_log_only
+Default: --screen_log_only
 ```
 9. **--C**: regularization parameter. Regularization term = 1/(2C × num_data) × L2_norm(weight)^2
 ```
---C 0.01
+Default: --C 0.01
 ```
 10. **--dim**: input dimension of data. Shape must be: height width num_channels
 ```
---dim 28 28 1
+Default: --dim 32 32 3
 ```
 11. **--seed**: specify random seed to make results deterministic. If no random seeds are given, a different result is produced after each run.
 ```
---seed 0
+Default: --seed 0
 ```
-
 
 ### Newton Method
 
 1. **--GNsize**: number of samples used in the subsampled Gauss-Newton matrix.
 ```
---GNsize 5000
+Default: --GNsize 4096
 ```
 
 ### SGD
 1. **--decay**: divide learning rate by 10 every **decay** epochs
 ```
---decay 500
+Default: --decay 500
 ```
 2. **--momentum**: SGD + momentum
 ```
---momentum 0
+Default: --momentum 0
 ```
 
 # Predict
@@ -132,15 +131,19 @@ CUDA_VISIBLE_DEVICES=0 python3 predict.py --bsize 1024 \
 You may need the following arguments to run the predict script:
 1. **--model**: address of the saved model from training
 ```
---model ./saved_model/model.ckpt
+Default: --model ./saved_model/model.ckpt
 ```
 2. **--dim**: input dimension of data. Shape must be: height width num_channels
 ```
---dim 28 28 1
+Default: --dim 32 32 3
 ```
 3. **--test_set**: provide the directory of .mat file for test.
 ```
---test_set data/mnist-demo.t.mat
+Default: --test_set data/mnist-demo.t.mat
+```
+4. **--bsize**: Split data into segements of size **bsize** so that each segment can fit into memroy for stochastic gradient and global graident. If you encounter Out of Memory (OOM) during training, you may decrease the **--bsize** paramter to an appropriate value.
+```
+Default: --bsize 1024
 ```
 
 # Experiment Results

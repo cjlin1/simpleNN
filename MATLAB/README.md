@@ -70,7 +70,7 @@ If not, we select the model of the last iteration to be the output **model**.
 
 ### Options
 
-In this section, we show all the available option/parameters. They are listed along with their default values. You can change the default value by giving the string **option** in _**cnn_train**_. The string format should be
+You can change the default value by giving the string **option** in _**cnn_train**_. The string format should be
 
 ```
 '<option> <value>'
@@ -78,22 +78,31 @@ In this section, we show all the available option/parameters. They are listed al
 
 and separated by a space between each option-value pair inside the string. For example, we can set the **option** to be '-C 0.1 -GNsize 128' to change the regularization constant and the number of instances selected from the data for Newton method.
 
-1. **-s**: the optimization method used for training CNN. (1: Newton method (Default); 2: SG method.)
+1. **-s**: the optimization method used for training CNN. (1: Newton method; 2: SG with momentom; 3: Adam)
 ```
-solver = 1;
+Default: -s 1
 ```
 
 2. **-C**: the regularization constant in the objective function.
 ```
-C = 0.01;
+Default: -C 0.01
 ```
 
-3. **-gpu_use**: using GPU or not (0: GPU not used; 1: GPU used). Default 1 if GPU devices detected; 0 otherwise.
+3. **-gpu_use**: using GPU or not (0: GPU not used; 1: GPU used).
+```
+Default: -gpu_use 1 if GPU devices detected; 0 otherwise.
+```
 
-4. **-ftype**: the precision of the floating point (0: single; 1: double). Default: 0 if gpu_use = 1; 1 otherwise.
+4. **-ftype**: the precision of the floating point (0: single; 1: double).
+```
+Default: -ftype 0 if gpu_use = 1; 1 otherwise.
+```
 
 5. **-bsize**: mini-batch size. For SG, the number of data per update. For Newton, it is the batch size in function and gradient evaluations, 
-and subsampled Gauss-Newton matrix-vector products. Default: 1024 for Newton without using GPU; 128 otherwise.
+and subsampled Gauss-Newton matrix-vector products. 
+```
+Default: -bsize 1024 for Newton without using GPU; 128 otherwise.
+```
 
 #### Newton Method
 
@@ -101,71 +110,64 @@ The following options are necessary parameters for Newton method.
 
 1. **-GNsize**: the number of instances selected from the data for the subsampled Gauss-Newton matrix.
 ```
-GNsize = ceil(0.05*total_number_instances);
+Default: 5% of the number of instances
 ```
 
 2. **-iter_max**: the maximal number of Newton iterations.
 ```
-iter_max = 100;
+Default: -iter_max 100
 ```
 
 3. **-xi**: the tolerance in the relative stopping condition for the conjugate gradient (CG) method.
 ```
-xi = 0.1;
+Default: -xi 0.1
 ```
 
 4. **-CGmax**: the maximal number of CG iterations.
 ```
-CGmax = 250;
+Default -CGmax 250
 ```
 
 5. **-lambda**: the initial lambda for the Levenberg-Marquardt (LM) method.
 ```
-lambda = 1;
+Default -lambda 1
 ```
 
 6. **-drop**/**-boost**: the drop and boost constants for the LM method.
 ```
-drop = 2/3;
-boost = 3/2;
+Default -drop 2/3; -boost 3/2
 ```
 
 7. **-eta**: the parameter for the line search stopping condition.
 ```
-eta = 0.0001;
+Default: -eta 0.0001
 ```
 
-8. **-Jacobian**: the flag of storing the Jacobian matrix.
+8. **-Jacobian**: storing information of the Jacobian matrix or not (0: not; 1: yes)
 ```
-if gpu_use
-    param.Jacobian = false;
-else
-    param.Jacobian = true;
-end
+Default: -Jacobian 0 if GPU devices detected; 1 otherwise.
 ```
 
 #### Stochastic Gradient (SG) Method
 
-The following options are necessary parameters for SG method.
-
 1. **-epoch_max**: the maximal number of SG epochs.
 ```
-epoch_max = 500;
+Default: -epoch_max 500
 ```
 
 2. **-lr**: learning rate.
 ```
-lr = 0.01
+Default: -lr 0.01
 ```
 
 3. **-decay**: learning rate decay over each mini-batch update.
 ```
-decay = 0
+Default: -decay 0
 ```
 
 4. **-momentum**: weight of information from past sub-gradients.
 ```
-momentum = 0
+Default: -momentum 0
 ```
 
 # _**cnn_predict**_ Usage
@@ -201,12 +203,12 @@ momentum = 0
 ```
 ### Options
 
-In this subsection, we show all the available options/parameters. They are listed along with their default values. You can change the default value by giving the string **option** in _**cnn_predict**_ and the string format is the same as 
+You can change the default value by giving the string **option** in _**cnn_predict**_ and the string format is the same as 
 the option string format for _**cnn_train**_.
 
 1. **-bsize**: mini-batch size.
 ```
-bsize = 128;
+Default: -bsize 128
 ```
 
 # Configuration File

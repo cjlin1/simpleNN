@@ -17,13 +17,13 @@ def parse_args():
 					  default='./saved_model/model.ckpt', type=str)
 	parser.add_argument('--bsize', dest='bsize',
 					  help='batch size',
-					  default=256, type=int)
+					  default=1024, type=int)
 	parser.add_argument('--loss', dest='loss', 
 					  help='which loss function to use: MSELoss or CrossEntropy',
 					  default='MSELoss', type=str)
 	parser.add_argument('--dim', dest='dim', nargs='+', help='input dimension of data,'+\
 						'shape must be:  height width num_channels',
-					  default=[28, 28, 1], type=int)
+					  default=[32, 32, 3], type=int)
 	args = parser.parse_args()
 	return args
 
