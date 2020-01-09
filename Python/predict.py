@@ -3,7 +3,6 @@ tf.compat.v1.disable_eager_execution()
 from utilities import predict, read_data, normalize_and_reshape
 from net.net import CNN
 import numpy as np 
-import pandas as pd
 import argparse
 import pdb
 
