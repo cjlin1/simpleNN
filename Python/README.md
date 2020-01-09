@@ -7,7 +7,6 @@ Python dependecies (Tensorflow 1.13, 1.14, 1.15 and 2.0 are now **supported**!):
 ```
 python 3.5.2
 tensorflow 2.0
-pandas 0.25.3
 ```
 
 # Train

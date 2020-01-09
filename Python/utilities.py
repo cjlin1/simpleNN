@@ -106,8 +106,9 @@ def read_data(filename, label_enum=None):
 	else:
 		num_cls = len(label_enum)
 		forward_map = dict(zip(label_enum, np.arange(num_cls)))
-		labels = pd.Series(labels)
-		labels = labels.apply(lambda x: forward_map[x]).to_numpy()
+		labels = np.expand_dims(labels, axis=1)
+		labels = np.apply_along_axis(lambda x:forward_map[x[0]], axis=1, arr=labels)
+		
 
 	# convert groundtruth to one-hot encoding
 	labels = np.eye(num_cls)[labels]

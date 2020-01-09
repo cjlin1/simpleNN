@@ -62,8 +62,8 @@ if __name__ == '__main__':
 
 		# convert results back to the original labels
 		inverse_map = dict(zip(np.arange(num_cls), label_enum))
-		results = pd.Series(results)
-		results = results.apply(lambda x: inverse_map[x]).to_numpy()
+		results = np.expand_dims(results, axis=1)
+		results = np.apply_along_axis(lambda x: inverse_map[x[0]], axis=1, arr=results)
 	
 	print('In test phase, average loss: {:.3f} | average accuracy: {:.3f}%'.\
 		format(avg_loss, avg_acc*100))
