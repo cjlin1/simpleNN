@@ -13,7 +13,7 @@ case {'pool_gradient', 'pool_Jacobian'}
 		idx = net.idx_pool{m} + [0:num_data-1]*d_prev*a_prev*b_prev;
 	else
 		num_v = nL*num_data;
-		idx = reshape(net.idx_pool{m}, [], 1, num_data) + reshape([0:nL*num_data-1]*d_prev*a_prev*b_prev, 1, nL, num_data);
+		idx = reshape(net.idx_pool{m}, [], 1, num_data) + reshape(gpu([0:nL*num_data-1]*d_prev*a_prev*b_prev), 1, nL, num_data);
 	end
 case {'phi_gradient', 'phi_Jacobian'}
 	a_prev = model.ht_pad(m);

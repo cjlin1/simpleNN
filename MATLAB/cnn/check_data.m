@@ -26,4 +26,4 @@ tmp = [];
 for d = 1 : net_config.ch_input(1)
 	tmp = [tmp; reshape(Z(:, (d-1)*a*b+1 : d*a*b)', [], 1)'];
 end
-prob.data = reshape(tmp, [], prob.l);
+prob.data = ftype(reshape(tmp, [], prob.l));

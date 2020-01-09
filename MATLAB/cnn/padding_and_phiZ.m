@@ -9,12 +9,15 @@ h = model.wd_filter(m);
 d = model.ch_input(m);
 phiZ = reshape(phiZ, h*h*d, []);
 
-
 function output = padding(model, net, m, num_data)
 
-a = model.ht_pad(m);
-b = model.wd_pad(m);
+a_in = model.ht_input(m);
+b_in = model.wd_input(m);
+a_pad = model.ht_pad(m);
+b_pad = model.wd_pad(m);
+p = model.wd_pad_added(m);
 d = model.ch_input(m);
-idx = reshape(net.idx_pad{m} + [0:num_data-1]*a*b, [], 1);
-output = gpu(ftype(zeros(d, a*b*num_data)));
-output(:,idx) = net.Z{m};
+
+Z = reshape(net.Z{m}, d, a_in, b_in, []);
+output = zeros(d, a_pad, b_pad, num_data, 'like', model.like);
+output(:, p+1:p+a_in, p+1:p+b_in, :) = Z;

@@ -1,7 +1,7 @@
 function net = feedforward(data, model, net)
 
 num_data = size(data, 2);
-net.Z{1} = reshape(gpu(ftype(data)), model.ch_input(1), []);
+net.Z{1} = reshape(gpu(data), model.ch_input(1), []);
 
 L = model.L;
 LC = model.LC;

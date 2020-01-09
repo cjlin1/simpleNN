@@ -6,7 +6,7 @@ nL = model.nL;
 dzdS = cell(L, 1);
 num_data = size(data, 2);
 
-dzdS{L} = gpu(ftype(repmat(eye(nL, nL), 1, num_data)));
+dzdS{L} = repmat(eye(nL, nL, 'like', model.like), 1, num_data);
 
 for m = L : -1 : max(LC+1, 2)
 	dzdS{m-1} = (model.weight{m}' * dzdS{m}).*reshape(repmat(net.Z{m} > 0, nL, 1), [], nL*num_data);
