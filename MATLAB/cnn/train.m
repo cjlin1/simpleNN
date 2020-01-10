@@ -24,11 +24,6 @@ global gpu_use;
 model.gpu_use = gpu_use;
 global float_type;
 model.float_type = float_type;
-if gpu_use
-	model.like = zeros(1,1,float_type,'gpuArray');
-else
-	model.like = zeros(1,1,float_type);
-end	
 
 LC = net_config.LC;
 L = net_config.L;
@@ -63,14 +58,14 @@ for m = 1 : LC
 	var_num(m) = model.ch_input(m+1)*(model.wd_filter(m)*model.wd_filter(m)*model.ch_input(m) + 1);
 
 	model.weight{m} = gpu(ftype(randn(model.ch_input(m+1), model.wd_filter(m)*model.wd_filter(m)*model.ch_input(m))*sqrt(2.0/(model.wd_filter(m)*model.wd_filter(m)*model.ch_input(m)))));
-	model.bias{m} = zeros(model.ch_input(m+1), 1, 'like', model.like);
+	model.bias{m} = gpu(@zeros, [model.ch_input(m+1), 1]);
 end
 
 num_neurons_prev = model.ht_input(LC+1)*model.wd_input(LC+1)*model.ch_input(LC+1);
 for m = LC+1 : L
 	num_neurons = model.full_neurons(m - LC);
 	model.weight{m} = gpu(ftype(randn(num_neurons, num_neurons_prev)*sqrt(2.0/(num_neurons_prev))));
-	model.bias{m} = zeros(num_neurons, 1, 'like', model.like);
+	model.bias{m} = gpu(@zeros, [num_neurons, 1]);
 	var_num(m) = num_neurons * (num_neurons_prev + 1);
 	num_neurons_prev = num_neurons;
 end

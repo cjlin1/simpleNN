@@ -7,8 +7,8 @@ end
 grad = [];
 if strcmp(task, 'fungrad')
 	for m = 1 : model.L
-		grad.dfdW{m} = zeros(size(model.weight{m}), 'like', model.like);
-		grad.dfdb{m} = zeros(size(model.bias{m}), 'like', model.like);
+		grad.dfdW{m} = gpu(@zeros,size(model.weight{m}));
+		grad.dfdb{m} = gpu(@zeros,size(model.bias{m}));
 	end
 end
 

@@ -3,9 +3,9 @@ function [s, CGiter, gs, sGs] = CG(data, param, model, net, grad)
 var_ptr = model.var_ptr;
 n = var_ptr(end) - 1;
 GNsize = size(data, 2);
-s = zeros(n, 1, 'like', model.like);
-Gv = zeros(n, 1, 'like', model.like);
-g = zeros(n, 1, 'like', model.like);
+s = gpu(@zeros, [n, 1]);
+Gv = gpu(@zeros, [n, 1]);
+g = gpu(@zeros, [n, 1]);
 for m = 1 : model.L
 	var_range = var_ptr(m) : var_ptr(m+1) - 1;
 	g(var_range) = [grad.dfdW{m}(:); grad.dfdb{m}];
@@ -51,7 +51,7 @@ nL = model.nL;
 GNsize = size(data, 2);
 var_ptr = model.var_ptr;
 n = var_ptr(end) - 1;
-u = zeros(n, 1, 'like', model.like);
+u = gpu(@zeros, [n, 1]);
 
 bsize = param.bsize;
 for i = 1 : ceil(GNsize/bsize)
@@ -71,7 +71,7 @@ for i = 1 : ceil(GNsize/bsize)
 	end
 
 	% Jv
-	Jv = zeros(nL*num_data, 1, 'like', model.like);
+	Jv = gpu(@zeros, [nL*num_data, 1]);
 	for m = L : -1 : LC+1
 		var_range = var_ptr(m) : var_ptr(m+1) - 1;
 		n_m = model.full_neurons(m-LC);

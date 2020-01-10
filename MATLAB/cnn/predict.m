@@ -1,7 +1,7 @@
 function results = predict(prob, param, model, net)
 
 L = model.L;
-results = zeros(model.nL, prob.l, 'like', model.like);
+results = gpu(@zeros, [model.nL, prob.l]);
 
 bsize = param.bsize;
 for i = 1 : ceil(prob.l/bsize)

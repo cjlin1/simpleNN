@@ -19,5 +19,5 @@ p = model.wd_pad_added(m);
 d = model.ch_input(m);
 
 Z = reshape(net.Z{m}, d, a_in, b_in, []);
-output = zeros(d, a_pad, b_pad, num_data, 'like', model.like);
+output = gpu(@zeros, [d, a_pad, b_pad, num_data]);
 output(:, p+1:p+a_in, p+1:p+b_in, :) = Z;
