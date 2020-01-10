@@ -43,8 +43,10 @@ if strcmp(task, 'fungrad')
 			dXidS = reshape(vTP(model, net, m, num_data, V, 'phi_gradient'), model.ch_input(m), []);
 
 			% vTP_pad
-			a = model.ht_pad(m); b = model.wd_pad(m);
-			dXidS = dXidS(:, net.idx_pad{m} + a*b*[0:num_data-1]);
+			p = model.wd_pad_added(m);
+			dXidS = reshape(dXidS, model.ch_input(m), model.ht_pad(m), model.wd_pad(m), []);
+			dXidS = dXidS(:, p+1:p+model.ht_input(m), p+1:p+model.wd_input(m), :);
+			dXidS = reshape(dXidS, model.ch_input(m), []);
 
 			% activation function
 			dXidS = dXidS.*(net.Z{m} > 0);

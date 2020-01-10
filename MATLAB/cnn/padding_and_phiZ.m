@@ -11,10 +11,8 @@ phiZ = reshape(phiZ, h*h*d, []);
 
 function output = padding(model, net, m, num_data)
 
-a_in = model.ht_input(m);
-b_in = model.wd_input(m);
-a_pad = model.ht_pad(m);
-b_pad = model.wd_pad(m);
+a_in = model.ht_input(m); b_in = model.wd_input(m);
+a_pad = model.ht_pad(m); b_pad = model.wd_pad(m);
 p = model.wd_pad_added(m);
 d = model.ch_input(m);
 
