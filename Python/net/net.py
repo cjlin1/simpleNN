@@ -1,4 +1,5 @@
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
 import math
 import pdb
 from tensorflow.python.client import device_lib
@@ -14,7 +15,7 @@ def CNN_3layers(x_image, num_cls, reuse=False):
 			padding='SAME',
 			activation=tf.nn.relu
 		)(x_image)
-		pool = tf.keras.layers.MaxPool2D(pool_size=[2, 2], strides=2, padding='SAME')(conv)
+		pool = tf.keras.layers.MaxPool2D(pool_size=[2, 2], strides=2, padding='valid')(conv)
 		# N x 16 x 16 x 32
 
 	with tf.variable_scope('conv2', reuse=reuse) as scope:
@@ -24,7 +25,7 @@ def CNN_3layers(x_image, num_cls, reuse=False):
 			padding='SAME',
 			activation=tf.nn.relu
 		)(pool)
-		pool = tf.keras.layers.MaxPool2D(pool_size=[2, 2], strides=2, padding='SAME')(conv)
+		pool = tf.keras.layers.MaxPool2D(pool_size=[2, 2], strides=2, padding='valid')(conv)
 		# N x 8 x 8 x 64
 		
 	with tf.variable_scope('conv3', reuse=reuse) as scope:
@@ -34,7 +35,7 @@ def CNN_3layers(x_image, num_cls, reuse=False):
 			padding='SAME',
 			activation=tf.nn.relu
 		)(pool)
-		pool = tf.keras.layers.MaxPool2D(pool_size=[2, 2], strides=2, padding='SAME')(conv)
+		pool = tf.keras.layers.MaxPool2D(pool_size=[2, 2], strides=2, padding='valid')(conv)
 		# N x 4 x 4 x 64
 
 	with tf.variable_scope('fully_connected', reuse=reuse) as scope:
@@ -59,7 +60,7 @@ def CNN_6layers(x_image, num_cls, reuse=False):
 			padding='SAME',
 			activation=tf.nn.relu
 		)(conv)
-		pool = tf.keras.layers.MaxPool2D(pool_size=[2, 2], strides=2, padding='SAME')(conv)
+		pool = tf.keras.layers.MaxPool2D(pool_size=[2, 2], strides=2, padding='valid')(conv)
 		# N x 16 x 16 x 32
 
 	with tf.variable_scope('conv2', reuse=reuse) as scope:
@@ -75,7 +76,7 @@ def CNN_6layers(x_image, num_cls, reuse=False):
 			padding='SAME',
 			activation=tf.nn.relu
 		)(conv)
-		pool = tf.keras.layers.MaxPool2D(pool_size=[2, 2], strides=2, padding='SAME')(conv)
+		pool = tf.keras.layers.MaxPool2D(pool_size=[2, 2], strides=2, padding='valid')(conv)
 		# N x 8 x 8 x 64
 
 	with tf.variable_scope('conv3', reuse=reuse) as scope:
@@ -91,7 +92,7 @@ def CNN_6layers(x_image, num_cls, reuse=False):
 			padding='SAME',
 			activation=tf.nn.relu
 		)(conv)
-		pool = tf.keras.layers.MaxPool2D(pool_size=[2, 2], strides=2, padding='SAME')(conv)
+		pool = tf.keras.layers.MaxPool2D(pool_size=[2, 2], strides=2, padding='valid')(conv)
 		# pool = tf.layers.dropout(pool, rate=0.25, name=scope.name)
 		# N x 4 x 4 x 128
 

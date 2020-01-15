@@ -4,7 +4,8 @@ https://github.com/pytorch/vision/blob/master/torchvision/models/vgg.py, and
 https://github.com/keras-team/keras-applications/blob/master/keras_applications/vgg16.py
 """
 
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
 import numpy as np 
 import pdb
 from tensorflow.keras.applications.vgg16 import VGG16 as vgg16
@@ -27,7 +28,7 @@ def VGG(feature, num_cls):
 def make_layers(x, cfg):
 	for v in cfg:
 		if v == 'M':
-			x = tf.keras.layers.MaxPool2D(pool_size=[2, 2], strides=2, padding='SAME')(x)
+			x = tf.keras.layers.MaxPool2D(pool_size=[2, 2], strides=2, padding='valid')(x)
 		else:
 			x = tf.keras.layers.Conv2D(
 			filters=v,

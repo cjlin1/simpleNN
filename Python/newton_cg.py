@@ -17,9 +17,9 @@ def Rop(f, weights, v):
 			the number of output of f
 	"""
 	if type(f) == list:
-		u = [tf.ones_like(ff) for ff in f]
+		u = [tf.zeros_like(ff) for ff in f]
 	else:
-		u = tf.ones_like(f)  # dummy variable
+		u = tf.zeros_like(f)  # dummy variable
 	g = tf.gradients(ys=f, xs=weights, grad_ys=u)
 	return tf.gradients(ys=g, xs=u, grad_ys=v)
 
