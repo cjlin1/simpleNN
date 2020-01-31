@@ -23,7 +23,7 @@ end
 
 for CGiter = 1 : param.CGmax
 	Gv = JTBJv(data, param, model, net, v);
-	Gv = (param.lambda + 1/param.C) * v + Gv/GNsize;
+	Gv = (param.lambda + div(1, param.C)) * v + Gv/GNsize;
 
 	alpha = rTr / (v' * Gv);
 	s = s + alpha * v;

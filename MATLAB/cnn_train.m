@@ -20,7 +20,7 @@ elseif nargin == 7
 else
 	error('The #arguments is incorrect.');
 end
-addpath(genpath('./cnn'), genpath('./opt'));
+addpath(genpath('./cnn'), genpath('./opt'), genpath('./utils'));
 
 param = parameter(Z, options);
 net_config = read_config(config_file);

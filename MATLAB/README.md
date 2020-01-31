@@ -83,7 +83,7 @@ and separated by a space between each option-value pair inside the string. For e
 Default: -s 1
 ```
 
-2. **-C**: the regularization constant in the objective function.
+2. **-C**: the regularization constant in the objective function. When you set ``-C 0'', the regularization term of the objective function will be ignored.
 ```
 Default: -C 0.01
 ```
