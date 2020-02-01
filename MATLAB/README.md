@@ -265,11 +265,17 @@ For example:
 
 # A Full Example
 
-Please see _./example.m_.
+Please see _./example.m_. About input data format, for example, mnist is stored by row-wise, we convert 28x28 pixels to feature values. That is, (row 1, instance 1), (row 2, instance 1), ..., (row 28, instance 1), (row 1, instance 2), (row 2, instance 2), ...
 
 - **input_format**: input data format (0: row-wise; 1: column-wise).
 ```
 Default: 0
+```
+
+Because MATLAB uses column-wise memory storage of arrays, if the input data format is in row-wise, we need to rearrange data from row-wise to col-wise:
+
+```matlab
+>> Z = reshape(permute(reshape(Z, [],b,a,d), [1,3,2,4]), [], a*b*d);
 ```
 
 # Additional Information
