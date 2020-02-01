@@ -20,7 +20,7 @@ elseif nargin == 7
 else
 	error('The #arguments is incorrect.');
 end
-addpath(genpath('./cnn'), genpath('./opt'), genpath('./utils'));
+addpath(genpath('./cnn'), genpath('./opt'));
 
 param = parameter(Z, options);
 net_config = read_config(config_file);
@@ -94,26 +94,6 @@ if isempty(param.bsize)
 	end
 end
 param.C = param.C*size(Z,1);
-
-function net_config = read_config(config_file)
-
-net_config = struct;
-
-fid = fopen(config_file, 'r');
-if fid == -1
-	error('The configure file cannot be opened.');
-end
-while ~feof(fid)
-	s = fgetl(fid);
-	if ~isempty(s)
-		if strcmp(s(1),'%') == 0
-			eval(['net_config.' s]);
-		end
-	end
-end
-fclose(fid);
-
-net_config.nL = net_config.full_neurons(net_config.LF);
 
 function param = parse_options(param, options)
 
