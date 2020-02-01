@@ -33,8 +33,8 @@ reg = 0.0;
 for m = 1 : model.L
 	reg = reg + norm(model.weight{m}, 'fro')^2 + norm(model.bias{m})^2;
 	if strcmp(task, 'fungrad')
-		grad.dfdW{m} = div(model.weight{m}, param.C) + grad.dfdW{m}/prob.l;
-		grad.dfdb{m} = div(model.bias{m}, param.C) + grad.dfdb{m}/prob.l;
+		grad.dfdW{m} = model.weight{m}/param.C + grad.dfdW{m}/prob.l;
+		grad.dfdb{m} = model.bias{m}/param.C + grad.dfdb{m}/prob.l;
 	end
 end
-f = (div(1.0, 2*param.C))*reg + f/prob.l;
+f = (1.0/(2*param.C))*reg + f/prob.l;
