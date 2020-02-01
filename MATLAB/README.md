@@ -265,7 +265,12 @@ For example:
 
 # A Full Example
 
-Please see _./example_mnist.m_.
+Please see _./example.m_.
+
+- **input_format**: input data format (0: row-wise; 1: column-wise).
+```
+Default: 0
+```
 
 # Additional Information
 

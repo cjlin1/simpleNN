@@ -23,6 +23,7 @@ d = net_config.ch_input(1);
 
 % Read train data sets
 load('data/mnist-demo.mat', 'y', 'Z');
+% Because sparse matrices stored in the provided mat file do not store zero columns in the end, we need to fill it.
 Z = [full(Z) zeros(size(Z,1), a*b*d - size(Z,2))];
 
 % If input data format is row-wise, we rearrange data from row-wise to col-wise
@@ -45,6 +46,7 @@ model = cnn_train(y, Z, [], [], config_file, options, seed);
 % -----
 % Read test data sets
 load('data/mnist-demo.t.mat', 'y', 'Z');
+% Because sparse matrices stored in the provided mat file do not store zero columns in the end, we need to fill it.
 Z = [full(Z) zeros(size(Z,1), a*b*d - size(Z,2))];
 
 % If input data format is row-wise, we rearrange data from row-wise to col-wise
