@@ -281,7 +281,7 @@ example(options, input_format);
 ```
 Default: 0
 ```
-This format indicates how every image is transformed to a vector. FOr example, a row-wise format is used for mnist. The 28x28 pixels are stored as row 1, row 2, ..., etc.
+The format indicates how every image is transformed to a vector. For example, a row-wise format is used for mnist, so 28x28 pixels of each images are stored as row 1, row 2, ..., etc.
 
 # Additional Information
 
