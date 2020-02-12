@@ -18,7 +18,7 @@ compile simpleNN/MATLAB/cnn/accum.cu first. We take _MATLAB_2017a version as an 
 cd simpleNN/MATLAB;
 make('/usr/local/cuda-8.0/bin');
 ```
-For the cuda version suppored by _MATLAB_ release, please check the following website:
+For the cuda version supported by _MATLAB_ release, please check the following website:
 https://www.mathworks.com/help/parallel-computing/gpu-support-by-release.html.
 
 # _**cnn_train**_ Usage
@@ -265,18 +265,23 @@ For example:
 
 # A Full Example
 
-Please see _./example.m_. About input data format, for example, mnist is stored by row-wise, we convert 28x28 pixels to feature values. That is, (row 1, instance 1), (row 2, instance 1), ..., (row 28, instance 1), (row 1, instance 2), (row 2, instance 2), ...
+Please see _./example.m_.
 
-- **input_format**: input data format (0: row-wise; 1: column-wise).
+### Syntax
+
+```matlab
+example;
+example(options);
+example(options, input_format);
+```
+### Parameters
+
+- **options**: options for cnn_train
+- **input_format**: 0: row-wise; 1: column-wise.
 ```
 Default: 0
 ```
-
-Because MATLAB uses column-wise memory storage of arrays, if the input data format is in row-wise, we need to rearrange data from row-wise to col-wise:
-
-```matlab
->> Z = reshape(permute(reshape(Z, [],b,a,d), [1,3,2,4]), [], a*b*d);
-```
+This format indicates how every image is transformed to a vector. FOr example, a row-wise format is used for mnist. The 28x28 pixels are stored as row 1, row 2, ..., etc.
 
 # Additional Information
 
