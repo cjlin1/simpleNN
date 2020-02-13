@@ -251,7 +251,7 @@ full_neurons = [10];
 
 # Data Provided
 
-We provide two small data sets, _mnist-demo.mat_ for training and _mnist-demo.t.mat_ for testing. The data sets are generated using stratified selection to select 2,000 instances and 1,000 instances from [mnist.scale.bz2](https://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/multiclass/mnist.scale.bz2) and [mnist.scale.t.bz2](https://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/multiclass/mnist.scale.t.bz2) respectively.
+We provide two small data sets, _mnist-demo.mat_ for training and _mnist-demo.t.mat_ for testing. The data sets are generated using stratified selection to select 2,000 instances and 1,000 instances from [mnist.bz2](https://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/multiclass/mnist.bz2) and [mnist.t.bz2](https://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/multiclass/mnist.t.bz2) respectively.
 
 The _*.mat_ files contain a label vector, y and a dense feature matrix, Z.
 
