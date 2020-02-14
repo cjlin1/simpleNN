@@ -122,10 +122,7 @@ def normalize_and_reshape(images, dim, mean_tr=None):
 	# images normalization and zero centering
 	images = images.reshape(images_shape[0], -1)
 
-	max_value = images.max(axis=1).reshape(-1,1)
-	min_value = images.min(axis=1).reshape(-1,1)
-	
-	images = (images - min_value) / (max_value - min_value)
+	images = images/255.0
 
 	if mean_tr is None:
 		print('No mean of data provided! Normalize images by their own mean.')
