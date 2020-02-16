@@ -67,7 +67,7 @@ for i = 1 : ceil(GNsize/bsize)
 			dzdS{m} = net.dzdS{(i-1)*L + m};
 		end
 	else
-		dzdS = cal_dzdS(data(:, range), model, net);
+		dzdS = cal_dzdS(model, net, num_data);
 	end
 
 	% Jv

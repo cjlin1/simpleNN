@@ -1,10 +1,9 @@
-function dzdS = cal_dzdS(data, model, net)
+function dzdS = cal_dzdS(model, net, num_data)
 
 L = model.L;
 LC = model.LC;
 nL = model.nL;
 dzdS = cell(L, 1);
-num_data = size(data, 2);
 
 dzdS{L} = repmat(gpu(@eye, [nL, nL]), 1, num_data);
 
