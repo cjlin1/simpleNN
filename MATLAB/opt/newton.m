@@ -23,7 +23,7 @@ for k = 1 : param.iter_max
 	alpha = 1;
 	while 1
 		model = update_weights(model, alpha, x);
-		prered = alpha*gs + (alpha^2)*sGs;
+		prered = alpha*gs + 0.5*(alpha^2)*sGs;
 
 		[~, f, ~] = fungrad_minibatch(prob, param, model, net, 'funonly');
 		actred = f - fold;

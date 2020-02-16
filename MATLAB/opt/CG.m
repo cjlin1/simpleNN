@@ -41,7 +41,7 @@ end
 
 % Values used for predicting function-value reduction
 gs = s' * g;
-sGs = 0.5 * s' * (-g - r - param.lambda*s);
+sGs = s' * (-g - r - param.lambda*s);
 
 function u = JTBJv(data, param, model, net, v)
 
