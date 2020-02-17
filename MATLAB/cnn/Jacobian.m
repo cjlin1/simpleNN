@@ -14,7 +14,7 @@ for i = 1 : num_batches
 	net = feedforward(data(:, range), model, net);
 
 	% Compute dzdS
-	dzdS = cal_dzdS(data(:, range), model, net);
+	dzdS = cal_dzdS(model, net, num_data);
 
 	% store dzdS
 	for m = 1 : L
