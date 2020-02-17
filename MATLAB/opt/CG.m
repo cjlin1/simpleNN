@@ -71,59 +71,63 @@ for i = 1 : ceil(GNsize/bsize)
 	end
 
 	% Jv
-	Jv = gpu(@zeros, [nL*num_data, 1]);
-	for m = L : -1 : LC+1
-		var_range = var_ptr(m) : var_ptr(m+1) - 1;
-		n_m = model.full_neurons(m-LC);
-
-		p = reshape(v(var_range), n_m, []) * [net.Z{m}; ones(1, num_data)];
-		p = sum(reshape(dzdS{m}, n_m, nL, []) .* reshape(p, n_m, 1, []),1);
-		Jv = Jv + p(:);
-	end
-
-	for m = LC : -1 : 1
-		var_range = var_ptr(m) : var_ptr(m+1) - 1;
-		d = model.ch_input(m+1);
-		ab = model.ht_conv(m)*model.wd_conv(m);
-
-		if model.gpu_use
-			phiZ = padding_and_phiZ(model, net, m, num_data);
-			p = reshape(v(var_range), d, []) * [phiZ; ones(1, ab*num_data)];
-		else
-			p = reshape(v(var_range), d, []) * [net.phiZ{m}; ones(1, ab*num_data)];
-		end
-		p = sum(reshape(dzdS{m}, d*ab, nL, []) .* reshape(p, d*ab, 1, []),1);
-		Jv = Jv + p(:);
-	end
+	p = arrayfun(@(m) Jv_one(model, net, dzdS{m}, v(var_ptr(m) : var_ptr(m+1) - 1), m, num_data), [1 : L], 'un', false);
+	Jv = sum(horzcat(p{:}), 2);
 
 	% BJv
 	Jv = 2*Jv;
 	
 	% JTBJv
-	for m = L : -1 : LC+1
-		var_range = var_ptr(m) : var_ptr(m+1) - 1;
+	u_m = arrayfun(@(m) JTBJv_one(model, net, dzdS{m}, Jv, m, num_data), [1 : L], 'un', false);
+	u = u + vertcat(u_m{:});
+end
 
-		u_m = dzdS{m} .* Jv';
-		u_m = sum(reshape(u_m, [], nL, num_data), 2);
-		u_m = reshape(u_m, [], num_data) * [net.Z{m}' ones(num_data, 1)];
-		u(var_range) = u(var_range) + u_m(:);
+function p = Jv_one(model, net, dzdS, v, m, num_data)
+
+L = model.L;
+LC = model.LC;
+nL = model.nL;
+if m >= LC + 1
+	n_m = model.full_neurons(m-LC);
+
+	p = reshape(v, n_m, []) * [net.Z{m}; ones(1, num_data)];
+	p = sum(reshape(dzdS, n_m, nL, []) .* reshape(p, n_m, 1, []),1);
+else
+	d = model.ch_input(m+1);
+	ab = model.ht_conv(m)*model.wd_conv(m);
+
+	if model.gpu_use
+		phiZ = padding_and_phiZ(model, net, m, num_data);
+		p = reshape(v, d, []) * [phiZ; ones(1, ab*num_data)];
+	else
+		p = reshape(v, d, []) * [net.phiZ{m}; ones(1, ab*num_data)];
 	end
+	p = sum(reshape(dzdS, d*ab, nL, []) .* reshape(p, d*ab, 1, []),1);
+end
+p = p(:);
 
-	for m = LC : -1 : 1
-		a = model.ht_conv(m);
-		b = model.wd_conv(m);
-		d = model.ch_input(m+1);
-		var_range = var_ptr(m) : var_ptr(m+1) - 1;
+function u_m = JTBJv_one(model, net, dzdS, Jv, m, num_data)
 
-		u_m = reshape(dzdS{m}, [], nL*num_data) .* Jv';
-		u_m = sum(reshape(u_m, [], nL, num_data), 2);
+L = model.L;
+LC = model.LC;
+nL = model.nL;
+if m >= LC + 1
+	u_m = dzdS .* Jv';
+	u_m = sum(reshape(u_m, [], nL, num_data), 2);
+	u_m = reshape(u_m, [], num_data) * [net.Z{m}' ones(num_data, 1)];
+else
+	a = model.ht_conv(m);
+	b = model.wd_conv(m);
+	d = model.ch_input(m+1);
 
-		if model.gpu_use
-			phiZ = padding_and_phiZ(model, net, m, num_data);
-			u_m = reshape(u_m, d, []) * [phiZ' ones(a*b*num_data, 1)];
-		else
-			u_m = reshape(u_m, d, []) * [net.phiZ{m}' ones(a*b*num_data, 1)];
-		end
-		u(var_range) = u(var_range) + u_m(:);
+	u_m = reshape(dzdS, [], nL*num_data) .* Jv';
+	u_m = sum(reshape(u_m, [], nL, num_data), 2);
+
+	if model.gpu_use
+		phiZ = padding_and_phiZ(model, net, m, num_data);
+		u_m = reshape(u_m, d, []) * [phiZ' ones(a*b*num_data, 1)];
+	else
+		u_m = reshape(u_m, d, []) * [net.phiZ{m}' ones(a*b*num_data, 1)];
 	end
 end
+u_m = u_m(:);
