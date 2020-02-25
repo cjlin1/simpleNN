@@ -50,22 +50,22 @@ If not, we select the model of the last iteration to be the output **model**.
 
 1. Running with the default options.
 ```matlab
->> model = cnn_train(y, Z, [], [], 'config/mnist-demo-layer3.config');
+>> model = cnn_train(y, Z, [], [], 'config/mnist-demo-layer4.config');
 ```
 
 2. Running with the default options and a specific seed.
 ```matlab
->> model = cnn_train(y, Z, [], [], 'config/mnist-demo-layer3.config', '', 111);
+>> model = cnn_train(y, Z, [], [], 'config/mnist-demo-layer4.config', '', 111);
 ```
 
 3. Running with the specific options and no seed.
 ```matlab
->> model = cnn_train(y, Z, [], [], 'config/mnist-demo-layer3.config', '-C 0.01 -GNsize 100');
+>> model = cnn_train(y, Z, [], [], 'config/mnist-demo-layer4.config', '-C 0.01 -GNsize 100');
 ```
 
 4. Running with the specific options and a specific seed.
 ```matlab
->> model = cnn_train(y, Z, [], [], 'config/mnist-demo-layer3.config', '-C 0.01 -GNsize 100', 111);
+>> model = cnn_train(y, Z, [], [], 'config/mnist-demo-layer4.config', '-C 0.01 -GNsize 100', 111);
 ```
 
 ### Options
@@ -213,7 +213,7 @@ Default: -bsize 128
 
 # Configuration File
 
-Let's take _./config/mnist-demo-layer3.config_ as an example. The following items are contained in the configuration file.
+Let's take _./config/mnist-demo-layer4.config_ as an example. The following items are contained in the configuration file.
 
 1. The #layers of the neural network:
  - **L**: the number of layers
@@ -259,7 +259,7 @@ For example:
 
 ```matlab
 >> load('data/mnist-demo.mat', 'y', 'Z');
->> model = cnn_train(y, Z, 'config/mnist-demo-layer3.config');
+>> model = cnn_train(y, Z, 'config/mnist-demo-layer4.config');
 ```
 
 

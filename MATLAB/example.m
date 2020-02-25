@@ -15,7 +15,7 @@ addpath(genpath('./cnn'));
 
 %% Train
 % ------
-config_file = 'config/mnist-demo-layer3.config';
+config_file = 'config/mnist-demo-layer4.config';
 net_config = read_config(config_file);
 a = net_config.ht_input(1);
 b = net_config.wd_input(1);
