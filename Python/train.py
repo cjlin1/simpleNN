@@ -185,7 +185,7 @@ def gradient_trainer(config, sess, network, full_batch, val_batch, saver, test_n
 
 			# print initial loss
 			if epoch == 0 and i == 0:
-				output_str = 'initial f: {:.3f}'.format(batch_loss)
+				output_str = 'initial f (reg + avg. loss of 1st batch): {:.3f}'.format(batch_loss)
 				print(output_str)
 				if not config.screen_log_only:
 					print(output_str, file=log_file)
