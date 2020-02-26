@@ -51,8 +51,8 @@ def parse_args():
 					  help='learning rate',
 					  default=0.01, type=float)
 	parser.add_argument('--decay', dest='lr_decay',
-					  help='learning rate decay over each lr_decay epochs',
-					  default=500, type=int)
+					  help='learning rate decay over each mini-batch update',
+					  default=0, type=float)
 	parser.add_argument('--momentum', dest='momentum',
 					  help='momentum of learning',
 					  default=0, type=float)
@@ -157,13 +157,12 @@ def gradient_trainer(config, sess, network, full_batch, val_batch, saver, test_n
 
 	total_running_time = 0.0
 	best_acc = 0.0
+	lr = config.lr
 
 	for epoch in range(0, args.epoch):
 		
 		loss_avg = 0.0
 		start = time.time()
-
-		lr = config.lr * (0.1 ** (epoch // args.lr_decay))
 
 		for i in range(num_iters):
 			
@@ -178,11 +177,11 @@ def gradient_trainer(config, sess, network, full_batch, val_batch, saver, test_n
 			batch_labels = np.ascontiguousarray(batch_labels)
 			config.elapsed_time += time.time() - load_time
 
-			_, _, batch_loss= sess.run(
+			step, _, batch_loss= sess.run(
 				[global_step, optimizer, loss_with_reg],
 				feed_dict = {x: batch_input, y: batch_labels, learning_rate: lr}
 				)
-
+			
 			# print initial loss
 			if epoch == 0 and i == 0:
 				output_str = 'initial f (reg + avg. loss of 1st batch): {:.3f}'.format(batch_loss)
@@ -199,6 +198,10 @@ def gradient_trainer(config, sess, network, full_batch, val_batch, saver, test_n
 				print(output_str)
 				if not config.screen_log_only:
 					print(output_str, file=log_file)
+			
+			# adjust learning rate for SGD by inverse time decay
+			if args.optim != 'Adam':
+				lr = lr/(1 + args.lr_decay*step)
 
 		# exclude data loading time for fair comparison
 		epoch_end = time.time() - config.elapsed_time

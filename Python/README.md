@@ -108,9 +108,9 @@ Default: --GNsize 4096
 ```
 
 ### SGD
-1. **--decay**: divide learning rate by 10 every **decay** epochs
+1. **--decay**: learning rate decay over each mini-batch update.
 ```
-Default: --decay 500
+Default: --decay 0
 ```
 2. **--momentum**: SGD + momentum
 ```
