@@ -66,7 +66,7 @@ def parse_args():
 					  default=1024, type=int)
 	parser.add_argument('--net', dest='net',
 					  help='classifier type',
-					  default='CNN_3layers', type=str)
+					  default='CNN_4layers', type=str)
 	parser.add_argument('--train_set', dest='train_set',
 					  help='provide the directory of .mat file for training',
 					  default='data/mnist-demo.mat', type=str)
@@ -282,7 +282,7 @@ def main():
 		tf.compat.v1.random.set_random_seed(config.seed)
 		np.random.seed(config.seed)
 
-	if config.net in ('CNN_3layers', 'CNN_6layers', 'VGG11', 'VGG13', 'VGG16','VGG19'):
+	if config.net in ('CNN_4layers', 'CNN_7layers', 'VGG11', 'VGG13', 'VGG16','VGG19'):
 		x, y, outputs = CNN(config.net, num_cls, config.dim)
 		test_network = None
 	else:

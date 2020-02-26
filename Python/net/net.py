@@ -6,7 +6,7 @@ from tensorflow.python.client import device_lib
 import numpy as np
 from net.vgg import *
 
-def CNN_3layers(x_image, num_cls, reuse=False):
+def CNN_4layers(x_image, num_cls, reuse=False):
 	_NUM_CLASSES = num_cls
 	with tf.variable_scope('conv1', reuse=reuse) as scope:
 		conv = tf.keras.layers.Conv2D(
@@ -45,7 +45,7 @@ def CNN_3layers(x_image, num_cls, reuse=False):
 
 	return outputs
 
-def CNN_6layers(x_image, num_cls, reuse=False):
+def CNN_7layers(x_image, num_cls, reuse=False):
 	_NUM_CLASSES = num_cls
 	with tf.variable_scope('conv1', reuse=reuse) as scope:
 		conv = tf.keras.layers.Conv2D(

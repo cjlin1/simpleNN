@@ -39,14 +39,14 @@ If you want to rewrite our model, the model needs to return a tuple **(x, y, out
 To use Newton optimizer, please run:
 ```
 CUDA_VISIBLE_DEVICES=0 python3 train.py --optim NewtonCG --GNsize 100 --C 0.01  \
-						--net CNN_3layers --bsize 1024 \
+						--net CNN_4layers --bsize 1024 \
 						--train_set ./data/mnist-demo.mat \
 						--val_set ./data/mnist-demo.t.mat --dim 28 28 1
 ```
 To use SGD optimizer, please run:
 ```
 CUDA_VISIBLE_DEVICES=0 python3 train.py --optim SGD --lr 0.01 --C 0.01 \
-						--net CNN_3layers --bsize 256 \
+						--net CNN_4layers --bsize 256 \
 						--train_set ./data/mnist-demo.mat \
 						--val_set ./data/mnist-demo.t.mat --dim 28 28 1
 ```
@@ -59,9 +59,9 @@ In this section, we show option/parameters that are solely for Tensorflow implem
 ```
 Default: --optim NewtonCG
 ```
-2. **--net**: network configuration (CNN_3layers, CNN_6layers, VGG11, VGG13, VGG16, and VGG19)
+2. **--net**: network configuration (CNN_4layers, CNN_7layers, VGG11, VGG13, VGG16, and VGG19)
 ```
-Default: --net CNN_3layers
+Default: --net CNN_4layers
 ```
 3. **--train_set** & **--val_set**: provide the address of .mat file for training or validation (optional). 
 ```
@@ -146,16 +146,16 @@ Default: --bsize 1024
 ```
 
 # Experiment Results
-In the following experiments, we run 100 Newton steps on Newton method and 500 epochs on SGD. We report our resutls on both 3-layer and 6-layer CNN with MSE loss function. We consider the same 3-layer CNN setting in [Wang et al.](https://www.csie.ntu.edu.tw/~cjlin/papers/cnn/newton-CNN.pdf). Other settings such as the initialization are also the same as [Wang et al.](https://www.csie.ntu.edu.tw/~cjlin/papers/cnn/newton-CNN.pdf) for both 3-layer and 6-layer CNN. Both netowrks are trained and tested on CIFAR10 dataset. To reproduce our results, you may download training set [cifar10.mat](https://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/multiclass/cifar10.mat) and test set [cifar10.t.mat](https://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/multiclass/cifar10.t.mat) to ./data directory.
+In the following experiments, we run 100 Newton steps on Newton method and 500 epochs on SGD. We report our resutls on both 4-layer and 7-layer CNN with MSE loss function. We consider the same 4-layer CNN setting in [Wang et al.](https://www.csie.ntu.edu.tw/~cjlin/papers/cnn/newton-CNN.pdf). Other settings such as the initialization are also the same as [Wang et al.](https://www.csie.ntu.edu.tw/~cjlin/papers/cnn/newton-CNN.pdf) for both 4-layer and 7-layer CNN. Both netowrks are trained and tested on CIFAR10 dataset. To reproduce our results, you may download training set [cifar10.mat](https://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/multiclass/cifar10.mat) and test set [cifar10.t.mat](https://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/multiclass/cifar10.t.mat) to ./data directory.
 
-## Experiments on 3 layer CNN
+## Experiments on 4 layer CNN
 
 ### Wall clock time comparison
-![](./FILES_FOR_README/ACCU_TIME_3_layers.png "accu vs time")
+![](./FILES_FOR_README/ACCU_TIME_3_layers_1.png "accu vs time")
 
-![](./FILES_FOR_README/loss_3layers.png "loss of 3 layer CNN")
+![](./FILES_FOR_README/loss_3layers_1.png "loss of 3 layer CNN")
 
-![](./FILES_FOR_README/accu_3layers.png "accuracy of 3 layer CNN")
+![](./FILES_FOR_README/accu_3layers_1.png "accuracy of 3 layer CNN")
 
 ### Test accuracy changes w.r.t. regularization constant.
 C | 10% sub-sampled Gv| 5% sub-sampled Gv| 1% sub-sampled Gv
@@ -171,13 +171,13 @@ Memory | bsize 1024 | bsize 512| bsize 256
 1% sub-sampled Gv |3.1 GB |1.8 GB|1.1 GB
 SGD |3.1 GB|1.8 GB|1.1 GB|
 
-## Experiments on 6 layer CNN
+## Experiments on 7 layer CNN
 ### Wall clock time comparison
-![](./FILES_FOR_README/ACCU_TIME_7_layers.png "accu vs time")
+![](./FILES_FOR_README/ACCU_TIME_7_layers_1.png "accu vs time")
 
-![](./FILES_FOR_README/loss_7layers.png "loss of 6 layer CNN")
+![](./FILES_FOR_README/loss_7layers_1.png "loss of 6 layer CNN")
 
-![](./FILES_FOR_README/accu_7layers.png "accuracy of 6 layer CNN")
+![](./FILES_FOR_README/accu_7layers_1.png "accuracy of 6 layer CNN")
 
 ### Test accuracy changes w.r.t. regularization constant.
 C | 10% sub-sampled Gv| 5% sub-sampled Gv| 1% sub-sampled Gv
