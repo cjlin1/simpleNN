@@ -164,6 +164,8 @@ Default: -lr 0.01
 ```
 Default: -decay 0
 ```
+The update rule is
+(initial learning rate)/(1 + decay*(cumulative number of batches));
 
 4. **-momentum**: weight of information from past sub-gradients.
 ```

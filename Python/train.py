@@ -181,7 +181,7 @@ def gradient_trainer(config, sess, network, full_batch, val_batch, saver, test_n
 				[global_step, optimizer, loss_with_reg],
 				feed_dict = {x: batch_input, y: batch_labels, learning_rate: lr}
 				)
-			
+
 			# print initial loss
 			if epoch == 0 and i == 0:
 				output_str = 'initial f (reg + avg. loss of 1st batch): {:.3f}'.format(batch_loss)
