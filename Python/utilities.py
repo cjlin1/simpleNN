@@ -77,7 +77,7 @@ class ConfigClass(object):
 		
 		self.elapsed_time = 0.0
 
-def read_data(filename, label_enum=None):
+def read_data(filename, dim, label_enum=None):
 	"""
 	args:
 		filename: the path where .mat files are stored
@@ -93,6 +93,11 @@ def read_data(filename, label_enum=None):
 	
 	labels = labels.reshape(-1)
 	images = images.reshape(images.shape[0], -1)
+
+	_IMAGE_HEIGHT, _IMAGE_WIDTH, _IMAGE_CHANNELS = dim
+	zero_to_append = np.zeros((images.shape[0],
+			_IMAGE_CHANNELS*_IMAGE_HEIGHT*_IMAGE_WIDTH-np.prod(images.shape[1:])))
+	images = np.append(images, zero_to_append, axis=1)
 
 	# check data validity
 	if label_enum is None:

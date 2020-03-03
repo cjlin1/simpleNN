@@ -269,13 +269,13 @@ def newton_trainer(config, sess, network, full_batch, val_batch, saver, test_net
 
 def main():
 
-	full_batch, num_cls, label_enum = read_data(filename=args.train_set)
+	full_batch, num_cls, label_enum = read_data(filename=args.train_set, dim=args.dim)
 	
 	if args.val_set is None:
 		print('No validation set is provided. Will output model at the last iteration.')
 		val_batch = None
 	else:
-		val_batch, _, _ = read_data(filename=args.val_set, label_enum=label_enum)
+		val_batch, _, _ = read_data(filename=args.val_set, dim=args.dim, label_enum=label_enum)
 
 	num_data = full_batch[0].shape[0]
 	

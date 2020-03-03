@@ -43,7 +43,7 @@ if __name__ == '__main__':
 		mean_tr = sess.run(mean_param)
 		label_enum = sess.run(label_enum_var)
 
-		test_batch, num_cls, _ = read_data(args.test_set, label_enum=label_enum)
+		test_batch, num_cls, _ = read_data(args.test_set, dim=args.dim, label_enum=label_enum)
 		test_batch[0], _ = normalize_and_reshape(test_batch[0], dim=args.dim, mean_tr=mean_tr)
 
 		x = tf.compat.v1.get_default_graph().get_tensor_by_name('main_params/input_of_net:0')
