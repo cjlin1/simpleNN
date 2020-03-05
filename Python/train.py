@@ -304,7 +304,8 @@ def main():
 	with tf.compat.v1.Session(config=sess_config) as sess:
 		
 		full_batch[0], mean_tr = normalize_and_reshape(full_batch[0], dim=config.dim, mean_tr=None)
-		val_batch[0], _ = normalize_and_reshape(val_batch[0], dim=config.dim, mean_tr=mean_tr)
+		if val_batch is not None:
+			val_batch[0], _ = normalize_and_reshape(val_batch[0], dim=config.dim, mean_tr=mean_tr)
 
 		param = tf.compat.v1.trainable_variables()
 
