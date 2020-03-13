@@ -52,7 +52,7 @@ CUDA_VISIBLE_DEVICES=0 python3 train.py --optim SGD --lr 0.01 --C 0.01 \
 ```
 
 ## Arguments
-In this section, we show option/parameters that are solely for Tensorflow implementation. The remaining arguments are maintained the same as the MATLAB version of [SimpleNN](https://github.com/cjlin1/simpleNN/tree/master/MATLAB).
+In this section, we show option/parameters that are solely for the Python implementation. **For other arguments see details in README of the MATLAB directory of [SimpleNN](https://github.com/cjlin1/simpleNN/tree/master/MATLAB).**
 
 ### General
 1. **--optim**: the optimization method used for training CNN. (NewtonCG, SGD or Adam)
