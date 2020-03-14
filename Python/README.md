@@ -39,16 +39,16 @@ If you want to rewrite our model, the model needs to return a tuple **(x, y, out
 To use Newton optimizer, please run:
 ```
 CUDA_VISIBLE_DEVICES=0 python3 train.py --optim NewtonCG --GNsize 100 --C 0.01  \
-						--net CNN_4layers --bsize 1024 \
-						--train_set ./data/mnist-demo.mat \
-						--val_set ./data/mnist-demo.t.mat --dim 28 28 1
+                                                --net CNN_4layers --bsize 1024 \
+                                                --train_set ./data/mnist-demo.mat \
+                                                --val_set ./data/mnist-demo.t.mat --dim 28 28 1
 ```
 To use SGD optimizer, please run:
 ```
 CUDA_VISIBLE_DEVICES=0 python3 train.py --optim SGD --lr 0.01 --C 0.01 \
-						--net CNN_4layers --bsize 256 \
-						--train_set ./data/mnist-demo.mat \
-						--val_set ./data/mnist-demo.t.mat --dim 28 28 1
+                                                --net CNN_4layers --bsize 256 \
+                                                --train_set ./data/mnist-demo.mat \
+                                                --val_set ./data/mnist-demo.t.mat --dim 28 28 1
 ```
 
 ## Arguments
