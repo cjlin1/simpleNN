@@ -201,7 +201,7 @@ def gradient_trainer(config, sess, network, full_batch, val_batch, saver, test_n
 			
 			# adjust learning rate for SGD by inverse time decay
 			if args.optim != 'Adam':
-				lr = lr/(1 + args.lr_decay*step)
+				lr = config.lr/(1 + args.lr_decay*step)
 
 		# exclude data loading time for fair comparison
 		epoch_end = time.time() - config.elapsed_time
