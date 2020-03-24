@@ -123,7 +123,7 @@ def gradient_trainer(config, sess, network, full_batch, val_batch, saver, test_n
 	for p in param:
 		reg = reg + tf.reduce_sum(input_tensor=tf.pow(p,2))
 	reg_const = 1/(2*config.C)
-	loss_with_reg = reg_const*reg + loss/config.bsize
+	loss_with_reg = reg_const*reg + loss
 
 	if config.optim == 'SGD':
 		optimizer = tf.compat.v1.train.MomentumOptimizer(
@@ -292,9 +292,9 @@ def main():
 		raise ValueError('Unrecognized training model')
 
 	if config.loss == 'MSELoss':
-		loss = tf.reduce_sum(input_tensor=tf.pow(outputs-y, 2))
+		loss = tf.reduce_mean(tf.reduce_sum(input_tensor=tf.pow(outputs-y, 2), axis=1))
 	else:
-		loss = tf.reduce_sum(input_tensor=tf.nn.softmax_cross_entropy_with_logits(logits=outputs, labels=y))
+		loss = tf.reduce_mean(tf.reduce_sum(input_tensor=tf.nn.softmax_cross_entropy_with_logits(logits=outputs, labels=y), axis=1))
 	
 	network = (x, y, loss, outputs)
 
