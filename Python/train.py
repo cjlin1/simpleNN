@@ -111,6 +111,7 @@ def init_model(param):
         return tf.group(*init_ops)
 
 def gradient_trainer(config, sess, network, full_batch, val_batch, saver, test_network):
+
         x, y, loss, outputs,  = network
         
         global_step = tf.Variable(initial_value=0, trainable=False, name='global_step')
@@ -268,6 +269,7 @@ def newton_trainer(config, sess, network, full_batch, val_batch, saver, test_net
 
 
 def main():
+
 
         full_batch, num_cls, label_enum = read_data(filename=args.train_set, dim=args.dim)
         
