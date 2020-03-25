@@ -124,7 +124,7 @@ def gradient_trainer(config, sess, network, full_batch, val_batch, saver, test_n
         for p in param:
                 reg = reg + tf.reduce_sum(input_tensor=tf.pow(p,2))
         reg_const = 1/(2*config.C)
-        batch_size = tf.placeholder(tf.float32, shape=[], name='batch_size') # for variable batch sizes
+        batch_size = tf.compat.v1.placeholder(tf.float32, shape=[], name='batch_size') # for variable batch sizes
         loss_with_reg = reg_const*reg + loss/batch_size
 
         if config.optim == 'SGD':
