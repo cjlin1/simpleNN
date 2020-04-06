@@ -15,7 +15,7 @@ def parse_args():
 	parser.add_argument('--C', dest='C',
 					  help='regularization term, or so-called weight decay where'+\
 					  		'weight_decay = lr/(C*num_of_samples) in this implementation' ,
-					  default=math.inf, type=float)
+					  default=0.01, type=float)
 
 	# Newton method arguments
 	parser.add_argument('--GNsize', dest='GNsize',
