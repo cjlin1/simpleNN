@@ -1,3 +1,5 @@
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '1'
 import pdb
 import numpy as np
 import tensorflow as tf
@@ -8,7 +10,10 @@ import argparse
 
 from net.net import CNN
 from newton_cg import newton_cg
-from utilities import read_data, predict, ConfigClass, normalize_and_reshape
+from utilities import (
+	read_data, predict, ConfigClass, normalize_and_reshape,
+	Profiler)
+
 
 def parse_args():
 	parser = argparse.ArgumentParser(description='Newton method on DNN')
@@ -93,6 +98,8 @@ def parse_args():
 					  default=[32, 32, 3], type=int)
 	parser.add_argument('--seed', dest='seed', help='a nonnegative integer for \
 						reproducibility', type=int)	  
+	parser.add_argument('--profile', action='store_true',
+					  help='enable profiling')
 	args = parser.parse_args()
 	return args
 
@@ -149,7 +156,7 @@ def gradient_trainer(config, sess, network, full_batch, val_batch, saver, test_n
 		log_file = open(config.log_file, 'w')
 		print(config.args, file=log_file)
 	sess.run(tf.compat.v1.global_variables_initializer())
-	
+
 
 	print('-------------- initializing network by methods in He et al. (2015) --------------')
 	param = tf.compat.v1.trainable_variables()
@@ -158,6 +165,8 @@ def gradient_trainer(config, sess, network, full_batch, val_batch, saver, test_n
 	total_running_time = 0.0
 	best_acc = 0.0
 	lr = config.lr
+
+	profiler = Profiler(config.args.profile)
 
 	for epoch in range(0, args.epoch):
 		
@@ -177,10 +186,13 @@ def gradient_trainer(config, sess, network, full_batch, val_batch, saver, test_n
 			batch_labels = np.ascontiguousarray(batch_labels)
 			config.elapsed_time += time.time() - load_time
 
-			step, _, batch_loss= sess.run(
-				[global_step, optimizer, loss_with_reg],
-				feed_dict = {x: batch_input, y: batch_labels, learning_rate: lr}
-				)
+			with profiler:
+				step, _, batch_loss= sess.run(
+					[global_step, optimizer, loss_with_reg],
+					feed_dict = {x: batch_input, y: batch_labels, learning_rate: lr},
+					options=profiler.run_options,
+					run_metadata=profiler.run_metadata
+					)
 
 			# print initial loss
 			if epoch == 0 and i == 0:
@@ -251,8 +263,13 @@ def gradient_trainer(config, sess, network, full_batch, val_batch, saver, test_n
 			.format(val_acc*100, best_acc*100, total_running_time)
 	
 	print(output_str)
+	summary = profiler.summary()
+	if config.args.profile:
+		print(summary)
 	if not config.screen_log_only:
 		print(output_str, file=log_file)
+		if config.args.profile:
+			print(summary, file=log_file)
 		log_file.close()
 
 def newton_trainer(config, sess, network, full_batch, val_batch, saver, test_network):
