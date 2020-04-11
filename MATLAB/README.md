@@ -12,7 +12,7 @@
 
 1. _MATLAB R2016b_ or _Octave 4.0.3_. Other higher version may work as well.
 
-2. The GPU version is currently only supported by _MATLAB_. Users need to 
+2. It can be directly run on CPU. To use GPU currently only _MATLAB_ is supported and users need to 
 compile simpleNN/MATLAB/cnn/accum.cu first. We take _MATLAB_2017a version as an example.
 ```
 cd simpleNN/MATLAB;
