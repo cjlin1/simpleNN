@@ -7,7 +7,7 @@ bsize = param.bsize;
 for i = 1 : ceil(prob.l/bsize)
 	range = (i-1)*bsize + 1 : min(prob.l, i*bsize);
 	
-	net = feedforward(prob.data(:, range), model, net);
+	net = feedforward(prob.data(:, range), model, net, 'not_Jv');
 	
 	results(:, range) = net.Z{L+1};
 end

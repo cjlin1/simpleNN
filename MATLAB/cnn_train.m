@@ -149,6 +149,12 @@ for i = 1 : length(options)/2
 				error('we do not support this float type');
 			end
 		case '-gpu_use'
+			if ~(gpu_use) && logical(value)
+				error('we do not detect any gpuDevice.');
+			end
+			if gpu_use && ~logical(value) && sum(ismember(options, '-Jacobian')) == 0
+				param.Jacobian = true;
+			end
 			gpu_use = logical(value) && (exist('OCTAVE_VERSION', 'builtin') == 0);
 		otherwise
 			error('%s is not a supported option.', option);

@@ -1,4 +1,4 @@
-function net = feedforward(data, model, net)
+function net = feedforward(data, model, net, task)
 
 num_data = size(data, 2);
 net.Z{1} = reshape(gpu(data), model.ch_input(1), []);
@@ -7,16 +7,15 @@ L = model.L;
 LC = model.LC;
 
 for m = 1 : LC
-	if model.gpu_use
-		phiZ = padding_and_phiZ(model, net, m, num_data);
-		net.Z{m+1} = max(model.weight{m}*phiZ + model.bias{m}, 0);
-	else
-		net.phiZ{m} = padding_and_phiZ(model, net, m, num_data);
-		net.Z{m+1} = max(model.weight{m}*net.phiZ{m} + model.bias{m}, 0);
-	end
+	net.phiZ{m} = padding_and_phiZ(model, net, net.Z{m}, m, num_data);
+	net.Z{m+1} = max(model.weight{m}*net.phiZ{m} + model.bias{m}, 0);
 
 	if model.wd_subimage_pool(m) > 1
-		[net.Z{m+1}, net.idx_pool{m}] = maxpooling(model, net, m);
+		if strcmp(task, 'Jv')
+			[net.Z{m+1}, net.idx_pool{m}, net.R_max_id{m}] = maxpooling(model, net, net.Z{m+1}, m, 'Jv_maxpooling');
+		else
+			[net.Z{m+1}, net.idx_pool{m}] = maxpooling(model, net, net.Z{m+1}, m, 'maxpooling');
+		end
 	end
 end
 
