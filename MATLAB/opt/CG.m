@@ -149,8 +149,8 @@ var_ptr = model.var_ptr;
 v_w = cell(L, 1); v_b = cell(L, 1);
 channel_and_neurons = [model.ch_input; model.full_neurons];
 for m = 1 : L
-    var_range = var_ptr(m) : var_ptr(m+1) - 1;
+	var_range = var_ptr(m) : var_ptr(m+1) - 1;
 	X = reshape(v(var_range), channel_and_neurons(m+1), []);
 	v_w{m} = X(:,1:end-1);
-    v_b{m} = X(:,end);
+	v_b{m} = X(:,end);
 end 

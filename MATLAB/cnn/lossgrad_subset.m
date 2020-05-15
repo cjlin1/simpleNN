@@ -18,7 +18,7 @@ if strcmp(task, 'fungrad')
 	v = 2*(net.Z{L+1} - Y);
 	v = JTv(model, net, v);
 	for m = 1 : L
-    	net.dlossdW{m} = v{m}(:, 1:end-1);
-    	net.dlossdb{m} = v{m}(:, end);	
+		net.dlossdW{m} = v{m}(:, 1:end-1);
+		net.dlossdb{m} = v{m}(:, end);	
 	end
 end

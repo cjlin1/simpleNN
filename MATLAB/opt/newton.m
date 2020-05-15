@@ -78,7 +78,7 @@ for m = 1 : model.L
 	range = var_ptr(m):var_ptr(m+1)-1;
 	X = reshape(x(range), channel_and_neurons(m+1), []);
 	model.weight{m} = model.weight{m} + (alpha - old_alpha) * X(:, 1:end-1);
- 	model.bias{m} = model.bias{m} + (alpha - old_alpha) * X(:, end);
+	model.bias{m} = model.bias{m} + (alpha - old_alpha) * X(:, end);
 end
 
 function gnorm = calc_gnorm(grad, L)

@@ -11,11 +11,7 @@ for m = 1 : LC
 	net.Z{m+1} = max(model.weight{m}*net.phiZ{m} + model.bias{m}, 0);
 
 	if model.wd_subimage_pool(m) > 1
-		if strcmp(task, 'Jv')
-			[net.Z{m+1}, net.idx_pool{m}, net.R_max_id{m}] = maxpooling(model, net, net.Z{m+1}, m, 'Jv_maxpooling');
-		else
-			[net.Z{m+1}, net.idx_pool{m}] = maxpooling(model, net, net.Z{m+1}, m, 'maxpooling');
-		end
+		[net.Z{m+1}, net.idx_pool{m}] = maxpooling(model, net, net.Z{m+1}, m, 'maxpooling');
 	end
 end
 

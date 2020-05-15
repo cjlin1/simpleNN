@@ -22,8 +22,8 @@ for m = 1 : LC
 
 	dab = model.ch_input(m)*model.ht_pad(m)*model.wd_pad(m);
 	if ~isfield(param, 'Jacobian') || ~param.Jacobian
-   		net.idx_phiZ{m} = net.idx_phiZ{m}(:) + [0:bsize-1]*dab;
+		net.idx_phiZ{m} = net.idx_phiZ{m}(:) + [0:bsize-1]*dab;
 	else
-   		net.idx_phiZ{m} = net.idx_phiZ{m}(:) + [0:nL*bsize-1]*dab;
+		net.idx_phiZ{m} = net.idx_phiZ{m}(:) + [0:nL*bsize-1]*dab;
 	end
 end
