@@ -52,67 +52,61 @@ function u = JTBJv(data, param, model, net, v)
 L = model.L;
 LC = model.LC;
 nL = model.nL;
-GNsize = size(data, 2);
+num_data = size(data, 2);
 var_ptr = model.var_ptr;
 n = var_ptr(end) - 1;
 u = gpu(@zeros, [n, 1]);
 
-bsize = param.bsize;
-for i = 1 : ceil(GNsize/bsize)
-	range = (i-1)*bsize + 1 : min(GNsize, i*bsize);
-	num_data = length(range);
+% Jv
+Jv = gpu(@zeros, [nL*num_data, 1]);
+for m = L : -1 : LC+1
+	var_range = var_ptr(m) : var_ptr(m+1) - 1;
+	n_m = model.full_neurons(m-LC);
 
-	% Jv
-	Jv = gpu(@zeros, [nL*num_data, 1]);
-	for m = L : -1 : LC+1
-		var_range = var_ptr(m) : var_ptr(m+1) - 1;
-		n_m = model.full_neurons(m-LC);
+	p = reshape(v(var_range), n_m, []);
+	p = p(:, 1:end-1)*net.Z{m} + p(:, end);
+	p = sum(reshape(net.dzdS{m}, n_m, nL, []) .* reshape(p, n_m, 1, []),1);
+	Jv = Jv + p(:);
+end
 
-		p = reshape(v(var_range), n_m, []);
-		p = p(:, 1:end-1)*net.Z{(i-1)*L + m} + p(:, end);
-		p = sum(reshape(net.dzdS{(i-1)*L + m}, n_m, nL, []) .* reshape(p, n_m, 1, []),1);
-		Jv = Jv + p(:);
-	end
+for m = LC : -1 : 1
+	var_range = var_ptr(m) : var_ptr(m+1) - 1;
+	d = model.ch_input(m+1);
+	ab = model.ht_conv(m)*model.wd_conv(m);
 
-	for m = LC : -1 : 1
-		var_range = var_ptr(m) : var_ptr(m+1) - 1;
-		d = model.ch_input(m+1);
-		ab = model.ht_conv(m)*model.wd_conv(m);
+	p = reshape(v(var_range), d, []);
+	p = p(:, 1:end-1)*net.phiZ{m} + p(:, end);
+	p = sum(reshape(net.dzdS{m}, d*ab, nL, []) .* reshape(p, d*ab, 1, []),1);
+	Jv = Jv + p(:);
+end
 
-		p = reshape(v(var_range), d, []);
-		p = p(:, 1:end-1)*net.phiZ{(i-1)*L + m} + p(:, end);
-		p = sum(reshape(net.dzdS{(i-1)*L + m}, d*ab, nL, []) .* reshape(p, d*ab, 1, []),1);
-		Jv = Jv + p(:);
-	end
+% BJv
+Jv = 2*Jv;
 
-	% BJv
-	Jv = 2*Jv;
-	
-	% JTBJv
-	for m = L : -1 : LC+1
-		var_range = var_ptr(m) : var_ptr(m+1) - 1;
+% JTBJv
+for m = L : -1 : LC+1
+	var_range = var_ptr(m) : var_ptr(m+1) - 1;
 
-		u_m = net.dzdS{(i-1)*L + m} .* Jv';
-		u_m = sum(reshape(u_m, [], nL, num_data), 2);
+	u_m = net.dzdS{m} .* Jv';
+	u_m = sum(reshape(u_m, [], nL, num_data), 2);
 
-		u_m = reshape(u_m, [], num_data);
-		u_m = [u_m*net.Z{(i-1)*L + m}' sum(u_m, 2)];
-		u(var_range) = u(var_range) + u_m(:);
-	end
+	u_m = reshape(u_m, [], num_data);
+	u_m = [u_m*net.Z{m}' sum(u_m, 2)];
+	u(var_range) = u(var_range) + u_m(:);
+end
 
-	for m = LC : -1 : 1
-		a = model.ht_conv(m);
-		b = model.wd_conv(m);
-		d = model.ch_input(m+1);
-		var_range = var_ptr(m) : var_ptr(m+1) - 1;
+for m = LC : -1 : 1
+	a = model.ht_conv(m);
+	b = model.wd_conv(m);
+	d = model.ch_input(m+1);
+	var_range = var_ptr(m) : var_ptr(m+1) - 1;
 
-		u_m = reshape(net.dzdS{(i-1)*L + m}, [], nL*num_data) .* Jv';
-		u_m = sum(reshape(u_m, [], nL, num_data), 2);
+	u_m = reshape(net.dzdS{m}, [], nL*num_data) .* Jv';
+	u_m = sum(reshape(u_m, [], nL, num_data), 2);
 
-		u_m = reshape(u_m, d, []);
-		u_m = [u_m*net.phiZ{(i-1)*L + m}' sum(u_m, 2)];
-		u(var_range) = u(var_range) + u_m(:);
-	end
+	u_m = reshape(u_m, d, []);
+	u_m = [u_m*net.phiZ{m}' sum(u_m, 2)];
+	u(var_range) = u(var_range) + u_m(:);
 end
 
 function u = R_JTBJv(data, param, model, net, v)
@@ -122,14 +116,13 @@ LC = model.LC;
 GNsize = size(data, 2);
 n = model.var_ptr(end) - 1;
 u = gpu(@zeros, [n, 1]);
-[v_w, v_b] = v_to_w(model, v);
 
 bsize = param.bsize;
 for i = 1 : ceil(GNsize/bsize)
 	range = (i-1)*bsize + 1 : min(GNsize, i*bsize);
 
 	% Jv	
-	[Jv_, net] = Jv(data(:, range), model, net, v_w, v_b);
+	[Jv_, net] = Jv(data(:, range), model, net, v);
 
 	% BJv
 	BJv = 2*Jv_;
@@ -140,17 +133,3 @@ for i = 1 : ceil(GNsize/bsize)
 	JTv_ = arrayfun(@(m) JTv_{m}(:), [1 : L], 'un', 0);
 	u = u + vertcat(JTv_{:});
 end
-
-function [v_w, v_b] = v_to_w(model, v)
-
-L = model.L;
-var_ptr = model.var_ptr;
-
-v_w = cell(L, 1); v_b = cell(L, 1);
-channel_and_neurons = [model.ch_input; model.full_neurons];
-for m = 1 : L
-	var_range = var_ptr(m) : var_ptr(m+1) - 1;
-	X = reshape(v(var_range), channel_and_neurons(m+1), []);
-	v_w{m} = X(:,1:end-1);
-	v_b{m} = X(:,end);
-end 

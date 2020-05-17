@@ -1,23 +1,27 @@
-function [Jv_, net] = Jv(data, model, net, v_w, v_b)
+function [R_Z, net] = Jv(data, model, net, v)
 
 L = model.L;
 LC = model.LC;
+var_ptr = model.var_ptr;
 num_data = size(data, 2);
 
-% R_feedforward
 net.Z{1} = reshape(gpu(data), model.ch_input(1), []);
 R_Z = gpu(@zeros, size(net.Z{1}));
 
 for m = 1 : LC
+	var_range = var_ptr(m) : var_ptr(m+1) - 1;
+	d = model.ch_input(m+1);
+	v_ = reshape(v(var_range), d, []);
+
 	net.phiZ{m} = padding_and_phiZ(model, net, net.Z{m}, m, num_data);
 	net.Z{m+1} = max(model.weight{m}*net.phiZ{m} + model.bias{m}, 0);
 
 	R_Z = padding_and_phiZ(model, net, R_Z, m, num_data);
-	R_Z = model.weight{m}*R_Z + v_w{m}*net.phiZ{m} + v_b{m};
+	R_Z = model.weight{m}*R_Z + v_(:, 1:end-1)*net.phiZ{m} + v_(:, end);
 
 	if model.wd_subimage_pool(m) > 1
-		[net.Z{m+1}, net.idx_pool{m}, net.R_max_id{m}] = maxpooling(model, net, net.Z{m+1}, m, 'Jv_maxpooling');
-		R_Z = maxpooling(model, net, R_Z, m, 'R_maxpooling');
+		[net.Z{m+1}, net.idx_pool{m}, net.R_max_id{m}] = maxpooling(model, net, net.Z{m+1}, m, 'Jv');
+		R_Z = maxpooling(model, net, R_Z, m, 'R');
 	end
 
 	if m == LC
@@ -27,10 +31,14 @@ for m = 1 : LC
 	R_Z = (net.Z{m+1} > 0).*R_Z;
 end
 
-for m = LC+1 : L-1
-	R_Z = model.weight{m}*R_Z + v_w{m}*net.Z{m} + v_b{m};
-	net.Z{m+1} = max(model.weight{m}*net.Z{m} + model.bias{m}, 0);
-	R_Z = (net.Z{m+1} > 0).*R_Z;
-end
+for m = LC+1 : L
+	var_range = var_ptr(m) : var_ptr(m+1) - 1;
+	n_m = model.full_neurons(m-LC);
+	v_ = reshape(v(var_range), n_m, []);
 
-Jv_ = model.weight{L}*R_Z + v_w{L}*net.Z{L} + v_b{L};
+	R_Z = model.weight{m}*R_Z + v_(:, 1:end-1)*net.Z{m} + v_(:, end);
+	if m < L
+		net.Z{m+1} = max(model.weight{m}*net.Z{m} + model.bias{m}, 0);
+		R_Z = (net.Z{m+1} > 0).*R_Z;
+	end
+end

@@ -1,4 +1,4 @@
-function net = feedforward(data, model, net, task)
+function net = feedforward(data, model, net)
 
 num_data = size(data, 2);
 net.Z{1} = reshape(gpu(data), model.ch_input(1), []);
@@ -11,7 +11,7 @@ for m = 1 : LC
 	net.Z{m+1} = max(model.weight{m}*net.phiZ{m} + model.bias{m}, 0);
 
 	if model.wd_subimage_pool(m) > 1
-		[net.Z{m+1}, net.idx_pool{m}] = maxpooling(model, net, net.Z{m+1}, m, 'maxpooling');
+		[net.Z{m+1}, net.idx_pool{m}] = maxpooling(model, net, net.Z{m+1}, m);
 	end
 end
 

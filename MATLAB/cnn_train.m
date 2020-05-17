@@ -67,13 +67,8 @@ end
 
 % floating-point type and the flag of storing Jacobian
 global float_type;
-if gpu_use
-	float_type = 'single';
-	param.Jacobian = false;
-else
-	float_type = 'double';
-	param.Jacobian = true;
-end
+float_type = [];
+param.Jacobian = [];
 
 % parameters for stochastic gradient
 
@@ -87,12 +82,25 @@ if ~isempty(options)
 	param = parse_options(param, options);
 end
 
+if isempty(float_type)
+    if gpu_use
+        float_type = 'single';
+    else
+        float_type = 'double';
+    end
+end
+
+if isempty(param.Jacobian)
+    param.Jacobian = ~gpu_use;
+end
+
 if isempty(param.bsize)
 	param.bsize = 128;
 	if ~gpu_use && (param.solver == 1)
 		param.bsize = 1024;
 	end
 end
+
 param.C = param.C*size(Z,1);
 
 function param = parse_options(param, options)
@@ -151,9 +159,6 @@ for i = 1 : length(options)/2
 		case '-gpu_use'
 			if ~(gpu_use) && logical(value)
 				error('we do not detect any gpuDevice.');
-			end
-			if gpu_use && ~logical(value) && sum(ismember(options, '-Jacobian')) == 0
-				param.Jacobian = true;
 			end
 			gpu_use = logical(value) && (exist('OCTAVE_VERSION', 'builtin') == 0);
 		otherwise
