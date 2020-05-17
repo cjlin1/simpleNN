@@ -10,11 +10,10 @@ case {'pool_gradient', 'pool_Jacobian'}
 	d_prev = model.ch_input(m+1);
 	if strcmp(op, 'pool_gradient')
 		num_v = num_data;
-		idx = net.idx_pool{m};
+		idx = net.idx_pool{m} + gpu([0:num_data-1])*d_prev*a_prev*b_prev;
 	else
 		num_v = nL*num_data;
-		idx = reshape(net.idx_pool{m}, [], 1, num_data) ...
-			+ reshape((reshape(gpu([0:nL*num_data-1]), nL, []) - gpu(ones(nL, 1))*[0:num_data-1])*d_prev*a_prev*b_prev, 1, nL, num_data);
+		idx = reshape(net.idx_pool{m}, [], 1, num_data) + reshape(gpu([0:nL*num_data-1])*d_prev*a_prev*b_prev, 1, nL, num_data);
 	end
 case {'phi_gradient', 'phi_Jacobian'}
 	a_prev = model.ht_pad(m);
