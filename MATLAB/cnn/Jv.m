@@ -20,8 +20,7 @@ for m = 1 : LC
 	R_Z = model.weight{m}*R_Z + v_(:, 1:end-1)*net.phiZ{m} + v_(:, end);
 
 	if model.wd_subimage_pool(m) > 1
-		[net.Z{m+1}, net.idx_pool{m}, net.R_max_id{m}] = maxpooling(model, net, net.Z{m+1}, m, 'Jv');
-		R_Z = maxpooling(model, net, R_Z, m, 'R');
+		[net.Z{m+1}, net.idx_pool{m}, R_Z] = maxpooling(model, net, [net.Z{m+1} R_Z], m, 'R');
 	end
 
 	if m == LC
