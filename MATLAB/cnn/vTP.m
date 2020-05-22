@@ -26,7 +26,7 @@ case {'phi_gradient', 'phi_Jacobian'}
 		num_v = nL*num_data;
 	end
 
-	idx = net.idx_phiZ{m}(:, 1:num_v);
+	idx = net.idx_phiZ{m}(:) + [0:num_v-1]*d_prev*a_prev*b_prev;
 otherwise
 	error('Unknown operation in function vTP.');
 end
