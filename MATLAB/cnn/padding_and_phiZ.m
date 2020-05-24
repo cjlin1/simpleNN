@@ -3,7 +3,7 @@ function phiZ = padding_and_phiZ(model, net, Z, m, num_data)
 phiZ = padding(model, Z, m, num_data);
 % Calculate phiZ
 phiZ = reshape(phiZ, [], num_data);
-phiZ = phiZ(net.idx_phiZ{m}(:, 1), :);
+phiZ = phiZ(net.idx_phiZ{m}, :);
 
 h = model.wd_filter(m);
 d = model.ch_input(m);
