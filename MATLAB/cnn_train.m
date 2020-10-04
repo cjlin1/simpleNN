@@ -74,6 +74,9 @@ param.Jacobian = [];
 
 param.epoch_max = 500;
 param.lr = 0.01;
+if param.solver == 3
+	param.lr = 0.001;
+end
 param.decay = 0;
 param.momentum = 0;
 

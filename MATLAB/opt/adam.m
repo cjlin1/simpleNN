@@ -2,7 +2,7 @@ function best_model = adam(prob, prob_v, param, model, net)
 
 beta1 = 0.9;
 beta2 = 0.999;
-alpha = 1e-3;
+alpha = param.lr;
 eps = 1e-8;
 var_ptr = model.var_ptr;
 ch_input = [model.ch_input;model.full_neurons];
