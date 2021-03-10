@@ -1,9 +1,11 @@
-import numpy as np
 import math
-import scipy.io as sio
 import os
-import math
-import pdb
+
+import numpy as np
+import scipy.io as sio
+import tensorflow as tf
+from tensorflow.python import _pywrap_stat_summarizer
+
 
 class ConfigClass(object):
 	def __init__(self, args, num_data, num_cls):
@@ -177,3 +179,34 @@ def predict(sess, network, test_batch, bsize):
 	
 	return avg_loss, avg_acc, results
 
+
+class Profiler:
+	def __init__(self, is_enabled=False):
+		self._is_enabled = is_enabled
+		self.run_metadata = None
+		self._summarizer = _pywrap_stat_summarizer.StatSummarizer()
+
+		if self._is_enabled:
+			self.run_options = tf.compat.v1.RunOptions(
+				trace_level=tf.compat.v1.RunOptions.FULL_TRACE)
+		else:
+			self.run_options = None
+
+	def add_stat(self, run_metadata):
+		self._summarizer.ProcessStepStatsStr(
+			run_metadata.step_stats.SerializeToString())
+
+	def __enter__(self):
+		if self._is_enabled:
+			if self.run_metadata is not None:
+				raise RuntimeError('Recursively called')
+			self.run_metadata = tf.compat.v1.RunMetadata()
+		return self
+
+	def __exit__(self, *args, **kwargs):
+		if self._is_enabled:
+			self.add_stat(self.run_metadata)
+			self.run_metadata = None
+
+	def summary(self):
+		return self._summarizer.GetOutputString()

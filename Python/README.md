@@ -99,6 +99,10 @@ Default: --dim 32 32 3
 ```
 Default: --seed 0
 ```
+12. **--profile**: enable profiling
+```
+Default: false
+```
 
 ### Newton Method
 
