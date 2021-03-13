@@ -134,7 +134,7 @@ def normalize_and_reshape(images, dim, mean_tr=None):
 		# if no mean_tr is provided, we calculate it according to the current data
 		mean_tr = images.mean(axis=0) 
 	else:
-		print('Normalzie images according to the provided mean.')
+		print('Normalize images according to the provided mean.')
 		if np.prod(mean_tr.shape) != np.prod(dim):
 			raise ValueError('Dimension of provided mean does not agree with the data! Please verify them!')
 
