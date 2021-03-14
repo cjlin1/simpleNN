@@ -95,7 +95,7 @@ Default: --C 0.01
 ```
 Default: --dim 32 32 3
 ```
-11. **--seed**: specify random seed to make results deterministic. If no random seeds are given, a different result is produced after each run.
+11. **--seed**: specify random seed to make results deterministic and reproducible.
 ```
 Default: --seed 0
 ```

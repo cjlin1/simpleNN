@@ -91,8 +91,8 @@ def parse_args():
 	parser.add_argument('--dim', dest='dim', nargs='+', help='input dimension of data,'+\
 						'shape must be:  height width num_channels',
 					  default=[32, 32, 3], type=int)
-	parser.add_argument('--seed', dest='seed', help='a nonnegative integer for \
-						reproducibility', type=int)	  
+	parser.add_argument('--seed', dest='seed', help='a nonnegative integer for reproducibility',
+					  default=0, type=int)	  
 	args = parser.parse_args()
 	return args
 
