@@ -172,8 +172,8 @@ def predict(sess, network, test_batch, bsize):
 		# note that _loss was summed over batches
 		infer_loss = infer_loss + _loss
 
-	avg_acc = (np.argmax(test_labels, axis=1) == results).mean()
+	acc = (np.argmax(test_labels, axis=1) == results).mean()
 	avg_loss = infer_loss/num_data
 	
-	return avg_loss, avg_acc, results
+	return avg_loss, acc, results
 
