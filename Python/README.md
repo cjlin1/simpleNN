@@ -41,14 +41,14 @@ To use Newton optimizer, please run:
 CUDA_VISIBLE_DEVICES=0 python3 train.py --optim NewtonCG --GNsize 100 --C 0.01  \
                                                 --net CNN_4layers --bsize 1024 \
                                                 --train_set ./data/mnist-demo.mat \
-                                                --val_set ./data/mnist-demo.t.mat --dim 28 28 1
+                                                --dim 28 28 1
 ```
 To use SGD optimizer, please run:
 ```
 CUDA_VISIBLE_DEVICES=0 python3 train.py --optim SGD --lr 0.01 --C 0.01 \
                                                 --net CNN_4layers --bsize 256 \
                                                 --train_set ./data/mnist-demo.mat \
-                                                --val_set ./data/mnist-demo.t.mat --dim 28 28 1
+                                                --dim 28 28 1
 ```
 
 ## Arguments
@@ -158,18 +158,18 @@ In the following experiments, we run 100 Newton steps on Newton method and 500 e
 ![](./FILES_FOR_README/accu_3layers_1.png "accuracy of 3 layer CNN")
 
 ### Test accuracy changes w.r.t. regularization constant.
-C | 10% sub-sampled Gv| 5% sub-sampled Gv| 1% sub-sampled Gv
---|-----|----|---
-0.01l|78.09%|78.33%|75.62%
-0.1l|74.96%|75.33%|73.45%
-1l|73.03%|73.35%|72.82%
+| C     | 10% sub-sampled Gv | 5% sub-sampled Gv | 1% sub-sampled Gv |
+| ----- | ------------------ | ----------------- | ----------------- |
+| 0.01l | 78.09%             | 78.33%            | 75.62%            |
+| 0.1l  | 74.96%             | 75.33%            | 73.45%            |
+| 1l    | 73.03%             | 73.35%            | 72.82%            |
 
-Memory | bsize 1024 | bsize 512| bsize 256
---|-----|----|---
-10% sub-sampled Gv|3.1 GB |1.8 GB|1.1 GB
-5% sub-sampled Gv |3.1 GB |1.8 GB|1.1 GB
-1% sub-sampled Gv |3.1 GB |1.8 GB|1.1 GB
-SGD |3.1 GB|1.8 GB|1.1 GB|
+| Memory             | bsize 1024 | bsize 512 | bsize 256 |
+| ------------------ | ---------- | --------- | --------- |
+| 10% sub-sampled Gv | 3.1 GB     | 1.8 GB    | 1.1 GB    |
+| 5% sub-sampled Gv  | 3.1 GB     | 1.8 GB    | 1.1 GB    |
+| 1% sub-sampled Gv  | 3.1 GB     | 1.8 GB    | 1.1 GB    |
+| SGD                | 3.1 GB     | 1.8 GB    | 1.1 GB    |
 
 ## Experiments on 7 layer CNN
 ### Wall clock time comparison
@@ -180,15 +180,15 @@ SGD |3.1 GB|1.8 GB|1.1 GB|
 ![](./FILES_FOR_README/accu_7layers_1.png "accuracy of 6 layer CNN")
 
 ### Test accuracy changes w.r.t. regularization constant.
-C | 10% sub-sampled Gv| 5% sub-sampled Gv| 1% sub-sampled Gv
---|-----|----|---
-0.01l|80.61%|81.41%|75.50%
-0.1l|74.06%|73.55%|75.90%
-1l|71.03%|70.83%|76.29%
+| C     | 10% sub-sampled Gv | 5% sub-sampled Gv | 1% sub-sampled Gv |
+| ----- | ------------------ | ----------------- | ----------------- |
+| 0.01l | 80.61%             | 81.41%            | 75.50%            |
+| 0.1l  | 74.06%             | 73.55%            | 75.90%            |
+| 1l    | 71.03%             | 70.83%            | 76.29%            |
 
-Memory | bsize 1024 | bsize 512| bsize 256
---|-----|----|---
-10% sub-sampled Gv|7.2 GB |3.8 GB|2.1 GB
-5% sub-sampled Gv |7.2 GB |3.8 GB|2.1 GB
-1% sub-sampled Gv |7.2 GB |3.8 GB|2.1 GB
-SGD |7.2 GB|3.8 GB|2.1 GB|
+| Memory             | bsize 1024 | bsize 512 | bsize 256 |
+| ------------------ | ---------- | --------- | --------- |
+| 10% sub-sampled Gv | 7.2 GB     | 3.8 GB    | 2.1 GB    |
+| 5% sub-sampled Gv  | 7.2 GB     | 3.8 GB    | 2.1 GB    |
+| 1% sub-sampled Gv  | 7.2 GB     | 3.8 GB    | 2.1 GB    |
+| SGD                | 7.2 GB     | 3.8 GB    | 2.1 GB    |
