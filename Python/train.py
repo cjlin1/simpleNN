@@ -185,7 +185,7 @@ def gradient_trainer(config, sess, network, full_batch, val_batch, saver, test_n
 
 			# print initial loss
 			if epoch == 0 and i == 0:
-				output_str = 'initial f (reg + avg. loss of 1st batch): {:.3f}'.format(batch_loss)
+				output_str = 'initial f (loss with reg of 1st batch): {:.3f}'.format(batch_loss)
 				print(output_str)
 				if not config.screen_log_only:
 					print(output_str, file=log_file)
@@ -195,7 +195,7 @@ def gradient_trainer(config, sess, network, full_batch, val_batch, saver, test_n
 			# print log every 10% of the iterations
 			if i % math.ceil(num_iters/10) == 0:
 				end = time.time()
-				output_str = 'Epoch {}: {}/{} | loss {:.4f} | lr {:.6} | elapsed time {:.3f}'\
+				output_str = 'Epoch {}: {}/{} | loss with reg {:.4f} | lr {:.6} | elapsed time {:.3f}'\
 					.format(epoch, i, num_iters, batch_loss , lr, end-start)
 				print(output_str)
 				if not config.screen_log_only:
@@ -211,7 +211,7 @@ def gradient_trainer(config, sess, network, full_batch, val_batch, saver, test_n
 		config.elapsed_time = 0.0
 		
 		if val_batch is None:
-			output_str = 'In epoch {} train loss: {:.3f} | epoch time {:.3f}'\
+			output_str = 'In epoch {} train loss with reg: {:.3f} | epoch time {:.3f}'\
 				.format(epoch, cumulative_loss / cumulative_size, epoch_end-start)
 		else:
 			if test_network == None:
@@ -230,7 +230,7 @@ def gradient_trainer(config, sess, network, full_batch, val_batch, saver, test_n
 					bsize=config.bsize
 					)
 			
-			output_str = 'In epoch {} train loss: {:.3f} | val loss: {:.3f} | val accuracy: {:.3f}% | epoch time {:.3f}'\
+			output_str = 'In epoch {} train loss with reg: {:.3f} | val loss with reg: {:.3f} | val accuracy: {:.3f}% | epoch time {:.3f}'\
 				.format(epoch, cumulative_loss / cumulative_size, val_loss, val_acc*100, epoch_end-start)
 		
 			if val_acc > best_acc:
