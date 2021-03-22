@@ -161,7 +161,8 @@ def gradient_trainer(config, sess, network, full_batch, val_batch, saver, test_n
 
 	for epoch in range(0, args.epoch):
 		
-		loss_avg = 0.0
+		cumulative_loss = 0.0
+		cumulative_size = 0
 		start = time.time()
 
 		for i in range(num_iters):
@@ -189,7 +190,8 @@ def gradient_trainer(config, sess, network, full_batch, val_batch, saver, test_n
 				if not config.screen_log_only:
 					print(output_str, file=log_file)
 
-			loss_avg = loss_avg + batch_loss
+			cumulative_loss = cumulative_loss + batch_loss * batch_input.shape[0]
+			cumulative_size = cumulative_size + batch_input.shape[0]
 			# print log every 10% of the iterations
 			if i % math.ceil(num_iters/10) == 0:
 				end = time.time()
@@ -210,7 +212,7 @@ def gradient_trainer(config, sess, network, full_batch, val_batch, saver, test_n
 		
 		if val_batch is None:
 			output_str = 'In epoch {} train loss: {:.3f} | epoch time {:.3f}'\
-				.format(epoch, loss_avg/(i+1), epoch_end-start)			
+				.format(epoch, cumulative_loss / cumulative_size, epoch_end-start)
 		else:
 			if test_network == None:
 				val_loss, val_acc, _ = predict(
@@ -229,7 +231,7 @@ def gradient_trainer(config, sess, network, full_batch, val_batch, saver, test_n
 					)
 			
 			output_str = 'In epoch {} train loss: {:.3f} | val loss: {:.3f} | val accuracy: {:.3f}% | epoch time {:.3f}'\
-				.format(epoch, loss_avg/(i+1), val_loss, val_acc*100, epoch_end-start)
+				.format(epoch, cumulative_loss / cumulative_size, val_loss, val_acc*100, epoch_end-start)
 		
 			if val_acc > best_acc:
 				best_acc = val_acc
