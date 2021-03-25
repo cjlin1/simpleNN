@@ -217,7 +217,7 @@ def gradient_trainer(config, sess, network, full_batch, val_batch, saver, test_n
 			if test_network == None:
 				val_loss, val_acc, _ = predict(
 					sess, 
-					network=(x, y, loss, outputs),
+					network=(x, y, loss_with_reg*batch_size, outputs),
 					test_batch=val_batch,
 					bsize=config.bsize
 					)
