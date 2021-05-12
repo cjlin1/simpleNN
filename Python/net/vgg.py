@@ -5,40 +5,41 @@ https://github.com/keras-team/keras-applications/blob/master/keras_applications/
 """
 
 import tensorflow.compat.v1 as tf
+import tensorflow.compat.v1.keras as keras
 tf.disable_v2_behavior()
-import numpy as np 
-import pdb
-from tensorflow.keras.applications.vgg16 import VGG16 as vgg16
-from tensorflow.keras.applications.vgg19 import VGG19 as vgg19
+import numpy as np
 
 __all__ = ['VGG11', 'VGG13', 'VGG16','VGG19']
 
-def VGG(feature, num_cls):
-
-	with tf.variable_scope('fully_connected') as scope:
-		dim =np.prod(feature.shape[1:])
-		x = tf.reshape(feature, [-1, dim])
-
-		x = tf.keras.layers.Dense(units=4096, activation='relu', name=scope.name)(x)
-		x = tf.keras.layers.Dense(units=4096, activation='relu', name=scope.name)(x)
-		x = tf.keras.layers.Dense(units=num_cls, name=scope.name)(x)
-
-	return x
-
-def make_layers(x, cfg):
-	for v in cfg:
-		if v == 'M':
-			x = tf.keras.layers.MaxPool2D(pool_size=[2, 2], strides=2, padding='valid')(x)
-		else:
-			x = tf.keras.layers.Conv2D(
-			filters=v,
+def make_layers(layer_spec, input_shape, output_shape):
+	layers = [
+		keras.layers.Conv2D(
+			filters=layer_spec[0],
 			kernel_size=[3, 3],
 			padding='SAME',
-			activation=tf.nn.relu
-			)(x)
-	return x
+			activation=tf.nn.relu,
+			input_shape=input_shape,
+		),
+	]
+	for v in layer_spec[1:]:
+		if v == 'M':
+			layers.append(keras.layers.MaxPool2D(pool_size=[2, 2], strides=2, padding='valid'))
+		else:
+			layers.append(keras.layers.Conv2D(
+				filters=v,
+				kernel_size=[3, 3],
+				padding='SAME',
+				activation=tf.nn.relu
+			))
 
-cfg = {
+	layers.append(keras.layers.Flatten())
+	layers.append(keras.layers.Dense(units=4096, activation='relu'))
+	layers.append(keras.layers.Dense(units=4096, activation='relu'))
+	layers.append(keras.layers.Dense(units=output_shape))
+
+	return layers
+
+layer_spec = {
 	'A': [64, 'M', 128, 'M', 256, 256, 'M', 512, 512, 'M', 512, 512, 'M'],
 	'B': [64, 64, 'M', 128, 128, 'M', 256, 256, 'M', 512, 512, 'M', 512, 512, 'M'],
 	'D': [64, 64, 'M', 128, 128, 'M', 256, 256, 256, 'M', 512, 512, 512, 'M', 512, 512, 512, 'M'],
@@ -46,20 +47,20 @@ cfg = {
 		  512, 512, 512, 512, 'M'],
 }
 
-def VGG11(x_images, num_cls):
-	feature = make_layers(x_images, cfg['A'])
-	return VGG(feature, num_cls)
+def VGG11(input_shape, output_shape):
+	layers = make_layers(layer_spec['A'], input_shape, output_shape)
+	return keras.models.Sequential(layers)
 
-def VGG13(x_images, num_cls):
-	feature = make_layers(x_images, cfg['B'])
-	return VGG(feature, num_cls)
+def VGG13(input_shape, output_shape):
+	layers = make_layers(layer_spec['B'], input_shape, output_shape)
+	return keras.models.Sequential(layers)
 
-def VGG16(x_images, num_cls):
-	feature = make_layers(x_images, cfg['D'])
-	return VGG(feature, num_cls)
+def VGG16(input_shape, output_shape):
+	layers = make_layers(layer_spec['D'], input_shape, output_shape)
+	return keras.models.Sequential(layers)
 
-def VGG19(x_images, num_cls):
-	feature = make_layers(x_images, cfg['E'])
-	return VGG(feature, num_cls)
+def VGG19(input_shape, output_shape):
+	layers = make_layers(layer_spec['E'], input_shape, output_shape)
+	return keras.models.Sequential(layers)
 
 	
